@@ -1,0 +1,21 @@
+﻿# project files
+/build*/*
+!/build*/.gitkeep
+
+# external files
+/external/*
+!/external/.gitkeep
+!/external/GL
+!/external/glew
+!/external/stb
+!/external/imgui
+!/external/tinyfd
+!/external/CMakeLists.txt
+
+# database
+/dataset/*
+
+# others
+a.exe
+/x64/*
+

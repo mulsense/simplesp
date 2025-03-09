@@ -1,0 +1,57 @@
+﻿cmake_minimum_required(VERSION 4.0)
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set (CMAKE_CXX_STANDARD 11)
+
+project(simplesp)
+
+## output
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+## external
+include_directories(${CMAKE_SOURCE_DIR}/external)
+link_directories(${CMAKE_SOURCE_DIR}/external)
+file(GLOB SP_EX_LIBS ${CMAKE_SOURCE_DIR}/external/*.lib)
+
+function(use_external_library target name)
+    include_directories("${CMAKE_SOURCE_DIR}/external/${name}")
+    target_link_libraries(${target} ${name})
+endfunction()
+
+
+## openGL
+option(SP_USE_OPENGL "SP_USE_OPENGL" OFF)
+if(SP_USE_OPENGL)
+    find_package(OpenGL REQUIRED)
+    find_package(GLFW REQUIRED)
+    
+    include_directories(${GLFW_INCLUDE_DIRS})
+    link_directories(${GLFW_LIB_DIRS})
+    
+    set(SP_GL_LIBS ${OPENGL_LIBRARY} ${GLFW_LIB})
+endif()
+
+## OpenMP
+option(SP_USE_OPENMP "SP_USE_OPENMP" ON)
+if(SP_USE_OPENMP) 
+    find_package(OpenMP)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+
+set(SP_LIBS 
+    $<$<CONFIG:Debug>:${CMAKE_SOURCE_DIR}/build/lib/Debug/simplesp.lib>
+    $<$<CONFIG:Release>:${CMAKE_SOURCE_DIR}/build/lib/Release/simplesp.lib>)
+
+
+## folder
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake")
+
+add_subdirectory(source)
+
+add_subdirectory(external)
+add_subdirectory(examples)

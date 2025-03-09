@@ -1,0 +1,37 @@
+#devel
+/_devel/*
+
+# image
+
+# marker
+
+# model
+/model/*
+!/model/model.txt
+
+# mnist
+/mnist/*
+!/mnist/mnist.txt
+
+# cifar
+/cifar/*
+!/cifar/cifar.txt
+
+# stanford
+/stanford/*
+!/stanford/bun_zipper.ply
+!/stanford/bunny.txt
+
+# middlebury
+/middlebury/*
+!/middlebury/stereo2005.txt
+!/middlebury/stereo2006.txt
+!/middlebury/dino.txt
+
+# tsukuba
+/tsukuba/*
+!/tsukuba/tsukuba.txt
+
+# tum
+/tum/*
+!/tum/tum.txt
