@@ -1,0 +1,11 @@
+add_subdirectory(testcore)
+add_subdirectory(print)
+add_subdirectory(cvmat)
+add_subdirectory(file)
+add_subdirectory(calibration)
+add_subdirectory(feature)
+add_subdirectory(dotmarker)
+add_subdirectory(bitmarker)
+add_subdirectory(realsense)
+add_subdirectory(realsense2)
+

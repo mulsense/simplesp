@@ -14,29 +14,35 @@ if (GLFW_DIR)
     find_path (GLFW_INCLUDE_DIR NAMES GLFW/glfw3.h PATHS "${GLFW_DIR}/include")
 
     if (WIN32)
-        if ((${MSVC_VERSION} EQUAL 1900))
+        if (MSVC11 OR (${MSVC_VERSION} EQUAL 1700))
+            find_library (GLFW_LIB NAMES glfw3
+                PATHS
+                    "${GLFW_DIR}/lib"
+                    "${GLFW_DIR}/lib-vc2012"
+            )
+        elseif (MSVC12 OR (${MSVC_VERSION} EQUAL 1800))
+            find_library (GLFW_LIB NAMES glfw3
+                PATHS
+                    "${GLFW_DIR}/lib"
+                    "${GLFW_DIR}/lib-vc2013"
+            )
+        elseif (MSVC14 AND (${MSVC_VERSION} EQUAL 1900))
             find_library (GLFW_LIB NAMES glfw3
                 PATHS
                     "${GLFW_DIR}/lib"
                     "${GLFW_DIR}/lib-vc2015"
             )
-        elseif ((${MSVC_VERSION} GREATER_EQUAL 1910) AND (${MSVC_VERSION} LESS 1920))
+        elseif (MSVC14 AND (${MSVC_VERSION} GREATER_EQUAL 1910) AND (${MSVC_VERSION} LESS 1920))
             find_library (GLFW_LIB NAMES glfw3
                 PATHS
                     "${GLFW_DIR}/lib"
                     "${GLFW_DIR}/lib-vc2017"
             )
-        elseif ((${MSVC_VERSION} GREATER_EQUAL 1920) AND (${MSVC_VERSION} LESS 1930))
+        elseif (MSVC14 AND (${MSVC_VERSION} GREATER_EQUAL 1920) AND (${MSVC_VERSION} LESS 1930))
             find_library (GLFW_LIB NAMES glfw3
                 PATHS
                     "${GLFW_DIR}/lib"
                     "${GLFW_DIR}/lib-vc2019"
-            )
-        elseif ((${MSVC_VERSION} GREATER_EQUAL 1930) AND (${MSVC_VERSION} LESS 1950))
-            find_library (GLFW_LIB NAMES glfw3
-                PATHS
-                    "${GLFW_DIR}/lib"
-                    "${GLFW_DIR}/lib-vc2022"
             )
         elseif (MINGW)
             if (CMAKE_CL_64)

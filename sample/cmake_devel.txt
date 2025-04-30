@@ -1,0 +1,51 @@
+﻿file(GLOB MAIN *.h *.hpp *.cpp)
+source_group("main" FILES ${MAIN})
+
+## simplesp.h
+file(GLOB SIMPLESP ${SIMPLESP_DIR}/*.h)
+source_group("" FILES ${SIMPLESP})
+
+
+## spex
+file(GLOB SPEX ${SIMPLESP_DIR}/spex/*.h)
+source_group("spex" FILES ${SPEX})
+
+
+## spcore
+file(GLOB SPCORE ${SIMPLESP_DIR}/spcore/*.h)
+file(GLOB SPGEN ${SIMPLESP_DIR}/spcore/spgen/*.h)
+file(GLOB SPCPU ${SIMPLESP_DIR}/spcore/spcpu/*.h)
+
+source_group("spcore" FILES ${SPCORE})
+source_group("spcore\\spgen" FILES ${SPGEN})
+source_group("spcore\\spcpu" FILES ${SPCPU})
+
+
+## spapp
+file(GLOB SPAPP ${SIMPLESP_DIR}/spapp/*.h)
+file(GLOB SPDATA ${SIMPLESP_DIR}/spapp/spdata/*.h)
+file(GLOB SPALGO ${SIMPLESP_DIR}/spapp/spalgo/*.h)
+file(GLOB SPIMG ${SIMPLESP_DIR}/spapp/spimg/*.h)
+file(GLOB SPIMGEX ${SIMPLESP_DIR}/spapp/spimgex/*.h)
+file(GLOB SPGEOM ${SIMPLESP_DIR}/spapp/spgeom/*.h)
+file(GLOB SPGEOMEX ${SIMPLESP_DIR}/spapp/spgeomex/*.h)
+file(GLOB SPLEARN ${SIMPLESP_DIR}/spapp/splearn/*.h)
+
+source_group("spapp" FILES ${SPAPP})
+source_group("spapp\\spdata" FILES ${SPDATA})
+source_group("spapp\\spalgo" FILES ${SPALGO})
+source_group("spapp\\spimg" FILES ${SPIMG})
+source_group("spapp\\spimgex" FILES ${SPIMGEX})
+source_group("spapp\\spgeom" FILES ${SPGEOM})
+source_group("spapp\\spgeomex" FILES ${SPGEOMEX})
+source_group("spapp\\splearn" FILES ${SPLEARN})
+
+set(SUB ${SUB}
+    ${SIMPLESP} ${SPEX} 
+    ${SPCORE} ${SPGEN} ${SPCPU}
+    ${SPAPP} ${SPDATA} ${SPALGO} ${SPIMG} ${SPIMGEX} ${SPGEOM} ${SPGEOMEX} ${SPLEARN})
+
+add_executable(${target} ${MAIN} ${SUB})
+
+target_link_libraries(${target} ${SP_EX_LIBS} ${SP_CV_LIBS} ${SP_GL_LIBS})
+
