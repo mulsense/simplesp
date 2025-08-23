@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.1)
+﻿cmake_minimum_required(VERSION 3.10)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set (CMAKE_CXX_STANDARD 11)
 
@@ -26,19 +26,6 @@ function(use_external_library target name)
     include_directories("${CMAKE_SOURCE_DIR}/external/${name}")
     target_link_libraries(${target} ${name})
 endfunction()
-
-
-## openCV
-option(SP_USE_OPENCV "SP_USE_OPENCV" OFF)
-if(SP_USE_OPENCV)
-    find_package(OpenCV REQUIRED)
-    
-    include_directories(${OpenCV_INCLUDE_DIRS})
-    link_directories(${OpenCV_LIB_DIRS})
-    
-    set(SP_CV_LIBS ${OpenCV_LIBS})
-endif(SP_USE_OPENCV)
-
 
 ## openGL
 option(SP_USE_OPENGL "SP_USE_OPENGL" OFF)

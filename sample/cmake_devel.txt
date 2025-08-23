@@ -26,26 +26,21 @@ file(GLOB SPAPP ${SIMPLESP_DIR}/spapp/*.h)
 file(GLOB SPDATA ${SIMPLESP_DIR}/spapp/spdata/*.h)
 file(GLOB SPALGO ${SIMPLESP_DIR}/spapp/spalgo/*.h)
 file(GLOB SPIMG ${SIMPLESP_DIR}/spapp/spimg/*.h)
-file(GLOB SPIMGEX ${SIMPLESP_DIR}/spapp/spimgex/*.h)
 file(GLOB SPGEOM ${SIMPLESP_DIR}/spapp/spgeom/*.h)
-file(GLOB SPGEOMEX ${SIMPLESP_DIR}/spapp/spgeomex/*.h)
-file(GLOB SPLEARN ${SIMPLESP_DIR}/spapp/splearn/*.h)
 
 source_group("spapp" FILES ${SPAPP})
 source_group("spapp\\spdata" FILES ${SPDATA})
 source_group("spapp\\spalgo" FILES ${SPALGO})
 source_group("spapp\\spimg" FILES ${SPIMG})
-source_group("spapp\\spimgex" FILES ${SPIMGEX})
 source_group("spapp\\spgeom" FILES ${SPGEOM})
-source_group("spapp\\spgeomex" FILES ${SPGEOMEX})
 source_group("spapp\\splearn" FILES ${SPLEARN})
 
 set(SUB ${SUB}
     ${SIMPLESP} ${SPEX} 
     ${SPCORE} ${SPGEN} ${SPCPU}
-    ${SPAPP} ${SPDATA} ${SPALGO} ${SPIMG} ${SPIMGEX} ${SPGEOM} ${SPGEOMEX} ${SPLEARN})
+    ${SPAPP} ${SPDATA} ${SPALGO} ${SPIMG} ${SPGEOM})
 
 add_executable(${target} ${MAIN} ${SUB})
 
-target_link_libraries(${target} ${SP_EX_LIBS} ${SP_CV_LIBS} ${SP_GL_LIBS})
+target_link_libraries(${target} ${SP_EX_LIBS} ${SP_GL_LIBS})
 

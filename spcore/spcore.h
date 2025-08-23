@@ -17,6 +17,7 @@
 #include "spcore/spcpu/spmem.h"
 #include "spcore/spcpu/spmop.h"
 #include "spcore/spcpu/spsolve.h"
+#include "spcore/spcpu/spkdtree.h"
 
 #include "spcore/spcpu/spcode.h"
 #include "spcore/spcpu/spprint.h"
