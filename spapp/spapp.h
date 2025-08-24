@@ -16,11 +16,9 @@
 
 // image
 #include "spapp/spimg/spimg.h"
-#include "spapp/spimg/spfilter.h"
-#include "spapp/spimg/spbin.h"
-#include "spapp/spimg/splabel.h"
 #include "spapp/spimg/sprender.h"
-
+#include "spapp/spimg/splabel.h"
+#include "spapp/spimg/spbin.h"
 
 // geometry
 #include "spapp/spgeom/spxmat.h"
@@ -30,6 +28,5 @@
 #include "spapp/spgeom/spray.h"
 #include "spapp/spgeom/spvertex.h"
 #include "spapp/spgeom/spvoxel.h"
-
 
 #endif

@@ -173,7 +173,7 @@ namespace sp {
                             voxel.update(x, y, z, -0.1);
                         }
                         else {
-                            if (dotVec(cpos, drc) >= 0) continue;
+                            if (cpos.dot(drc) >= 0) continue;
 
                             const SP_REAL dist = max(cpos.z - pos.z, -step) / step;
                             voxel.update(x, y, z, dist);

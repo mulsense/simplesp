@@ -22,7 +22,7 @@ namespace sp{
         //--------------------------------------------------------------------------------
 
         SP_CPUFUNC bool checkOutlier(const VecPD3 &vec0, const VecPD3 &vec1){
-            return (dotVec(vec0.drc, vec1.drc) > 0.5) ? true : false;
+            return (vec0.drc.dot(vec1.drc) > 0.5) ? true : false;
         }
 
         SP_CPUFUNC bool checkOutlier(const VecPD3 &vec0, const Vec3 &vec1){
@@ -151,7 +151,7 @@ namespace sp{
                 SP_REAL jDrc[3] = { drc.x, drc.y, drc.z };
                 mulMat(&J(i, 0), 1, 6, jDrc, 1, 3, jPoseToPos, 3, 6);
 
-                E(i, 0) = dotVec(err, drc);
+                E(i, 0) = err.dot(drc);
                 errs[i] = fabs(E(i, 0));
             }
 

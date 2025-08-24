@@ -6,7 +6,6 @@
 #define __SP_BIN_H__
 
 #include "spcore/spcore.h"
-#include "spapp/spimg/spfilter.h"
 
 namespace sp{
 

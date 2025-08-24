@@ -157,10 +157,11 @@ namespace sp{
     // vector
     //--------------------------------------------------------------------------------
 
+
     class Vec2 {
     public:
         SP_REAL x, y;
-		Vec2() {
+        Vec2() {
             x = static_cast<SP_REAL>(0.0);
             y = static_cast<SP_REAL>(0.0);
         }
@@ -168,6 +169,60 @@ namespace sp{
         Vec2(const double x, const double y) {
             this->x = static_cast<SP_REAL>(x);
             this->y = static_cast<SP_REAL>(y);
+        }
+
+        friend Vec2 operator + (const Vec2& vec0, const Vec2& vec1) {
+            return Vec2(vec0.x + vec1.x, vec0.y + vec1.y);
+        }
+
+        void operator += (const Vec2& vec) {
+            x += vec.x;
+            y += vec.y;
+        }
+
+        Vec2 operator + () const {
+            return *this;
+        }
+
+        friend Vec2 operator - (const Vec2& vec0, const Vec2& vec1) {
+            return Vec2(vec0.x - vec1.x, vec0.y - vec1.y);
+        }
+
+        void operator -= (const Vec2& vec) {
+            x -= vec.x;
+            y -= vec.y;
+        }
+
+        Vec2 operator - () const {
+            return Vec2(-x, -y);
+        }
+
+        friend Vec2 operator * (const Vec2& vec, const double val) {
+            return Vec2(vec.x * val, vec.y * val);
+        }
+
+        friend Vec2 operator * (const double val, const Vec2& vec) {
+            return Vec2(vec.x * val, vec.y * val);
+        }
+
+        void operator *= (const double val) {
+            x *= val;
+            y *= val;
+        }
+
+        friend Vec2 operator / (const Vec2& vec, const double val) {
+            SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
+            return Vec2(vec.x / val, vec.y / val);
+        }
+        void operator /= (const double val) {
+            SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
+            x /= val;
+            y /= val;
+        }
+
+        // dot production
+        SP_REAL dot(const Vec2& vec) const {
+            return x * vec.x + y * vec.y;
         }
     };
 
@@ -186,10 +241,66 @@ namespace sp{
             this->z = static_cast<SP_REAL>(z);
         }
 
-        Vec3(const Vec2 &vec, const double z) {
+        Vec3(const Vec2& vec, const double z) {
             this->x = static_cast<SP_REAL>(vec.x);
             this->y = static_cast<SP_REAL>(vec.y);
             this->z = static_cast<SP_REAL>(z);
+        }
+
+        friend Vec3 operator + (const Vec3& vec0, const Vec3& vec1) {
+            return Vec3(vec0.x + vec1.x, vec0.y + vec1.y, vec0.z + vec1.z);
+        }
+
+        void operator += (const Vec3& vec) {
+            x += vec.x;
+            y += vec.y;
+            z += vec.z;
+        }
+
+        Vec3 operator + () const {
+            return *this;
+        }
+
+        friend Vec3 operator - (const Vec3& vec0, const Vec3& vec1) {
+            return Vec3(vec0.x - vec1.x, vec0.y - vec1.y, vec0.z - vec1.z);
+        }
+
+        void operator -= (const Vec3& vec) {
+            x -= vec.x;
+            y -= vec.y;
+            z -= vec.z;
+        }
+
+        Vec3 operator - () const {
+            return Vec3(-x, -y, -z);
+        }
+
+        friend Vec3 operator * (const Vec3& vec, const double val) {
+            return Vec3(vec.x * val, vec.y * val, vec.z * val);
+        }
+        friend Vec3 operator * (const double val, const Vec3& vec) {
+            return Vec3(vec.x * val, vec.y * val, vec.z * val);
+        }
+        void operator *= (const double val) {
+            x *= val;
+            y *= val;
+            z *= val;
+        }
+
+        friend Vec3 operator / (const Vec3& vec, const double val) {
+            SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
+            return Vec3(vec.x / val, vec.y / val, vec.z / val);
+        }
+        void operator /= (const double val) {
+            SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
+            x /= val;
+            y /= val;
+            z /= val;
+        }
+
+        // dot production
+        SP_REAL dot(const Vec3& vec) const {
+            return x * vec.x + y * vec.y + z * vec.z;
         }
     };
 

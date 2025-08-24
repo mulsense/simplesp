@@ -192,8 +192,8 @@ namespace sp{
         const Vec3 M1 = trnMat(M) * n1;
 
         // |a*x + b*y + c| / sqrt(a*a + b*b)
-        const SP_REAL err0 = fabs(dotVec(n1, M0)) / max(pythag(M0.x, M0.y), SP_SMALL);
-        const SP_REAL err1 = fabs(dotVec(n0, M1)) / max(pythag(M1.x, M1.y), SP_SMALL);
+        const SP_REAL err0 = fabs(n1.dot(M0)) / max(pythag(M0.x, M0.y), SP_SMALL);
+        const SP_REAL err1 = fabs(n0.dot(M1)) / max(pythag(M1.x, M1.y), SP_SMALL);
         return max(err0, err1);
     }
 

@@ -64,7 +64,7 @@ namespace sp{
 
             const Mat mat = getMat(invPose(pose));
             for (int j = 0; j < map.size(); j++){
-                if (map[j].pos.z > 0 && dotVec(map[j].pos, map[j].drc) < 0){
+                if (map[j].pos.z > 0 && map[j].pos.dot(map[j].drc) < 0){
                     tmp.push(mat * map[j]);
                 }
             }
@@ -78,7 +78,7 @@ namespace sp{
         for (int i = 0; i < tmp.size(); i++){
             bool check = true;
             for (int j = 0; j < pnts.size(); j++){
-                if (dotVec(pnts[j].drc, tmp[i].drc) > 0.5 && normVec(pnts[j].pos - tmp[i].pos) < unit){
+                if (pnts[j].drc.dot(tmp[i].drc) > 0.5 && normVec(pnts[j].pos - tmp[i].pos) < unit){
                     check = false;
                     break;
                 }
@@ -126,14 +126,14 @@ namespace sp{
 
                     const Vec3 F = normVec(C - A) > normVec(D - A) ? C : D;
 
-                    if (fabs(dotVec(V, unitVec(F - A))) < 0.99) continue;
-                    if (fabs(dotVec(V, unitVec(D - C))) < 0.99) continue;
+                    if (fabs(V.dot(unitVec(F - A))) < 0.99) continue;
+                    if (fabs(V.dot(unitVec(D - C))) < 0.99) continue;
 
-                    const Vec3 O = dotVec(V, C) < dotVec(V, D) ? C : D;
-                    const Vec3 P = dotVec(V, C) < dotVec(V, D) ? D : C;
+                    const Vec3 O = V.dot(C) < V.dot(D) ? C : D;
+                    const Vec3 P = V.dot(C) < V.dot(D) ? D : C;
 
-                    const Vec3 X = dotVec(V, A) > dotVec(V, O) ? A : O;
-                    const Vec3 Y = dotVec(V, B) < dotVec(V, P) ? B : P;
+                    const Vec3 X = V.dot(A) > V.dot(O) ? A : O;
+                    const Vec3 Y = V.dot(B) < V.dot(P) ? B : P;
 
                     if (normVec(Y - X) < 0.01) continue;
 
@@ -260,7 +260,7 @@ namespace sp{
                     const Vec3 nrm0 = rmat * edges[j].nrm[0];
                     const Vec3 nrm1 = rmat * edges[j].nrm[1];
                     
-                    if (contour == true && dotVec(nrm0, pos) * dotVec(nrm1, pos) <= 0.0)
+                    if (contour == true && nrm0.dot(pos) * nrm1.dot(pos) <= 0.0)
                     {
                         pmodel.edges.push(edges[j]);
 
@@ -312,7 +312,7 @@ namespace sp{
                     }
                 _exit1:
 
-                    if (visible == true && dotVec(drc, pos) <= 0.0) {
+                    if (visible == true && drc.dot(pos) <= 0.0) {
                         pmodel.pnts.push(pnts[j]);
                     }
                 }

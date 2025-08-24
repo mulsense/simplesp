@@ -62,11 +62,11 @@ namespace sp {
 
     SP_CPUFUNC bool tracePlane(SP_REAL *result, const VecPD3 &plane, const VecPD3 &ray, const double minv, const double maxv) {
 
-        const Vec3 p = dotVec(plane.drc, plane.pos - ray.pos) * plane.drc;
+        const Vec3 p = plane.drc.dot(plane.pos - ray.pos)* plane.drc;
         const Vec3 n = unitVec(p);
-        if (dotVec(n, ray.drc) > 0.0 && normVec(p) > 0.0)
+        if (n.dot(ray.drc) > 0.0 && normVec(p) > 0.0)
         {
-            const double s = normVec(p) / dotVec(ray.drc, n);
+            const double s = normVec(p) / ray.drc.dot(n);
             if (s < minv || s > maxv) return false;
             result[0] = s;
             return true;
@@ -672,7 +672,7 @@ namespace sp {
                         VecPD3 &vec = m_raymap(u, v)[i];
                         if (m_cam.type == CamParam_Pers) {
                             vec.pos = wpose.pos;
-                            vec.drc = wrot * unitVec(prjVec(npx, 1.0, true));
+                            vec.drc = wrot * unitVec(Vec3(npx, 1.0));
                         }
                         else {
                             vec.pos = wpose.pos + wrot * Vec3(npx.x, npx.y, -1000.0 * 10);
@@ -898,7 +898,7 @@ namespace sp {
             next.pos = base.vec.pos + base.vec.drc * delta;
             next.drc = unitVec(lpos - base.vec.pos);
 
-            const SP_REAL d = dotVec(base.vec.drc, next.drc);
+            const SP_REAL d = base.vec.drc.dot(next.drc);
             BVH::Hit hit;
             if (d > 0.0 && trace(hit, next, 0.0, SP_INFINITY) == false) {
                 data.sdw = 0.0;
@@ -957,7 +957,7 @@ namespace sp {
                     if (ret == true) {
                         next.pos = hit.vec.pos + next.drc * delta;
                         next.drc = next.drc;
-                        if (dotVec(hit.vec.drc, next.drc) > 0.0) {
+                        if (hit.vec.drc.dot(next.drc) > 0.0) {
                             continue;
                         }
                         else {
@@ -1007,7 +1007,7 @@ namespace sp {
                             next.drc = next.drc;
 
                             data.sdw += tmp * (1.0 - r);
-                            if (dotVec(hit.vec.drc, next.drc) > 0.0) {
+                            if (hit.vec.drc.dot(next.drc) > 0.0) {
                                 tmp *= r;
                             }
                             else {
