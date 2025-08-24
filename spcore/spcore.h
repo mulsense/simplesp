@@ -16,7 +16,6 @@
 // extension
 #include "spcore/spmem.h"
 #include "spcore/spmop.h"
-#include "spcore/spsolve.h"
 #include "spcore/spkdtree.h"
 
 #include "spcore/spcode.h"

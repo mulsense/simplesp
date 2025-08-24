@@ -67,7 +67,7 @@ namespace sp{
                 }
 
                 if (check == false) {
-                    meshes.push(getMesh2(A, B, C));
+                    meshes.push(Mesh2(A, B, C));
                     p = pi % tmps.size();
                     break;
                 }
@@ -76,7 +76,7 @@ namespace sp{
             tmps.del(p);
         }
 
-        meshes.push(getMesh2(tmps[0], tmps[1], tmps[2]));
+        meshes.push(Mesh2(tmps[0], tmps[1], tmps[2]));
 
         return meshes;
     }

@@ -611,10 +611,10 @@ namespace sp {
             const Vec3 c = a + drc;
             const Vec3 d = b + drc;
 
-            glMesh(getMesh3(a, b, d) + vtx0);
-            glMesh(getMesh3(d, c, a) + vtx0);
-            glMesh(getMesh3(b, a, Vec3(0.0, 0.0, 0.0)) + vtx0);
-            glMesh(getMesh3(a, b, Vec3(0.0, 0.0, 0.0)) + drc + vtx0);
+            glMesh(Mesh3(a, b, d) + vtx0);
+            glMesh(Mesh3(d, c, a) + vtx0);
+            glMesh(Mesh3(b, a, Vec3(0.0, 0.0, 0.0)) + vtx0);
+            glMesh(Mesh3(a, b, Vec3(0.0, 0.0, 0.0)) + drc + vtx0);
         }
     }
     SP_CPUFUNC void glVector(const Vec3 &vtx0, const Vec3 &vtx1, const double radius) {
@@ -634,8 +634,8 @@ namespace sp {
             const Vec3 b = (nx * cos(pb) + ny * sin(pb)) * radius * 3.0;
             const Vec3 c = drc * seg0;
 
-            glMesh(getMesh3(a, b, c) + drc * seg1 + vtx0);
-            glMesh(getMesh3(b, a, Vec3(0.0, 0.0, 0.0)) + drc * seg1 + vtx0);
+            glMesh(Mesh3(a, b, c) + drc * seg1 + vtx0);
+            glMesh(Mesh3(b, a, Vec3(0.0, 0.0, 0.0)) + drc * seg1 + vtx0);
         }
         for (int i = 0; i < div; i++) {
             const double pa = (i + 0) * step * SP_PI / 180.0;
@@ -645,10 +645,10 @@ namespace sp {
             const Vec3 c = a + drc * seg1;
             const Vec3 d = b + drc * seg1;
 
-            glMesh(getMesh3(a, b, d) + vtx0);
-            glMesh(getMesh3(d, c, a) + vtx0);
-            glMesh(getMesh3(b, a, Vec3(0.0, 0.0, 0.0)) + vtx0);
-            glMesh(getMesh3(a, b, Vec3(0.0, 0.0, 0.0)) + drc * seg1 + vtx0);
+            glMesh(Mesh3(a, b, d) + vtx0);
+            glMesh(Mesh3(d, c, a) + vtx0);
+            glMesh(Mesh3(b, a, Vec3(0.0, 0.0, 0.0)) + vtx0);
+            glMesh(Mesh3(a, b, Vec3(0.0, 0.0, 0.0)) + drc * seg1 + vtx0);
         }
     }
 

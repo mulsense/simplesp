@@ -193,11 +193,11 @@ namespace sp{
         for (int i = 0; i < idxs.size(); i++){
             const Mem1<int> &idx = idxs[i];
             if (idx.size() == 3) {
-                meshes.push(getMesh3(vtxs[idx[0]].pos, vtxs[idx[1]].pos, vtxs[idx[2]].pos));
+                meshes.push(Mesh3(vtxs[idx[0]].pos, vtxs[idx[1]].pos, vtxs[idx[2]].pos));
             }
             if (idx.size() == 4) {
-                meshes.push(getMesh3(vtxs[idx[0]].pos, vtxs[idx[1]].pos, vtxs[idx[2]].pos));
-                meshes.push(getMesh3(vtxs[idx[0]].pos, vtxs[idx[2]].pos, vtxs[idx[3]].pos));
+                meshes.push(Mesh3(vtxs[idx[0]].pos, vtxs[idx[1]].pos, vtxs[idx[2]].pos));
+                meshes.push(Mesh3(vtxs[idx[0]].pos, vtxs[idx[2]].pos, vtxs[idx[3]].pos));
             }
         }
         return true;
@@ -218,17 +218,17 @@ namespace sp{
         for (int i = 0; i < idxs.size(); i++) {
             const Mem1<int> &idx = idxs[i];
             if (idx.size() == 3) {
-                meshes.push(getMesh3(vtxs[idx[0]].pos, vtxs[idx[1]].pos, vtxs[idx[2]].pos));
+                meshes.push(Mesh3(vtxs[idx[0]].pos, vtxs[idx[1]].pos, vtxs[idx[2]].pos));
                 cols.push(vtxs[idx[0]].col);
                 cols.push(vtxs[idx[1]].col);
                 cols.push(vtxs[idx[2]].col);
             }
             if (idx.size() == 4) {
-                meshes.push(getMesh3(vtxs[idx[0]].pos, vtxs[idx[1]].pos, vtxs[idx[2]].pos));
+                meshes.push(Mesh3(vtxs[idx[0]].pos, vtxs[idx[1]].pos, vtxs[idx[2]].pos));
                 cols.push(vtxs[idx[0]].col);
                 cols.push(vtxs[idx[1]].col);
                 cols.push(vtxs[idx[2]].col);
-                meshes.push(getMesh3(vtxs[idx[0]].pos, vtxs[idx[2]].pos, vtxs[idx[3]].pos));
+                meshes.push(Mesh3(vtxs[idx[0]].pos, vtxs[idx[2]].pos, vtxs[idx[3]].pos));
                 cols.push(vtxs[idx[0]].col);
                 cols.push(vtxs[idx[2]].col);
                 cols.push(vtxs[idx[3]].col);

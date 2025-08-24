@@ -869,7 +869,10 @@ namespace sp {
                     }
                     if (hit.find == true) {
                         Data data;
-                        calc_dif(data, ray, hit, m_plights[i].pos + randgVec3(1.0, 1.0, 1.0, m_cnt.dif[i]) * 1.0, 0, m_cnt.dif[i]);
+                        const unsigned int s0 = static_cast<unsigned int>(m_cnt.dif[i]);
+                        const unsigned int s1 = _snext(s0);
+                        const unsigned int s2 = _snext(s1);
+                        calc_dif(data, ray, hit, m_plights[i].pos + Vec3(randu(s0), randu(s1), randu(s2)) * 1.0, 0, m_cnt.dif[i]);
                         img.dif[i].col = blendCol(img.dif[i].col, m_cnt.dif[i], data.col, 1.0);
                         img.dif[i].sdw = blendCol(img.dif[i].sdw, m_cnt.dif[i], data.sdw, 1.0);
                     }
@@ -982,7 +985,11 @@ namespace sp {
 
             VecPD3 next;
             next.pos = base.vec.pos + base.vec.drc * delta;
-            next.drc = (base.vec.drc * (1.0 + delta) + randuVec3(1.0, 1.0, 1.0, seed)).unit();
+
+            const unsigned int s0 = static_cast<unsigned int>(seed);
+            const unsigned int s1 = _snext(s0);
+            const unsigned int s2 = _snext(s1);
+            next.drc = (base.vec.drc * (1.0 + delta) + Vec3(randu(s0), randu(s1), randu(s2))).unit();
 
             BVH::Hit hit;
 

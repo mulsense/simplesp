@@ -382,36 +382,231 @@ namespace sp{
     // position and direction
     //--------------------------------------------------------------------------------
     
-    struct VecPD2{
+    class VecPD2{
+    public:
         Vec2 pos, drc;
+
+        VecPD2() {
+        }
+
+        VecPD2(const Vec2& pos, const Vec2& drc) {
+            this->pos = pos;
+            this->drc = drc;
+        }
     };
 
-    struct VecPD3{
+    class VecPD3{
+    public:
         Vec3 pos, drc;
+
+        VecPD3() {
+        }
+
+        VecPD3(const Vec3& pos, const Vec3& drc) {
+            this->pos = pos;
+            this->drc = drc;
+        }
     };
 
     //--------------------------------------------------------------------------------
     // line
     //--------------------------------------------------------------------------------
 
-    struct Line2 {
+    class Line2 {
+    public:
         Vec2 pos[2];
+        Line2() {
+        }
+        Line2(const Vec2& vec0, const Vec2& vec1) {
+            pos[0] = vec0;
+            pos[1] = vec1;
+        }
+
+        friend Line2 operator + (const Line2& line, const Vec2& vec) {
+            return Line2(line.pos[0] + vec, line.pos[1] + vec);
+        }
+        friend Line2 operator - (const Line2& line, const Vec2& vec) {
+            return Line2(line.pos[0] - vec, line.pos[1] - vec);
+        }
+        void operator += (const Vec2& vec) {
+            pos[0] += vec;
+            pos[1] += vec;
+        }
+        void operator -= (const Vec2& vec) {
+            pos[0] -= vec;
+            pos[1] -= vec;
+        }
+
+        // length
+        SP_REAL length() const {
+            return (pos[0] - pos[1]).length();
+        }
+
+        // length
+        SP_REAL distance(const Vec2& vec) const {
+            double ret = 0.0;
+
+            const Vec2 lvec = pos[1] - pos[0];
+            const double len = lvec.length();
+
+            if (len < SP_SMALL) {
+                ret = (vec - (pos[0] + pos[1]) * 0.5).length();
+            }
+            else {
+                const double s = lvec.dot(vec - pos[0]) / len;
+                if (s < 0.0) {
+                    ret = (vec - pos[0]).length();
+                }
+                else if (s > len) {
+                    ret = (vec - pos[1]).length();
+                }
+                else {
+                    ret = (vec - (pos[0] + lvec * s / len)).length();
+                }
+            }
+            return ret;
+        }
     };
 
-    struct Line3 {
+    class Line3 {
+    public:
         Vec3 pos[2];
+
+        Line3() {
+        }
+        Line3(const Vec3& vec0, const Vec3& vec1) {
+            pos[0] = vec0;
+            pos[1] = vec1;
+        }
+
+        friend Line3 operator + (const Line3& line, const Vec3& vec) {
+            return Line3(line.pos[0] + vec, line.pos[1] + vec);
+        }
+        friend Line3 operator - (const Line3& line, const Vec3& vec) {
+            return Line3(line.pos[0] - vec, line.pos[1] - vec);
+        }
+        void operator += (const Vec3& vec) {
+            pos[0] += vec;
+            pos[1] += vec;
+        }
+        void operator -= (const Vec3& vec) {
+            pos[0] -= vec;
+            pos[1] -= vec;
+        }
+
+        // length
+        SP_REAL length() const {
+            return (pos[0] - pos[1]).length();
+        }
+
+        // length
+        SP_REAL distance(const Vec3& vec) const {
+            double ret = 0.0;
+
+            const Vec3 lvec = pos[1] - pos[0];
+            const double len = lvec.length();
+
+            if (len < SP_SMALL) {
+                ret = (vec - (pos[0] + pos[1]) * 0.5).length();
+            }
+            else {
+                const double s = lvec.dot(vec - pos[0]) / len;
+                if (s < 0.0) {
+                    ret = (vec - pos[0]).length();
+                }
+                else if (s > len) {
+                    ret = (vec - pos[1]).length();
+                }
+                else {
+                    ret = (vec - (pos[0] + lvec * s / len)).length();
+                }
+            }
+            return ret;
+        }
     };
 
     //--------------------------------------------------------------------------------
     // triangle mesh
     //--------------------------------------------------------------------------------
     
-    struct Mesh2{
+    class Mesh2{
+    public:
         Vec2 pos[3];
+
+        Mesh2() {
+        }
+
+        Mesh2(const Vec2& vec0, const Vec2& vec1, const Vec2& vec2) {
+            pos[0] = vec0;
+            pos[1] = vec1;
+            pos[2] = vec2;
+        }
+
+        friend Mesh2 operator + (const Mesh2& mesh, const Vec2 vec) { 
+            return Mesh2(mesh.pos[0] + vec, mesh.pos[1] + vec, mesh.pos[2] + vec);
+        }
+        friend Mesh2 operator - (const Mesh2& mesh, const Vec2 vec) {
+            return Mesh2(mesh.pos[0] - vec, mesh.pos[1] - vec, mesh.pos[2] - vec);
+        }
+        friend Mesh2 operator * (const Mesh2& mesh, const double val) {
+            return Mesh2(mesh.pos[0] * val, mesh.pos[1] * val, mesh.pos[2] * val);
+        }
+
+        void operator += (const Vec2& vec) {
+            pos[0] += vec;
+            pos[1] += vec;
+            pos[2] += vec;
+        }
+        void operator -= (const Vec2& vec) {
+            pos[0] -= vec;
+            pos[1] -= vec;
+            pos[2] -= vec;
+        }
+        void operator *= (const double val) {
+            pos[0] *= val;
+            pos[1] *= val;
+            pos[2] *= val;
+        }
     };
 
-    struct Mesh3 {
+    class Mesh3 {
+    public:
         Vec3 pos[3];
+
+        Mesh3() {
+        }
+
+        Mesh3(const Vec3& vec0, const Vec3& vec1, const Vec3& vec2) {
+            pos[0] = vec0;
+            pos[1] = vec1;
+            pos[2] = vec2;
+        }
+
+        friend Mesh3 operator + (const Mesh3& mesh, const Vec3 vec) {
+            return Mesh3(mesh.pos[0] + vec, mesh.pos[1] + vec, mesh.pos[2] + vec);
+        }
+        friend Mesh3 operator - (const Mesh3& mesh, const Vec3 vec) {
+            return Mesh3(mesh.pos[0] - vec, mesh.pos[1] - vec, mesh.pos[2] - vec);
+        }
+        friend Mesh3 operator * (const Mesh3& mesh, const double val) {
+            return Mesh3(mesh.pos[0] * val, mesh.pos[1] * val, mesh.pos[2] * val);
+        }
+
+        void operator += (const Vec3& vec) {
+            pos[0] += vec;
+            pos[1] += vec;
+            pos[2] += vec;
+        }
+        void operator -= (const Vec3& vec) {
+            pos[0] -= vec;
+            pos[1] -= vec;
+            pos[2] -= vec;
+        }
+        void operator *= (const double val) {
+            pos[0] *= val;
+            pos[1] *= val;
+            pos[2] *= val;
+        }
     };
 
     //--------------------------------------------------------------------------------

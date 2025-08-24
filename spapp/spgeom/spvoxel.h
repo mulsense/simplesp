@@ -253,7 +253,7 @@ namespace sp {
         };
 
         SP_CPUFUNC Mesh3 mmesh(const Vec3 &a, const Vec3 &b, const Vec3 &c, const int pid) {
-            return (pid > 0) ? getMesh3(a, b, c) : getMesh3(a, c, b);
+            return (pid > 0) ? Mesh3(a, b, c) : Mesh3(a, c, b);
         };
 
         SP_CPUFUNC Mesh3 mmesh(const char *v, const Vec3 *p, const int a0, const int a1, const int b0, const int b1, const int c0, const int c1, const int pid) {
@@ -506,8 +506,8 @@ namespace sp {
                                 cnt += (voxel.getv(round(p3.x), round(p3.y), round(p3.z)) >= 0) ? 1 : 0;
 
                                 if (cnt >= 3) {
-                                    zms[mz].push(getMesh3(_mc::mvec(v, p, a, b), _mc::mvec(v, p, b, d), _mc::mvec(v, p, a, c)));
-                                    zms[mz].push(getMesh3(_mc::mvec(v, p, a, c), _mc::mvec(v, p, b, d), _mc::mvec(v, p, c, d)));
+                                    zms[mz].push(Mesh3(_mc::mvec(v, p, a, b), _mc::mvec(v, p, b, d), _mc::mvec(v, p, a, c)));
+                                    zms[mz].push(Mesh3(_mc::mvec(v, p, a, c), _mc::mvec(v, p, b, d), _mc::mvec(v, p, c, d)));
                                     dpids[mz].push(15);
                                 }
                             };
@@ -564,7 +564,7 @@ namespace sp {
                 for (int i = 0; i < dpids[mz].size(); i++) {
                     const int pid = dpids[mz][i];
                     auto h = [&](const Vec3 &a, const Vec3 &b, const Vec3 &c) -> Mesh3 {
-                        return (pid < 0) ? getMesh3(a, b, c) : getMesh3(a, c, b);
+                        return (pid < 0) ? Mesh3(a, b, c) : Mesh3(a, c, b);
                     };
                     auto div3 = [&](const Vec3 &a, const Vec3 &b, const Vec3 &c, const int type) {
                         const Vec3 s = (a + b + c) / 3.0;
@@ -910,7 +910,7 @@ namespace sp {
                     const Vec3 cpos = cvec * detect;
                     const Vec3 cnrm = pose.rot * mnrm;
 
-                    map(u, v) = getVecPD3(cpos, cnrm);
+                    map(u, v) = VecPD3(cpos, cnrm);
                 }
             }
         }

@@ -21,9 +21,6 @@
 #include "spapp/spimg/spbin.h"
 
 // geometry
-#include "spapp/spgeom/spgeom.h"
-#include "spapp/spgeom/spdepth.h"
-#include "spapp/spgeom/spicp.h"
 #include "spapp/spgeom/spray.h"
 #include "spapp/spgeom/spvertex.h"
 #include "spapp/spgeom/spvoxel.h"

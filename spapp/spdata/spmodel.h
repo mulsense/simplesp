@@ -369,12 +369,12 @@ namespace sp{
 
         }
         if (nrm > 0) {
-            model.push(getMesh3(a, b, c));
-            model.push(getMesh3(a, c, d));
+            model.push(Mesh3(a, b, c));
+            model.push(Mesh3(a, c, d));
         }
         else {
-            model.push(getMesh3(c, b, a));
-            model.push(getMesh3(c, a, d));
+            model.push(Mesh3(c, b, a));
+            model.push(Mesh3(c, a, d));
         }
         return model;
     }
@@ -405,9 +405,9 @@ namespace sp{
                     const Vec3 py = Vec3(+x, -y, +z) * half;
                     const Vec3 pz = Vec3(+x, +y, -z) * half;
 
-                    model.push(getMesh3(p0, py, px));
-                    model.push(getMesh3(p0, pz, py));
-                    model.push(getMesh3(p0, px, pz));
+                    model.push(Mesh3(p0, py, px));
+                    model.push(Mesh3(p0, pz, py));
+                    model.push(Mesh3(p0, px, pz));
                 }
             }
         }
@@ -429,8 +429,8 @@ namespace sp{
             const Vec3 b = (nx * cos(pb) + ny * sin(pb)) * radius;
             const Vec3 c = drc;
 
-            model.push(getMesh3(a, b, c));
-            model.push(getMesh3(b, a, Vec3(0.0, 0.0, 0.0)));
+            model.push(Mesh3(a, b, c));
+            model.push(Mesh3(b, a, Vec3(0.0, 0.0, 0.0)));
         }
 
         return model;
@@ -451,10 +451,10 @@ namespace sp{
             const Vec3 c = a + drc;
             const Vec3 d = b + drc;
 
-            model.push(getMesh3(a, b, d));
-            model.push(getMesh3(d, c, a));
-            model.push(getMesh3(b, a, Vec3(0.0, 0.0, 0.0)));
-            model.push(getMesh3(a, b, Vec3(0.0, 0.0, 0.0)) + drc);
+            model.push(Mesh3(a, b, d));
+            model.push(Mesh3(d, c, a));
+            model.push(Mesh3(b, a, Vec3(0.0, 0.0, 0.0)));
+            model.push(Mesh3(a, b, Vec3(0.0, 0.0, 0.0)) + drc);
         }
 
         return model;
