@@ -6,7 +6,7 @@
 #define __SP_MATH_H__
 
 #include "spcore/spcom.h"
-#include "spcore/spgen/spbase.h"
+#include "spcore/spbase.h"
 
 namespace sp {
 

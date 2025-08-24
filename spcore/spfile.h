@@ -5,8 +5,8 @@
 #ifndef __SP_FILE_H__
 #define __SP_FILE_H__
 
-#include "spcore/spgen/spbase.h"
-#include "spcore/spcpu/spmem.h"
+#include "spcore/spbase.h"
+#include "spcore/spmem.h"
 
 //--------------------------------------------------------------------------------
 // format

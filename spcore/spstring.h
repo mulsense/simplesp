@@ -5,7 +5,7 @@
 #ifndef __SP_STRING_H__
 #define __SP_STRING_H__
 
-#include "spcore/spcpu/spmem.h"
+#include "spcore/spmem.h"
 
 #if defined(_WIN32)
 #define NOMINMAX

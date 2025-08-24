@@ -6,8 +6,8 @@
 #define __SP_TYPE_H__
 
 #include "spcore/spcom.h"
-#include "spcore/spgen/spbase.h"
-#include "spcore/spgen/spmath.h"
+#include "spcore/spbase.h"
+#include "spcore/spmath.h"
 
 //--------------------------------------------------------------------------------
 // vector
@@ -21,15 +21,6 @@ namespace sp {
     //--------------------------------------------------------------------------------
 
 
-    // cross production
-    SP_GENFUNC SP_REAL crsVec(const Vec2 &vec0, const Vec2 &vec1) {
-        return vec0.x * vec1.y - vec0.y * vec1.x;
-    }
-    // cross production
-    SP_GENFUNC Vec3 crsVec(const Vec3 &vec0, const Vec3 &vec1) {
-        return Vec3(vec0.y * vec1.z - vec0.z * vec1.y, vec0.z * vec1.x - vec0.x * vec1.z, vec0.x * vec1.y - vec0.y * vec1.x);
-    }
-
     // projection vec3 to vec2
     SP_GENFUNC Vec2 prjVec(const Vec3 &vec, const bool pers = true) {
         return (pers == true) ? Vec2(vec.x, vec.y) / vec.z : Vec2(vec.x, vec.y);
@@ -37,15 +28,6 @@ namespace sp {
     // projection vec2 to vec3
     SP_GENFUNC Vec3 prjVec(const Vec2 &vec, const double z, const bool pers = true) {
         return (pers == true) ? Vec3(vec.x, vec.y, 1.0) * z : Vec3(vec.x, vec.y, z);
-    }
-
-    // sq
-    SP_GENFUNC SP_REAL sqVec(const Vec2 &vec) {
-        return vec.dot(vec);
-    }
-    // sq
-    SP_GENFUNC SP_REAL sqVec(const Vec3 &vec) {
-        return vec.dot(vec);
     }
 
     // norm
@@ -505,7 +487,7 @@ namespace sp {
 
     // get normal vector
     SP_GENFUNC Vec3 getMeshNrm(const Mesh3 &mesh) {
-        return unitVec(crsVec(mesh.pos[1] - mesh.pos[0], mesh.pos[2] - mesh.pos[0]));
+        return unitVec((mesh.pos[1] - mesh.pos[0]).cross(mesh.pos[2] - mesh.pos[0]));
     }
 
     // get center vector
@@ -1972,11 +1954,11 @@ namespace sp {
             return getRotAngleX(angle);
         }
         else {
-            const Vec3 v0 = crsVec(Vec3(0.0, 1.0, 0.0), Vec3(nrm.x, nrm.y, 0.0));
+            const Vec3 v0 = Vec3(0.0, 1.0, 0.0).cross(Vec3(nrm.x, nrm.y, 0.0));
             const SP_REAL a0 = acos(nrm.y / sqrt(nrm.x * nrm.x + nrm.y * nrm.y));
             const Rot rot0 = getRotAngle(v0, a0);
 
-            const Vec3 v1 = crsVec(Vec3(0.0, 0.0, 1.0), nrm);
+            const Vec3 v1 = Vec3(0.0, 0.0, 1.0).cross(nrm);
             const SP_REAL a1 = acos(nrm.z);
             const Rot rot1 = getRotAngle(v1, a1);
 

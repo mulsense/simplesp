@@ -224,6 +224,14 @@ namespace sp{
         SP_REAL dot(const Vec2& vec) const {
             return x * vec.x + y * vec.y;
         }
+
+        SP_REAL cross(const Vec2& vec) const {
+            return x * vec.y - y * vec.x;
+        }
+
+        SP_REAL sq() const {
+            return x * x + y * y;
+		}
     };
 
     class Vec3 {
@@ -301,6 +309,14 @@ namespace sp{
         // dot production
         SP_REAL dot(const Vec3& vec) const {
             return x * vec.x + y * vec.y + z * vec.z;
+        }
+
+        Vec3 cross(const Vec3& vec) const {
+            return Vec3(y * vec.z - z * vec.y, z * vec.x - x * vec.z, x * vec.y - y * vec.x);
+        }
+
+        SP_REAL sq() const {
+            return x * x + y * y + z * z;
         }
     };
 

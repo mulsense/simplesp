@@ -5,9 +5,9 @@
 #ifndef __SP_CODE_H__
 #define __SP_CODE_H__
 
-#include "spcore/spgen/spbase.h"
-#include "spcore/spcpu/spmem.h"
-#include "spcore/spcpu/spstring.h"
+#include "spcore/spbase.h"
+#include "spcore/spmem.h"
+#include "spcore/spstring.h"
 
 namespace sp {
 

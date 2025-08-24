@@ -452,7 +452,7 @@ namespace sp {
 
         const Mat mat = getMat(getRotDirection(nrm));
         const Vec3 a = mat * Vec3(1.0, 0.0, 0.0);
-        const Vec3 b = crsVec(a, nrm);
+        const Vec3 b = a.cross(nrm);
 
         glBegin(type);
 

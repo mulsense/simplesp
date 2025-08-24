@@ -728,7 +728,7 @@ namespace sp {
 
                     for (int i = 0; i < zms[mz].size(); i++) {
                         const Mesh3 &m = zms[mz][i];
-                        if (normVec(crsVec(m.pos[1] - m.pos[0], m.pos[2] - m.pos[0])) > SP_SMALL) {
+                        if (normVec((m.pos[1] - m.pos[0]).cross(m.pos[2] - m.pos[0])) > SP_SMALL) {
                             meshes.push(m);
                         }
                     }

@@ -6,7 +6,7 @@
 #define __SP_MODEL_H__
 
 #include "spcore/spcore.h"
-#include "spcore/spcpu/spkdtree.h"
+#include "spcore/spkdtree.h"
 #include "spapp/spimg/sprender.h"
 
 namespace sp{

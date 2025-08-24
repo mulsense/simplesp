@@ -39,7 +39,7 @@ namespace sp {
         }
 
         bool used() {
-            return (m_init == false) | (m_used == true);
+            return m_init == false || m_used == true;
         }
 
         void lock() {

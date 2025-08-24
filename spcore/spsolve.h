@@ -5,7 +5,7 @@
 #ifndef __SP_SOLVE_H__
 #define __SP_SOLVE_H__
 
-#include "spcore/spcpu/spmop.h"
+#include "spcore/spmop.h"
 
 
 namespace sp{

@@ -6,10 +6,10 @@
 #define __SP_MOP_H__
 
 #include "spcore/spcom.h"
-#include "spcore/spgen/spmath.h"
-#include "spcore/spgen/sptype.h"
+#include "spcore/spmath.h"
+#include "spcore/sptype.h"
 
-#include "spcore/spcpu/spmem.h"
+#include "spcore/spmem.h"
 
 #include <stdlib.h>
 

@@ -5,8 +5,8 @@
 #ifndef __SP_DEBUG_H__
 #define __SP_DEBUG_H__
 
-#include "spcore/spcpu/spsystem.h"
-#include "spcore/spcpu/spprint.h"
+#include "spcore/spsystem.h"
+#include "spcore/spprint.h"
 
 #include <string>
 #include <vector>
