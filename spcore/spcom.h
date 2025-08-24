@@ -5,6 +5,8 @@
 #ifndef __SP_COM_H__
 #define __SP_COM_H__
 
+#include <math.h>
+
 
 //--------------------------------------------------------------------------------
 // system
@@ -109,6 +111,46 @@ namespace sp{
     typedef unsigned int   u32;
     typedef float          f32;
     typedef double         f64;
+
+    //--------------------------------------------------------------------------------
+    // basic
+    //--------------------------------------------------------------------------------
+    
+    // get round (ex. 1.5 -> 2)
+    SP_GENFUNC int round(const double x) { return static_cast<int>((x > 0) ? (x + 0.5) : (x - 0.5)); }
+
+    // get ceil (ex. 1.5 -> 2)
+    SP_GENFUNC int ceil(const double x) { return static_cast<int>((x > 0) ? (x + 1.0) : (x - 1.0)); }
+
+    // get floor (ex. 1.5 -> 1)
+    SP_GENFUNC int floor(const double x) { return static_cast<int>(x); }
+
+    // get sign (+1 or -1)
+    template<typename TYPE> SP_GENFUNC int sign(const TYPE x) { return (x > 0) - (x < 0); }
+
+    // swap
+    template<typename TYPE> SP_GENFUNC void swap(TYPE& a, TYPE& b) { const TYPE tmp = a; a = b; b = tmp; }
+
+    // get clone
+    template<typename TYPE> SP_GENFUNC TYPE clone(const TYPE& src) { TYPE dst = src; return dst; }
+
+    // get max value
+    SP_GENFUNC const int max(const int a, const int b) { return (a > b) ? a : b; }
+
+    // get min value
+    SP_GENFUNC const int min(const int a, const int b) { return (a < b) ? a : b; }
+
+    // get max value
+    SP_GENFUNC const SP_REAL max(const double a, const double b) { return static_cast<SP_REAL>((a > b) ? a : b); }
+
+    // get min value
+    SP_GENFUNC const SP_REAL min(const double a, const double b) { return static_cast<SP_REAL>((a < b) ? a : b); }
+
+    // get limit value
+    SP_GENFUNC const int lim(const int v, const int minv, const int maxv) { return (v > maxv) ? maxv : ((v < minv) ? minv : v); }
+
+    // get limit value
+    SP_GENFUNC const SP_REAL lim(const double v, const double minv, const double maxv) { return static_cast<SP_REAL>((v > maxv) ? maxv : ((v < minv) ? minv : v)); }
 
     //--------------------------------------------------------------------------------
     // complex
@@ -232,6 +274,21 @@ namespace sp{
         SP_REAL sq() const {
             return x * x + y * y;
 		}
+
+        // length
+        SP_REAL length() const {
+            return sqrt(x * x + y * y);
+        }
+
+        Vec2 unit() const {
+            const double l = length();
+            return (l > SP_SMALL) ? *this / l : Vec2(0.0, 0.0);
+        }
+
+        // round
+        friend Vec2 round(const Vec2 vec) {
+            return Vec2(round(vec.x), round(vec.y));
+        }
     };
 
     class Vec3 {
@@ -317,6 +374,21 @@ namespace sp{
 
         SP_REAL sq() const {
             return x * x + y * y + z * z;
+        }
+
+        // length
+        SP_REAL length() const {
+            return sqrt(x * x + y * y + z * z);
+        }
+
+        Vec3 unit() const {
+            const double l = length();
+            return (l > SP_SMALL) ? *this / l : Vec3(0.0, 0.0, 0.0);
+        }
+
+        // round
+        friend Vec3 round(const Vec3 vec) {
+            return Vec3(round(vec.x), round(vec.y), round(vec.z));
         }
     };
 

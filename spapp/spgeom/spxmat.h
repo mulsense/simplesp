@@ -126,7 +126,7 @@ namespace sp{
     //--------------------------------------------------------------------------------
 
     SP_CPUFUNC SP_REAL errHMat(const Mat &H, const Vec2 &pix, const Vec2 &obj) {
-        return normVec(pix - H * obj);
+        return (pix - H * obj).length();
     }
 
     SP_CPUFUNC Mem1<SP_REAL> errHMat(const Mat &H, const Mem<Vec2> &pixs, const Mem<Vec2> &objs) {
@@ -173,7 +173,7 @@ namespace sp{
 
             const Vec2 rx = Vec2(H(0, 0), H(1, 0));
             const Vec2 ry = Vec2(H(0, 1), H(1, 1));
-            if (normVec(rx) < SP_SMALL || normVec(ry) < SP_SMALL) return false;
+            if (rx.length() < SP_SMALL || ry.length() < SP_SMALL) return false;
         }
 
         return true;

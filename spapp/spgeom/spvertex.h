@@ -24,7 +24,7 @@ namespace sp{
 
             SP_REAL maxv = 0.0;
             for (int i = 0; i < tmps.size(); i++) {
-                const SP_REAL norm = normVec(tmps[i]);
+                const SP_REAL norm = tmps[i].length();
                 if (norm > maxv) {
                     maxv = norm;
                     p = i;
@@ -109,7 +109,7 @@ namespace sp{
                     const int s = index[k] / 3;
                     nrm += mnrms[s];
                 }
-                nrms[i * 3 + j] = unitVec(nrm);
+                nrms[i * 3 + j] = nrm.unit();
             }
         }
 

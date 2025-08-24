@@ -6,7 +6,6 @@
 #define __SP_BASE_H__
 
 #include "spcore/spcom.h"
-#include <math.h>
 
 namespace sp{
 
@@ -43,42 +42,7 @@ namespace sp{
     // util
     //--------------------------------------------------------------------------------
 
-    // get round (ex. 1.5 -> 2)
-    SP_GENFUNC int round(const double x) { return static_cast<int>((x > 0) ? (x + 0.5) : (x - 0.5)); }
-
-    // get ceil (ex. 1.5 -> 2)
-    SP_GENFUNC int ceil(const double x) { return static_cast<int>((x > 0) ? (x + 1.0) : (x - 1.0)); }
-
-    // get floor (ex. 1.5 -> 1)
-    SP_GENFUNC int floor(const double x){ return static_cast<int>(x); }
-
-    // get sign (+1 or -1)
-    template<typename TYPE> SP_GENFUNC int sign(const TYPE x){ return (x > 0) - (x < 0); }
-
-    // swap
-    template<typename TYPE> SP_GENFUNC void swap(TYPE &a, TYPE &b) { const TYPE tmp = a; a = b; b = tmp; }
-
-    // get clone
-    template<typename TYPE> SP_GENFUNC TYPE clone(const TYPE &src) { TYPE dst = src; return dst; }
-
-    // get max value
-    SP_GENFUNC const int max(const int a, const int b) { return (a > b) ? a : b; }
-
-    // get min value
-    SP_GENFUNC const int min(const int a, const int b) { return (a < b) ? a : b; }
-
-    // get max value
-    SP_GENFUNC const SP_REAL max(const double a, const double b) { return static_cast<SP_REAL>((a > b) ? a : b); }
-
-    // get min value
-    SP_GENFUNC const SP_REAL min(const double a, const double b) { return static_cast<SP_REAL>((a < b) ? a : b); }
-
-    // get limit value
-    SP_GENFUNC const int lim(const int v, const int minv, const int maxv) { return (v > maxv) ? maxv : ((v < minv) ? minv : v); }
-
-    // get limit value
-    SP_GENFUNC const SP_REAL lim(const double v, const double minv, const double maxv) { return static_cast<SP_REAL>((v > maxv) ? maxv : ((v < minv) ? minv : v)); }
-
+  
      // x * x
     SP_GENFUNC SP_REAL sq(const double x) { return static_cast<SP_REAL>(x * x); }
 

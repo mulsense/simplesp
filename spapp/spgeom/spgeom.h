@@ -19,7 +19,7 @@ namespace sp {
 
         SP_REAL ret = 0.0;
         if (vec.z > 0) {
-            ret = normVec(pix - mulCamD(cam, prjVec(vec)));
+            ret = (pix - mulCamD(cam, prjVec(vec))).length();
         }
         else {
             ret = SP_INFINITY;
@@ -80,7 +80,7 @@ namespace sp {
                 const Vec2 err = npxs[i] - prjVec(pos);
                 E(i * 2 + 0, 0) = err.x;
                 E(i * 2 + 1, 0) = err.y;
-                errs[i] = normVec(err);
+                errs[i] = err.length();
             }
 
             Mat result;
@@ -328,7 +328,7 @@ namespace sp {
                 E(i * 3 + 1, 0) = err.y;
                 E(i * 3 + 2, 0) = err.z;
 
-                errs[i] = normVec(err);
+                errs[i] = err.length();
             }
 
             Mat delta;
@@ -360,7 +360,7 @@ namespace sp {
                 const Vec2 err = pixs[i] - mulCamD(cam, prjVec(pose * objs[i]));
                 E(i * 2 + 0, 0) = err.x;
                 E(i * 2 + 1, 0) = err.y;
-                errs[i] = normVec(err);
+                errs[i] = err.length();
             }
 
             Mat delta;
@@ -395,7 +395,7 @@ namespace sp {
 
             if (refinePose(pose, cam1, pixs, objs, 1) == false) return false;
             
-            const SP_REAL d = normVec(pose.pos);
+            const SP_REAL d = pose.pos.length();
             if (d < SP_SMALL) return false;
 
             pose.pos /= d;
@@ -541,7 +541,7 @@ namespace sp {
 
             Mem1<SP_REAL> errs;
             for (int i = 0; i < num; i++) {
-                errs.push(normVec(objs0[i] - test * objs1[i]));
+                errs.push((objs0[i] - test * objs1[i]).length());
             }
             const SP_REAL eval = ransacEval(errs, unit, thresh);
 
@@ -560,7 +560,7 @@ namespace sp {
         {
             Mem1<SP_REAL> errs;
             for (int i = 0; i < num; i++) {
-                errs.push(normVec(objs0[i] - pose * objs1[i]));
+                errs.push((objs0[i] - pose * objs1[i]).length());
             }
             const Mem1<Vec3> dobjs0 = filter(objs0, errs, thresh * 2);
             const Mem1<Vec3> dobjs1 = filter(objs1, errs, thresh * 2);

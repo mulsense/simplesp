@@ -140,7 +140,7 @@ namespace sp {
 
     SP_CPUFUNC bool controlView(Vec2 &viewpPos, double &viewScale, const Mouse &mouse) {
         bool ret = false;
-        if (mouse.buttonL && normVec(mouse.move) > 0.0) {
+        if (mouse.buttonL && mouse.move.length() > 0.0) {
             viewpPos += mouse.move;
             ret = true;
         }
@@ -159,7 +159,7 @@ namespace sp {
         Pose cpose = pose * invPose(base);
         if (cpose.pos.z < 0.0) return false;
 
-        if (mouse.buttonM && normVec(mouse.move) > 0.0) {
+        if (mouse.buttonM && mouse.move.length() > 0.0) {
             const double s = ((cam.type == CamParam_Pers) ? cpose.pos.z : 1.0) / viewScale;
             cpose.pos.x += static_cast<SP_REAL>(mouse.move.x / cam.fx * s);
             cpose.pos.y += static_cast<SP_REAL>(mouse.move.y / cam.fy * s);
@@ -167,13 +167,13 @@ namespace sp {
             ret = true;
         }
 
-        if (mouse.buttonL && normVec(mouse.move) > 0.0) {
-            cpose.rot = getRotAngle(Vec3(+mouse.move.y, -mouse.move.x, 0.0), 0.01 * normVec(mouse.move)) * cpose.rot;
+        if (mouse.buttonL && mouse.move.length() > 0.0) {
+            cpose.rot = getRotAngle(Vec3(+mouse.move.y, -mouse.move.x, 0.0), 0.01 * mouse.move.length()) * cpose.rot;
             ret = true;
         }
 
         if (mouse.scroll != 0) {
-            cpose.pos -= unitVec(cpose.pos) * (cpose.pos.z * mouse.scroll * 0.02);
+            cpose.pos -= cpose.pos.unit() * (cpose.pos.z * mouse.scroll * 0.02);
             ret = true;
         }
 

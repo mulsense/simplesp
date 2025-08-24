@@ -63,10 +63,10 @@ namespace sp {
     SP_CPUFUNC bool tracePlane(SP_REAL *result, const VecPD3 &plane, const VecPD3 &ray, const double minv, const double maxv) {
 
         const Vec3 p = plane.drc.dot(plane.pos - ray.pos)* plane.drc;
-        const Vec3 n = unitVec(p);
-        if (n.dot(ray.drc) > 0.0 && normVec(p) > 0.0)
+        const Vec3 n = p.unit();
+        if (n.dot(ray.drc) > 0.0 && p.length() > 0.0)
         {
-            const double s = normVec(p) / ray.drc.dot(n);
+            const double s = p.length() / ray.drc.dot(n);
             if (s < minv || s > maxv) return false;
             result[0] = s;
             return true;
@@ -189,7 +189,7 @@ namespace sp {
                 layout.invp = invMat(poses[i]);
 
                 const Vec3 n = layout.pose.part(0, 0, 3, 3) * Vec3(0.0, 0.0, 1.0);
-                layout.scale = normVec(n);
+                layout.scale = n.length();
             }
 
             Unit &unit = *m_units.malloc();
@@ -474,7 +474,7 @@ namespace sp {
                         hit.mat = unit.data[minid].mat;
 
                         hit.vec.pos = layout.pose * (bray.pos + bray.drc * maxvB);
-                        hit.vec.drc = unitVec(layout.pose.part(0, 0, 3, 3)  * getMeshNrm(unit.data[minid].mesh));
+                        hit.vec.drc = (layout.pose.part(0, 0, 3, 3) * getMeshNrm(unit.data[minid].mesh)).unit();
                     }
                 }
             }
@@ -672,7 +672,7 @@ namespace sp {
                         VecPD3 &vec = m_raymap(u, v)[i];
                         if (m_cam.type == CamParam_Pers) {
                             vec.pos = wpose.pos;
-                            vec.drc = wrot * unitVec(Vec3(npx, 1.0));
+                            vec.drc = wrot * Vec3(npx, 1.0).unit();
                         }
                         else {
                             vec.pos = wpose.pos + wrot * Vec3(npx.x, npx.y, -1000.0 * 10);
@@ -810,7 +810,7 @@ namespace sp {
             {
                 ret = m_bvh.trace(hit, ray, minv, maxt);
                 if (ret == true) {
-                    maxt = normVec(hit.vec.pos - ray.pos);
+                    maxt = (hit.vec.pos - ray.pos).length();
                 }
             }
             if (m_plane.valid == true) {
@@ -896,7 +896,7 @@ namespace sp {
 
             VecPD3 next;
             next.pos = base.vec.pos + base.vec.drc * delta;
-            next.drc = unitVec(lpos - base.vec.pos);
+            next.drc = (lpos - base.vec.pos).unit();
 
             const SP_REAL d = base.vec.drc.dot(next.drc);
             BVH::Hit hit;
@@ -982,7 +982,7 @@ namespace sp {
 
             VecPD3 next;
             next.pos = base.vec.pos + base.vec.drc * delta;
-            next.drc = unitVec(base.vec.drc * (1.0 + delta) + randuVec3(1.0, 1.0, 1.0, seed));
+            next.drc = (base.vec.drc * (1.0 + delta) + randuVec3(1.0, 1.0, 1.0, seed)).unit();
 
             BVH::Hit hit;
 

@@ -30,35 +30,6 @@ namespace sp {
         return (pers == true) ? Vec3(vec.x, vec.y, 1.0) * z : Vec3(vec.x, vec.y, z);
     }
 
-    // norm
-    SP_GENFUNC SP_REAL normVec(const Vec2 &vec) {
-        return sqrt(vec.dot(vec));
-    }
-    // norm
-    SP_GENFUNC SP_REAL normVec(const Vec3 &vec) {
-        return sqrt(vec.dot(vec));
-    }
-
-    // unit vector
-    SP_GENFUNC Vec2 unitVec(const Vec2 &vec) {
-        const double norm = normVec(vec);
-        return (norm > SP_SMALL) ? vec / norm : Vec2(0.0, 0.0);
-    }
-    // unit vector
-    SP_GENFUNC Vec3 unitVec(const Vec3 &vec) {
-        const double norm = normVec(vec);
-        return (norm > SP_SMALL) ? vec / norm : Vec3(0.0, 0.0, 0.0);
-    }
-
-    // round
-    SP_GENFUNC Vec2 roundVec(const Vec2 &vec) {
-        return Vec2(round(vec.x), round(vec.y));
-    }
-    // round
-    SP_GENFUNC Vec3 roundVec(const Vec3 &vec) {
-        return Vec3(round(vec.x), round(vec.y), round(vec.z));
-    }
-
     // random uniform
     SP_CPUFUNC Vec2 randuVec2(const double x, const double y) {
         return Vec2(randu() * x, randu() * y);
@@ -204,7 +175,7 @@ namespace sp {
             }
         }
 
-        dst.drc = unitVec(mulMat(rot, 2, 2, vec.drc));
+        dst.drc = mulMat(rot, 2, 2, vec.drc).unit();
 
         return dst;
     }
@@ -231,7 +202,7 @@ namespace sp {
             }
         }
 
-        dst.drc = unitVec(mulMat(rot, 3, 3, vec.drc));
+        dst.drc = mulMat(rot, 3, 3, vec.drc).unit();
 
         return dst;
     }
@@ -324,12 +295,12 @@ namespace sp {
 
     // norm
     SP_GENFUNC double normLine(const Line2 &line) {
-        return normVec(line.pos[0] - line.pos[1]);
+        return (line.pos[0] - line.pos[1]).length();
     }
 
     // norm
     SP_GENFUNC double normLine(const Line3 &line) {
-        return normVec(line.pos[0] - line.pos[1]);
+        return (line.pos[0] - line.pos[1]).length();
     }
 
     // norm
@@ -337,21 +308,21 @@ namespace sp {
         double ret = 0.0;
 
         const Vec2 lvec = line.pos[1] - line.pos[0];
-        const double len = normVec(lvec);
+        const double len = lvec.length();
 
         if (len < SP_SMALL) {
-            ret = normVec(vec - (line.pos[0] + line.pos[1]) * 0.5);
+            ret = (vec - (line.pos[0] + line.pos[1]) * 0.5).length();
         }
         else {
             const double s = lvec.dot(vec - line.pos[0]) / len;
             if (s < 0.0) {
-                ret = normVec(vec - line.pos[0]);
+                ret = (vec - line.pos[0]).length();
             }
             else if (s > len) {
-                ret = normVec(vec - line.pos[1]);
+                ret = (vec - line.pos[1]).length();
             }
             else {
-                ret = normVec(vec - (line.pos[0] + lvec * s / len));
+                ret = (vec - (line.pos[0] + lvec * s / len)).length();
             }
         }
         return ret;
@@ -362,21 +333,21 @@ namespace sp {
         double ret = 0.0;
 
         const Vec3 lvec = line.pos[1] - line.pos[0];
-        const double len = normVec(lvec);
+        const double len = lvec.length();
 
         if (len < SP_SMALL) {
-            ret = normVec(vec - (line.pos[0] + line.pos[1]) * 0.5);
+            ret = (vec - (line.pos[0] + line.pos[1]) * 0.5).length();
         }
         else {
             const double s = lvec.dot(vec - line.pos[0]) / len;
             if (s < 0.0) {
-                ret = normVec(vec - line.pos[0]);
+                ret = (vec - line.pos[0]).length();
             }
             else if (s > len) {
-                ret = normVec(vec - line.pos[1]);
+                ret = (vec - line.pos[1]).length();
             }
             else {
-                ret = normVec(vec - (line.pos[0] + lvec * s / len));
+                ret = (vec - (line.pos[0] + lvec * s / len)).length();
             }
         }
         return ret;
@@ -487,7 +458,7 @@ namespace sp {
 
     // get normal vector
     SP_GENFUNC Vec3 getMeshNrm(const Mesh3 &mesh) {
-        return unitVec((mesh.pos[1] - mesh.pos[0]).cross(mesh.pos[2] - mesh.pos[0]));
+        return ((mesh.pos[1] - mesh.pos[0]).cross(mesh.pos[2] - mesh.pos[0])).unit();
     }
 
     // get center vector
@@ -542,7 +513,7 @@ namespace sp {
                         if (cmp(p[i].dot(p[j]), u, 0.001) == false) continue;
                         if (cmp(p[j].dot(p[k]), u, 0.001) == false) continue;
                         if (cmp(p[k].dot(p[i]), u, 0.001) == false) continue;
-                        model[cnt++] = getMesh3(unitVec(p[i]), unitVec(p[j]), unitVec(p[k]));
+                        model[cnt++] = getMesh3(p[i].unit(), p[j].unit(), p[k].unit());
                     }
                 }
             }
@@ -561,9 +532,9 @@ namespace sp {
 
         Mesh3 dst = model[tmp / num];
         for (int d = 0; d < level; d++) {
-            const Vec3 p0 = unitVec(dst.pos[0] + dst.pos[1]);
-            const Vec3 p1 = unitVec(dst.pos[1] + dst.pos[2]);
-            const Vec3 p2 = unitVec(dst.pos[2] + dst.pos[0]);
+            const Vec3 p0 = (dst.pos[0] + dst.pos[1]).unit();
+            const Vec3 p1 = (dst.pos[1] + dst.pos[2]).unit();
+            const Vec3 p2 = (dst.pos[2] + dst.pos[0]).unit();
 
             Mesh3 mesh[4];
             mesh[0] = getMesh3(p0, p1, p2);
@@ -1551,7 +1522,7 @@ namespace sp {
         Vec2 undist = npx;
         for (int it = 0; it < maxit; it++) {
             const Vec2 err = npx - npxDist(cam, undist);
-            if (normVec(err) < SP_SMALL) break;
+            if (err.length() < SP_SMALL) break;
 
             SP_REAL J[2 * 2], inv[2 * 2];
             jacobNpxToDist(J, cam, undist);
@@ -1865,8 +1836,8 @@ namespace sp {
     }
 
     SP_GENFUNC void getMatRodrigues(SP_REAL *dst, const int rows, const int cols, const Vec3 &vec) {
-        const SP_REAL angle = normVec(vec);
-        const Vec3 nrm = unitVec(vec);
+        const SP_REAL angle = vec.length();
+        const Vec3 nrm = vec.unit();
 
         const SP_REAL c = cos(angle);
         const SP_REAL s = sin(angle);
@@ -1885,13 +1856,13 @@ namespace sp {
     }
 
     SP_GENFUNC void getMatRodrigues(SP_REAL *dst, const int rows, const int cols, const Vec3 &vec, const SP_REAL angle) {
-        getMatRodrigues(dst, rows, cols, unitVec(vec) * angle);
+        getMatRodrigues(dst, rows, cols, vec.unit() * angle);
     }
 
     SP_GENFUNC Rot getRotAxis(const Vec3 &x, const Vec3 &y, const Vec3 &z) {
-        const Vec3 nx = unitVec(x);
-        const Vec3 ny = unitVec(y);
-        const Vec3 nz = unitVec(z);
+        const Vec3 nx = x.unit();
+        const Vec3 ny = y.unit();
+        const Vec3 nz = z.unit();
         SP_REAL mat[3 * 3];
         mat[0 * 3 + 0] = nx.x; mat[0 * 3 + 1] = ny.x; mat[0 * 3 + 2] = nz.x;
         mat[1 * 3 + 0] = nx.y; mat[1 * 3 + 1] = ny.y; mat[1 * 3 + 2] = nz.y;
@@ -1901,9 +1872,9 @@ namespace sp {
     }
 
     SP_GENFUNC Rot getRotAngle(const Vec3 &vec) {
-        const SP_REAL angle = normVec(vec);
+        const SP_REAL angle = vec.length();
         if (angle > SP_SMALL) {
-            const Vec3 nrm = unitVec(vec);
+            const Vec3 nrm = vec.unit();
 
             const SP_REAL s = sin(angle * 0.5);
             const SP_REAL c = cos(angle * 0.5);
@@ -1915,7 +1886,7 @@ namespace sp {
     }
 
     SP_GENFUNC Rot getRotAngle(const Vec3 &vec, const double angle) {
-        return getRotAngle(unitVec(vec) * angle);
+        return getRotAngle(vec.unit() * angle);
     }
 
     SP_GENFUNC Rot getRotAngleX(const double angle) {
@@ -1947,7 +1918,7 @@ namespace sp {
     }
 
     SP_GENFUNC Rot getRotDirection(const Vec3 &vec) {
-        const Vec3 nrm = unitVec(vec);
+        const Vec3 nrm = vec.unit();
 
         if (fabs(nrm.z) == 1.0) {
             const SP_REAL angle = (nrm.z > 0) ? 0.0 : SP_PI;
@@ -2028,8 +1999,8 @@ namespace sp {
     // angle
     SP_GENFUNC SP_REAL getAngle(const Vec2 &vec0, const Vec2 &vec1) {
         double ret = 0.0;
-        const double a = normVec(vec0);
-        const double b = normVec(vec1);
+        const double a = vec0.length();
+        const double b = vec1.length();
         if (a > SP_SMALL && b > SP_SMALL) {
             ret = acos(vec0.dot(vec1) / (a * b));
         }
@@ -2039,8 +2010,8 @@ namespace sp {
     // angle
     SP_GENFUNC SP_REAL getAngle(const Vec3 &vec0, const Vec3 &vec1) {
         double ret = 0.0;
-        const double a = normVec(vec0);
-        const double b = normVec(vec1);
+        const double a = vec0.length();
+        const double b = vec1.length();
         if (a > SP_SMALL && b > SP_SMALL) {
             ret = acos(vec0.dot(vec1) / (a * b));
         }
@@ -2049,7 +2020,7 @@ namespace sp {
 
     // dif
     SP_GENFUNC SP_REAL difRot(const Rot &rot0, const Rot &rot1) {
-        return normVec(getAngle(rot0 * invRot(rot1)));
+        return getAngle(rot0 * invRot(rot1)).length();
     }
 
     // dif

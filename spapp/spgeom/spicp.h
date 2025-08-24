@@ -68,7 +68,7 @@ namespace sp{
         }
 
         SP_CPUFUNC Vec3 getDrc(const Vec3 &vec0, const Vec3 &vec1){
-            return unitVec(vec1 - vec0);
+            return (vec1 - vec0).unit();
         }
 
 
@@ -88,7 +88,7 @@ namespace sp{
                 for (int j = 0; j < pnts0.size(); j++){
                     if (checkOutlier(pnts0[j], vec) == false) continue;
 
-                    const SP_REAL norm = normVec(getPos(pnts0[j]) - getPos(vec));
+                    const SP_REAL norm = (getPos(pnts0[j]) - getPos(vec)).length();
                     if (norm < minNorm){
                         minNorm = norm;
                         c = j;

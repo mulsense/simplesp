@@ -33,22 +33,17 @@ namespace sp {
         }
 
         void freeze() {
-            lock();
+            std::lock_guard<std::mutex> lock(m_mtx);
             m_init = false;
-            unlock();
         }
 
         bool used() {
             return m_init == false || m_used == true;
         }
 
-        void lock() {
-            m_mtx.lock();
-        }
-
-        void unlock() {
-            m_mtx.unlock();
-        }
+        std::mutex& mutex() {
+            return m_mtx;
+		}
 
         template<class Class, void (Class::*Func)()>
         bool run(Class *ptr, const bool wait = true) {
@@ -56,11 +51,10 @@ namespace sp {
             if (wait == false && m_used == true) return false;
 
             std::thread th([this, ptr, wait] {
-                lock();
+                std::lock_guard<std::mutex> lock(m_mtx);
                 m_used = true;
                 (ptr->*Func)();
                 m_used = false;
-                unlock();
             });
             th.detach();
             return true;
@@ -71,11 +65,10 @@ namespace sp {
             if (wait == false && m_used == true) return false;
 
             std::thread th([this, func, wait] {
-                lock();
+                std::lock_guard<std::mutex> lock(m_mtx);
                 m_used = true;
                 func();
                 m_used = false;
-                unlock();
             });
             th.detach();
             return true;
@@ -86,11 +79,10 @@ namespace sp {
             if (wait == false && m_used == true) return false;
 
             std::thread th([this, func, wait] {
-                lock();
+                std::lock_guard<std::mutex> lock(m_mtx);
                 m_used = true;
                 func();
                 m_used = false;
-                unlock();
             });
             th.detach();
             return true;

@@ -391,7 +391,7 @@ namespace sp{
 
                     const Vec2 A = tmps[a];
                     const Vec2 B = tmps[b];
-                    const Vec2 v = unitVec(A - B);
+                    const Vec2 v = (A - B).unit();
                     const Vec2 n = Vec2(-v.y, v.x);
 
                     const Vec2 t = Vec2(1.0, 1.0);

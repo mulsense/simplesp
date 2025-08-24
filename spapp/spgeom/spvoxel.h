@@ -121,7 +121,7 @@ namespace sp {
             const double vx = vmap(x + 1, y, z) - vmap(x - 1, y, z);
             const double vy = vmap(x, y + 1, z) - vmap(x, y - 1, z);
             const double vz = vmap(x, y, z + 1) - vmap(x, y, z - 1);
-            return unitVec(Vec3(-vx, -vy, -vz));
+            return Vec3(-vx, -vy, -vz).unit();
         }
 
         Vec3 center() const {
@@ -728,7 +728,7 @@ namespace sp {
 
                     for (int i = 0; i < zms[mz].size(); i++) {
                         const Mesh3 &m = zms[mz][i];
-                        if (normVec((m.pos[1] - m.pos[0]).cross(m.pos[2] - m.pos[0])) > SP_SMALL) {
+                        if (((m.pos[1] - m.pos[0]).cross(m.pos[2] - m.pos[0])).length() > SP_SMALL) {
                             meshes.push(m);
                         }
                     }

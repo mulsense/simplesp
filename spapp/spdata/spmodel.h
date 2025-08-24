@@ -36,7 +36,7 @@ namespace sp{
     SP_CPUFUNC SP_REAL getModelRadius(const Mem1<Mesh3> &model){
         Mem1<SP_REAL> mem(model.size());
         for (int i = 0; i < mem.size(); i++){
-            mem[i] = normVec(getMeshCent(model[i]));
+            mem[i] = getMeshCent(model[i]).length();
         }
 
         return max(mem);
@@ -78,7 +78,7 @@ namespace sp{
         for (int i = 0; i < tmp.size(); i++){
             bool check = true;
             for (int j = 0; j < pnts.size(); j++){
-                if (pnts[j].drc.dot(tmp[i].drc) > 0.5 && normVec(pnts[j].pos - tmp[i].pos) < unit){
+                if (pnts[j].drc.dot(tmp[i].drc) > 0.5 && (pnts[j].pos - tmp[i].pos).length() < unit){
                     check = false;
                     break;
                 }
@@ -112,9 +112,9 @@ namespace sp{
             for (int j = 0; j < 3; j++) {
                 const Vec3 A = model[i].pos[(j + 0) % 3];
                 const Vec3 B = model[i].pos[(j + 1) % 3];
-                const Vec3 V = unitVec(B - A);
+                const Vec3 V = (B - A).unit();
 
-                const Mem1<int> list = kdtree.search(&A, normVec(B - A) + 0.01);
+                const Mem1<int> list = kdtree.search(&A, (B - A).length() + 0.01);
 
                 for (int k = 0; k < list.size(); k++) {
                     const int mid = list[k] / 3;
@@ -124,10 +124,10 @@ namespace sp{
                     const Vec3 C = model[mid].pos[(pid + 0) % 3];
                     const Vec3 D = model[mid].pos[(pid + 1) % 3];
 
-                    const Vec3 F = normVec(C - A) > normVec(D - A) ? C : D;
+                    const Vec3 F = (C - A).length() > (D - A).length() ? C : D;
 
-                    if (fabs(V.dot(unitVec(F - A))) < 0.99) continue;
-                    if (fabs(V.dot(unitVec(D - C))) < 0.99) continue;
+                    if (fabs(V.dot((F - A).unit())) < 0.99) continue;
+                    if (fabs(V.dot((D - C).unit())) < 0.99) continue;
 
                     const Vec3 O = V.dot(C) < V.dot(D) ? C : D;
                     const Vec3 P = V.dot(C) < V.dot(D) ? D : C;
@@ -135,9 +135,9 @@ namespace sp{
                     const Vec3 X = V.dot(A) > V.dot(O) ? A : O;
                     const Vec3 Y = V.dot(B) < V.dot(P) ? B : P;
 
-                    if (normVec(Y - X) < 0.01) continue;
+                    if ((Y - X).length() < 0.01) continue;
 
-                    const int div = ceil(normVec(Y - X) / unit);
+                    const int div = ceil((Y - X).length() / unit);
                     for (int d = 0; d < div; d++) {
                         Edge edge;
                         edge.pos = (Y - X) / (div + 1.0) * (d + 1.0) + X;

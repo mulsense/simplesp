@@ -283,7 +283,7 @@ namespace sp{
         dst.resize(cam.dsize);
         dst.zero();
 
-        const double radius = normVec(mrkMap[0] - mrkMap[1]) * 0.1;
+        const double radius = (mrkMap[0] - mrkMap[1]).length() * 0.1;
 
         const Vec3 base = pose * Vec3(0.0, 0.0, 0.0);
         const Vec3 A = pose * Vec3(1.0, 0.0, 0.0) - base;
@@ -314,7 +314,7 @@ namespace sp{
                 const Vec2 pos = Vec2(result[0], result[1]);
 
                 for (int i = 0; i < mrkMap.size(); i++) {
-                    if (normVec(pos - mrkMap[i]) < radius) {
+                    if ((pos - mrkMap[i]).length() < radius) {
                         dst(u, v) = 0;
                         break;
                     }

@@ -624,7 +624,7 @@ namespace sp {
         const Vec3 ny = invRot(getRotDirection(drc)) * Vec3(0.0, 1.0, 0.0);
         const double step = 360.0 / div;
 
-        const double seg0 = 8.0 * radius / normVec(drc);
+        const double seg0 = 8.0 * radius / drc.length();
         const double seg1 = 1.0 - seg0;
 
         for (int i = 0; i < div; i++) {
