@@ -271,24 +271,9 @@ namespace sp{
         return reinterpret_cast<ELEM*>(&src.ptr[id])[c];
     }
 
-    template<typename TYPE, typename ELEM = TYPE>
-    SP_GENFUNC SP_REAL acs1(ExPtr<TYPE> &src, const double d0, const int c = 0) {
-        const int id0 = static_cast<int>(d0);
-        const double ad0 = d0 - id0;
-
-        const double v0 = acs1<TYPE, ELEM>(src, id0 + 0, c) * (1 - ad0);
-        const double v1 = acs1<TYPE, ELEM>(src, id0 + 1, c) * (0 + ad0);
-
-        return static_cast<SP_REAL>(v0 + v1);
-    }
 
     template<typename TYPE, typename ELEM = TYPE>
     SP_GENFUNC const ELEM& acs1(const ExPtr<TYPE> &src, const int d0, const int c = 0) {
-        return acs1<TYPE, ELEM>(*const_cast<ExPtr<TYPE>*>(&src), d0, c);
-    }
-
-    template<typename TYPE, typename ELEM = TYPE>
-    SP_GENFUNC SP_REAL acs1(const ExPtr<TYPE> &src, const double d0, const int c = 0) {
         return acs1<TYPE, ELEM>(*const_cast<ExPtr<TYPE>*>(&src), d0, c);
     }
 
@@ -326,28 +311,9 @@ namespace sp{
         return reinterpret_cast<ELEM*>(&src.ptr[id])[c];
     }
 
-    template<typename TYPE, typename ELEM = TYPE>
-    SP_GENFUNC SP_REAL acs2(ExPtr<TYPE> &src, const double d0, const double d1, const int c = 0) {
-        const int id0 = static_cast<int>(d0);
-        const int id1 = static_cast<int>(d1);
-        const double ad0 = d0 - id0;
-        const double ad1 = d1 - id1;
-
-        const double v00 = acs2<TYPE, ELEM>(src, id0 + 0, id1 + 0, c) * (1 - ad0) * (1 - ad1);
-        const double v10 = acs2<TYPE, ELEM>(src, id0 + 1, id1 + 0, c) * (0 + ad0) * (1 - ad1);
-        const double v01 = acs2<TYPE, ELEM>(src, id0 + 0, id1 + 1, c) * (1 - ad0) * (0 + ad1);
-        const double v11 = acs2<TYPE, ELEM>(src, id0 + 1, id1 + 1, c) * (0 + ad0) * (0 + ad1);
-
-        return static_cast<SP_REAL>(v00 + v10 + v01 + v11);
-    }
 
     template<typename TYPE, typename ELEM = TYPE>
     SP_GENFUNC const ELEM& acs2(const ExPtr<TYPE> &src, const int d0, const int d1, const int c = 0) {
-        return acs2<TYPE, ELEM>(*const_cast<ExPtr<TYPE>*>(&src), d0, d1, c);
-    }
-
-    template<typename TYPE, typename ELEM = TYPE>
-    SP_GENFUNC SP_REAL acs2(const ExPtr<TYPE> &src, const double d0, const double d1, const int c = 0) {
         return acs2<TYPE, ELEM>(*const_cast<ExPtr<TYPE>*>(&src), d0, d1, c);
     }
 
@@ -369,34 +335,9 @@ namespace sp{
         return reinterpret_cast<ELEM*>(&src.ptr[id])[c];
     }
 
-    template<typename TYPE, typename ELEM = TYPE>
-    SP_GENFUNC SP_REAL acs3(ExPtr<TYPE> &src, const SP_REAL d0, const double d1, const double d2, const int c = 0) {
-        const int id0 = static_cast<int>(d0);
-        const int id1 = static_cast<int>(d1);
-        const int id2 = static_cast<int>(d2);
-        const double ad0 = d0 - id0;
-        const double ad1 = d1 - id1;
-        const double ad2 = d2 - id2;
-
-        const double v000 = acs3<TYPE, ELEM>(src, id0 + 0, id1 + 0, id2 + 0, c) * (1 - ad0) * (1 - ad1) * (1 - ad2);
-        const double v100 = acs3<TYPE, ELEM>(src, id0 + 1, id1 + 0, id2 + 0, c) * (0 + ad0) * (1 - ad1) * (1 - ad2);
-        const double v010 = acs3<TYPE, ELEM>(src, id0 + 0, id1 + 1, id2 + 0, c) * (1 - ad0) * (0 + ad1) * (1 - ad2);
-        const double v110 = acs3<TYPE, ELEM>(src, id0 + 1, id1 + 1, id2 + 0, c) * (0 + ad0) * (0 + ad1) * (1 - ad2);
-        const double v001 = acs3<TYPE, ELEM>(src, id0 + 0, id1 + 0, id2 + 1, c) * (1 - ad0) * (1 - ad1) * (0 + ad2);
-        const double v101 = acs3<TYPE, ELEM>(src, id0 + 1, id1 + 0, id2 + 1, c) * (0 + ad0) * (1 - ad1) * (0 + ad2);
-        const double v011 = acs3<TYPE, ELEM>(src, id0 + 0, id1 + 1, id2 + 1, c) * (1 - ad0) * (0 + ad1) * (0 + ad2);
-        const double v111 = acs3<TYPE, ELEM>(src, id0 + 1, id1 + 1, id2 + 1, c) * (0 + ad0) * (0 + ad1) * (0 + ad2);
-
-        return static_cast<SP_REAL>(v000 + v100 + v010 + v110 + v001 + v101 + v011 + v111);
-    }
 
     template<typename TYPE, typename ELEM = TYPE>
     SP_GENFUNC const ELEM& acs3(const ExPtr<TYPE> &src, const int d0, const int d1, const int d2, const int c = 0) {
-        return acs3<TYPE, ELEM>(*const_cast<ExPtr<TYPE>*>(&src), d0, d1, d2, c);
-    }
-
-    template<typename TYPE, typename ELEM = TYPE>
-    SP_GENFUNC SP_REAL acs3(const ExPtr<TYPE> &src, const double d0, const double d1, const double d2, const int c = 0) {
         return acs3<TYPE, ELEM>(*const_cast<ExPtr<TYPE>*>(&src), d0, d1, d2, c);
     }
 
@@ -423,35 +364,7 @@ namespace sp{
         return src.ptr[id];
     }
 
-    SP_GENFUNC Col3 acsc(ExPtr<Col3> &src, const double d0, const double d1) {
-        const int id0 = static_cast<int>(d0);
-        const int id1 = static_cast<int>(d1);
-        const double ad0 = d0 - id0;
-        const double ad1 = d1 - id1;
-
-        const Col3 v00 = acsc(src, id0 + 0, id1 + 0);
-        const Col3 v10 = acsc(src, id0 + 1, id1 + 0);
-        const Col3 v01 = acsc(src, id0 + 0, id1 + 1);
-        const Col3 v11 = acsc(src, id0 + 1, id1 + 1);
-
-        const double r00 = (1 - ad0) * (1 - ad1);
-        const double r10 = (0 + ad0) * (1 - ad1);
-        const double r01 = (1 - ad0) * (0 + ad1);
-        const double r11 = (0 + ad0) * (0 + ad1);
-
-        Col3 dst;
-        dst.r = static_cast<Byte>(v00.r * r00 + v10.r * r10 + v01.r * r01 + v11.r * r11 + 0.5);
-        dst.g = static_cast<Byte>(v00.g * r00 + v10.g * r10 + v01.g * r01 + v11.g * r11 + 0.5);
-        dst.b = static_cast<Byte>(v00.b * r00 + v10.b * r10 + v01.b * r01 + v11.b * r11 + 0.5);
-
-        return dst;
-    }
-
     SP_GENFUNC const Col3& acsc(const ExPtr<Col3> &src, const int d0, const int d1) {
-        return acsc(*const_cast<ExPtr<Col3>*>(&src), d0, d1);
-    }
-
-    SP_GENFUNC Col3 acsc(const ExPtr<Col3> &src, const double d0, const double d1) {
         return acsc(*const_cast<ExPtr<Col3>*>(&src), d0, d1);
     }
 

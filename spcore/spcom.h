@@ -146,19 +146,11 @@ namespace sp{
     // get min value
     SP_GENFUNC const SP_REAL min(const double a, const double b) { return static_cast<SP_REAL>((a < b) ? a : b); }
 
-    // get limit value
-    SP_GENFUNC const int lim(const int v, const int minv, const int maxv) { return (v > maxv) ? maxv : ((v < minv) ? minv : v); }
+    // get clampped value
+    SP_GENFUNC const int clamp(const int v, const int minv, const int maxv) { return (v > maxv) ? maxv : ((v < minv) ? minv : v); }
 
-    // get limit value
-    SP_GENFUNC const SP_REAL lim(const double v, const double minv, const double maxv) { return static_cast<SP_REAL>((v > maxv) ? maxv : ((v < minv) ? minv : v)); }
-
-    //--------------------------------------------------------------------------------
-    // complex
-    //--------------------------------------------------------------------------------
-
-    struct Cmp {
-        SP_REAL re, im;
-    };
+    // get clampped value
+    SP_GENFUNC const SP_REAL clamp(const double v, const double minv, const double maxv) { return static_cast<SP_REAL>((v > maxv) ? maxv : ((v < minv) ? minv : v)); }
 
     //--------------------------------------------------------------------------------
     // memory ptr
@@ -179,7 +171,8 @@ namespace sp{
     // rectangle
     //--------------------------------------------------------------------------------
 
-    struct Rect2 {
+    class Rect2 {
+    public:
         // dimension base
         int dbase[2];
 
@@ -187,7 +180,8 @@ namespace sp{
         int dsize[2];
     };
 
-    struct Rect3 {
+    class Rect3 {
+    public:
         // dimension base
         int dbase[3];
 
@@ -270,10 +264,6 @@ namespace sp{
         SP_REAL cross(const Vec2& vec) const {
             return x * vec.y - y * vec.x;
         }
-
-        SP_REAL sq() const {
-            return x * x + y * y;
-		}
 
         // length
         SP_REAL length() const {
@@ -370,10 +360,6 @@ namespace sp{
 
         Vec3 cross(const Vec3& vec) const {
             return Vec3(y * vec.z - z * vec.y, z * vec.x - x * vec.z, x * vec.y - y * vec.x);
-        }
-
-        SP_REAL sq() const {
-            return x * x + y * y + z * z;
         }
 
         // length
@@ -730,94 +716,89 @@ namespace sp {
         return ((v0 - v1) < +t && (v0 - v1) > -t) ? true : false;
     }
 
-    // compare complex
-    SP_GENFUNC bool cmp(const Cmp &v0, const Cmp &v1, const double t = 1.0e-6) {
-        return cmp(v0.re, v1.re, t) & cmp(v0.im, v1.im, t);
-    }
-
     // compare rect
     SP_GENFUNC bool cmp(const Rect2 &v0, const Rect2 &v1) {
-        return (v0.dbase[0] == v1.dbase[0]) & (v0.dsize[0] == v1.dsize[0]) & (v0.dbase[1] == v1.dbase[1]) & (v0.dsize[1] == v1.dsize[1]);
+        return (v0.dbase[0] == v1.dbase[0]) && (v0.dsize[0] == v1.dsize[0]) && (v0.dbase[1] == v1.dbase[1]) && (v0.dsize[1] == v1.dsize[1]);
     }
     // compare rect
     SP_GENFUNC bool cmp(const Rect3 &v0, const Rect3 &v1) {
-        return (v0.dbase[0] == v1.dbase[0]) & (v0.dsize[0] == v1.dsize[0]) & (v0.dbase[1] == v1.dbase[1]) & (v0.dsize[1] == v1.dsize[1]) & (v0.dbase[2] == v1.dbase[2]) & (v0.dsize[2] == v1.dsize[2]);
+        return (v0.dbase[0] == v1.dbase[0]) && (v0.dsize[0] == v1.dsize[0]) && (v0.dbase[1] == v1.dbase[1]) && (v0.dsize[1] == v1.dsize[1]) && (v0.dbase[2] == v1.dbase[2]) && (v0.dsize[2] == v1.dsize[2]);
     }
 
     // compare vec
     SP_GENFUNC bool cmp(const Vec2 &v0, const Vec2 &v1, const double t = 1.0e-6) {
-        return cmp(v0.x, v1.x, t) & cmp(v0.y, v1.y, t);
+        return cmp(v0.x, v1.x, t) && cmp(v0.y, v1.y, t);
     }
     // compare vec
     SP_GENFUNC bool cmp(const Vec3 &v0, const Vec3 &v1, const double t = 1.0e-6) {
-        return cmp(v0.x, v1.x, t) & cmp(v0.y, v1.y, t) & cmp(v0.z, v1.z, t);
+        return cmp(v0.x, v1.x, t) && cmp(v0.y, v1.y, t) & cmp(v0.z, v1.z, t);
     }
 
     // compare vec (position and normal)
     SP_GENFUNC bool cmp(const VecPD2 &v0, const VecPD2 &v1, const double t = 1.0e-6) {
-        return cmp(v0.pos, v1.pos, t) & cmp(v0.drc, v1.drc, t);
+        return cmp(v0.pos, v1.pos, t) && cmp(v0.drc, v1.drc, t);
     }
     // compare vec (position and normal)
     SP_GENFUNC bool cmp(const VecPD3 &v0, const VecPD3 &v1, const double t = 1.0e-6) {
-        return cmp(v0.pos, v1.pos, t) & cmp(v0.drc, v1.drc, t);
+        return cmp(v0.pos, v1.pos, t) && cmp(v0.drc, v1.drc, t);
     }
     
     // compare line
     SP_GENFUNC bool cmp(const Line2 &v0, const Line2 &v1, const double t = 1.0e-6) {
-        return cmp(v0.pos[0], v1.pos[0], t) & cmp(v0.pos[1], v1.pos[1], t);
+        return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t);
     }
     // compare line
     SP_GENFUNC bool cmp(const Line3 &v0, const Line3 &v1, const double t = 1.0e-6) {
-        return cmp(v0.pos[0], v1.pos[0], t) & cmp(v0.pos[1], v1.pos[1], t);
+        return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t);
     }
 
     // compare mesh
     SP_GENFUNC bool cmp(const Mesh2 &v0, const Mesh2 &v1, const double t = 1.0e-6) {
-        return cmp(v0.pos[0], v1.pos[0], t) & cmp(v0.pos[1], v1.pos[1], t) & cmp(v0.pos[2], v1.pos[2], t);
+        return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t) && cmp(v0.pos[2], v1.pos[2], t);
     }
     // compare mesh
     SP_GENFUNC bool cmp(const Mesh3 &v0, const Mesh3 &v1, const double t = 1.0e-6) {
-        return cmp(v0.pos[0], v1.pos[0], t) & cmp(v0.pos[1], v1.pos[1], t) & cmp(v0.pos[2], v1.pos[2], t);
+        return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t) && cmp(v0.pos[2], v1.pos[2], t);
     }
 
     // compare rotation
     SP_GENFUNC bool cmp(const Rot &v0, const Rot &v1, const double t = 1.0e-6) {
         const double s0 = (v0.qw > 0.0) ? +1.0 : -1.0;
         const double s1 = (v1.qw > 0.0) ? +1.0 : -1.0;
-        return cmp(v0.qx * s0, v1.qx * s1, t) & cmp(v0.qy * s0, v1.qy * s1, t) & cmp(v0.qz * s0, v1.qz * s1, t) & cmp(v0.qw * s0, v1.qw * s1, t);
+        return cmp(v0.qx * s0, v1.qx * s1, t) && cmp(v0.qy * s0, v1.qy * s1, t) && cmp(v0.qz * s0, v1.qz * s1, t) && cmp(v0.qw * s0, v1.qw * s1, t);
     }
 
     // compare pose
     SP_GENFUNC bool cmp(const Pose &v0, const Pose &v1, const double t = 1.0e-6) {
-        return cmp(v0.rot, v1.rot, t) & cmp(v0.pos, v1.pos, t);
+        return cmp(v0.rot, v1.rot, t) && cmp(v0.pos, v1.pos, t);
     }
 
     // compare color
     SP_GENFUNC bool cmp(const Col3 &v0, const Col3 &v1) {
-        return (v0.r == v1.r) & (v0.g == v1.g) & (v0.b == v1.b);
+        return (v0.r == v1.r) && (v0.g == v1.g) && (v0.b == v1.b);
     }
     // compare color
     SP_GENFUNC bool cmp(const Col4 &v0, const Col4 &v1) {
-        return (v0.r == v1.r) & (v0.g == v1.g) & (v0.b == v1.b) & (v0.a == v1.a);
+        return (v0.r == v1.r) && (v0.g == v1.g) && (v0.b == v1.b) && (v0.a == v1.a);
     }
     // compare color
     SP_GENFUNC bool cmp(const Col3f &v0, const Col3f &v1, const double t = 1.0e-6) {
-        return cmp(v0.r, v1.r, t) & cmp(v0.g, v1.g, t) & cmp(v0.b, v1.b, t);
+        return cmp(v0.r, v1.r, t) && cmp(v0.g, v1.g, t) && cmp(v0.b, v1.b, t);
     }
     // compare color
     SP_GENFUNC bool cmp(const Col4f &v0, const Col4f &v1, const double t = 1.0e-6) {
-        return cmp(v0.r, v1.r, t) & cmp(v0.g, v1.g, t) & cmp(v0.b, v1.b, t) & cmp(v0.a, v1.a, t);
+        return cmp(v0.r, v1.r, t) && cmp(v0.g, v1.g, t) && cmp(v0.b, v1.b, t) && cmp(v0.a, v1.a, t);
     }
 
     // compare material
     SP_GENFUNC bool cmp(const Material &v0, const Material &v1, const double t = 1.0e-6) {
-        return cmp(v0.col, v1.col) & cmp(v0.rf, v1.rf, t) & cmp(v0.ri, v1.ri, t) & cmp(v0.tr, v1.tr, t) & cmp(v0.ex, v1.ex, t) & cmp(v0.em, v1.em, t);
+        return cmp(v0.col, v1.col) && cmp(v0.rf, v1.rf, t) && cmp(v0.ri, v1.ri, t) && cmp(v0.tr, v1.tr, t) && cmp(v0.ex, v1.ex, t) && cmp(v0.em, v1.em, t);
     }
 
     // compare camera
     SP_GENFUNC bool cmp(const CamParam &v0, const CamParam &v1) {
-        return (v0.type == v1.type) & (v0.dsize[0] == v1.dsize[0]) & (v0.dsize[1] == v1.dsize[1]) &
-            (v0.fx == v1.fx) & (v0.fy == v1.fy) & (v0.cx == v1.cx) & (v0.cy == v1.cy) & (v0.k1 == v1.k1) & (v0.k2 == v1.k2) & (v0.k3 == v1.k3) & (v0.p1 == v1.p1) & (v0.p2 == v1.p2);
+        return (v0.type == v1.type) && (v0.dsize[0] == v1.dsize[0]) && (v0.dsize[1] == v1.dsize[1]) &&
+            (v0.fx == v1.fx) && (v0.fy == v1.fy) && (v0.cx == v1.cx) && (v0.cy == v1.cy) && (v0.k1 == v1.k1) && (v0.k2 == v1.k2) && (v0.k3 == v1.k3) && (v0.p1 == v1.p1) && (v0.p2 == v1.p2);
     }
 
     // compare memory
@@ -837,7 +818,6 @@ namespace sp {
     SP_GENFUNC bool operator == (const TYPE &v0, const TYPE &v1) { return  cmp(v0, v1); } \
     SP_GENFUNC bool operator != (const TYPE &v0, const TYPE &v1) { return !cmp(v0, v1); }
 
-    SP_CMP_OPERATOR(Cmp);
     SP_CMP_OPERATOR(Rect2);
     SP_CMP_OPERATOR(Rect3);
     SP_CMP_OPERATOR(Vec2);

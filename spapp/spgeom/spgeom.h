@@ -6,7 +6,6 @@
 #define __SP_GEOM_H__
 
 #include "spcore/spcore.h"
-#include "spapp/spgeom/spxmat.h"
 
 namespace sp {
 
@@ -193,115 +192,6 @@ namespace sp {
         return true;
     }
 
-    SP_CPUFUNC bool calcPnt3dX(Vec3 &pnt, const Pose &pose0, const CamParam &cam0, const Vec2 &pix0, const Pose &pose1, const CamParam &cam1, const SP_REAL pix1x) {
-        const Vec2 &npx0 = invCamD(cam0, pix0);
-
-        const Pose stereo = pose1 * invPose(pose0);
-        const Mat mat = getMat(stereo);
-
-        const Mat E = skewMat(stereo.pos) * getMat(stereo.rot);
-
-        const Vec3 epi = E * Vec3(npx0.x, npx0.y, 1.0);
-        const Vec2 npx1 = npxUndistX(cam1, epi, (pix1x - cam1.cx) / cam1.fx);
-
-        const SP_REAL div
-            = (mat(0, 0) - npx1.x * mat(2, 0)) * npx0.x
-            + (mat(0, 1) - npx1.x * mat(2, 1)) * npx0.y
-            + (mat(0, 2) - npx1.x * mat(2, 2));
-
-        if (fabs(div) < SP_SMALL) return false;
-
-        const SP_REAL depth = (npx1.x * mat(2, 3) - mat(0, 3)) / div;
-
-        pnt = pose0 * (Vec3(npx0.x, npx0.y, 1.0) * depth);
-        return true;
-    }
-
-    SP_CPUFUNC bool calcPnt3dY(Vec3 &pnt, const Pose &pose0, const CamParam &cam0, const Vec2 &pix0, const Pose &pose1, const CamParam &cam1, const SP_REAL pix1y) {
-        const Vec2 &npx0 = invCamD(cam0, pix0);
-
-        const Pose stereo = pose1 * invPose(pose0);
-        const Mat mat = getMat(stereo);
-
-        const Mat E = skewMat(stereo.pos) * getMat(stereo.rot);
-
-        const Vec3 epi = E * Vec3(npx0.x, npx0.y, 1.0);
-        const Vec2 npx1 = npxUndistY(cam1, epi, (pix1y - cam1.cy) / cam1.fy);
-
-        const SP_REAL div
-            = (mat(1, 0) - npx1.y * mat(2, 0)) * npx0.x
-            + (mat(1, 1) - npx1.y * mat(2, 1)) * npx0.y
-            + (mat(1, 2) - npx1.y * mat(2, 2));
-
-        if (fabs(div) < SP_SMALL) return false;
-
-        const SP_REAL depth = (npx1.y * mat(2, 3) - mat(1, 3)) / div;
-        pnt = pose0 * (Vec3(npx0.x, npx0.y, 1.0) * depth);
-        return true;
-    }
-
-
-    //--------------------------------------------------------------------------------
-    // matrix to pose
-    //--------------------------------------------------------------------------------
-    
-    SP_CPUFUNC bool dcmpEMat(Pose &pose, const Mat &E, const Mem1<Vec2> &npxs0, const Mem1<Vec2> &npxs1) {
-        SP_ASSERT(npxs0.size() == npxs1.size());
-
-        Mat U, S, V;
-        if (svdMat(U, S, V, E, false) == false) return false;
-        if (detMat(U * trnMat(V)) < 0) {
-            V *= -1;
-        }
-
-        Rot R[2];
-        Vec3 T[2];
-        {
-            Mat W = zeroMat(3, 3);
-            W(0, 1) = -1.0;
-            W(1, 0) = +1.0;
-            W(2, 2) = +1.0;
-
-            R[0] = getRot((U * W * trnMat(V)).ptr, 3, 3);
-            R[1] = getRot((U * trnMat(W) * trnMat(V)).ptr, 3, 3);
-
-            T[0] = Vec3(U(0, 2), U(1, 2), U(2, 2));
-            T[1] = Vec3(U(0, 2), U(1, 2), U(2, 2)) * (-1);
-        }
-
-        int maxv = 0;
-        for (int i = 0; i < 4; i++) {
-            const Pose test = getPose(R[i % 2], T[i / 2]);
-
-            Mem1<Vec3> pnts(npxs0.size());
-
-            int cnt = 0;
-            for (int i = 0; i < npxs0.size(); i++) {
-                if (calcPnt3d(pnts[i], zeroPose(), npxs0[i], test, npxs1[i]) == false) continue;
-                cnt++;
-            }
-            if (cnt > maxv) {
-                maxv = cnt;
-                pose = test;
-            }
-        }
-
-        return true;
-    }
-
-    SP_CPUFUNC bool dcmpFMat(Pose &pose, const Mat &F, const CamParam &cam0, const Mem1<Vec2> &pixs0, const CamParam &cam1, const Mem1<Vec2> &pixs1) {
-        SP_ASSERT(pixs0.size() == pixs1.size());
-
-        const Mat E = trnMat(getMat(cam0)) * F * getMat(cam1);
-
-        const Mem1<Vec2> npxs0 = invCamD(cam0, pixs0);
-        const Mem1<Vec2> npxs1 = invCamD(cam1, pixs1);
-
-        if (dcmpEMat(pose, E, npxs0, npxs1) == false) return false;
-
-        return true;
-    }
-
     //--------------------------------------------------------------------------------
     // pose (refine)
     //--------------------------------------------------------------------------------
@@ -335,70 +225,6 @@ namespace sp {
             if (solver::solveAX_B(delta, J, E, solver::calcW(errs, 3)) == false) return false;
 
             pose = updatePose(pose, delta.ptr);
-        }
-
-        return true;
-    }
-
-    // 2D-3D pose
-    SP_CPUFUNC bool refinePose(Pose &pose, const CamParam &cam, const Mem1<Vec2> &pixs, const Mem1<Vec3> &objs, const int maxit = 10) {
-        SP_ASSERT(pixs.size() == objs.size());
-
-        const int num = pixs.size();
-
-        const int unit = 3;
-        if (num < unit) return false;
-
-        Mat J(2 * num, 6);
-        Mat E(2 * num, 1);
-        Mem1<SP_REAL> errs(num);
-
-        for (int it = 0; it < maxit; it++) {
-            for (int i = 0; i < num; i++) {
-                jacobPoseToPix(&J(i * 2, 0), cam, pose, objs[i]);
-
-                const Vec2 err = pixs[i] - mulCamD(cam, prjVec(pose * objs[i]));
-                E(i * 2 + 0, 0) = err.x;
-                E(i * 2 + 1, 0) = err.y;
-                errs[i] = err.length();
-            }
-
-            Mat delta;
-            if (solver::solveAX_B(delta, J, E, solver::calcW(errs, 2)) == false) return false;
-
-            pose = updatePose(pose, delta.ptr);
-        }
-
-        return true;
-    }
-
-    // 2D-2D pose (stereo camera)
-    SP_CPUFUNC bool refinePose(Pose &pose, const CamParam &cam0, const Mem1<Vec2> &pixs0, const CamParam &cam1, const Mem1<Vec2> &pixs1, const int maxit = 10) {
-        SP_ASSERT(pixs0.size() == pixs1.size());
-
-        const int num = pixs0.size();
-
-        const int unit = 3;
-        if (num < unit) return false;
-
-        for (int it = 0; it < maxit; it++) {
-            Mem1<Vec2> pixs;
-            Mem1<Vec3> objs;
-
-            for (int i = 0; i < num; i++) {
-                Vec3 obj;
-                if (calcPnt3d(obj, zeroPose(), cam0, pixs0[i], pose, cam1, pixs1[i]) == false) continue;
-              
-                pixs.push(pixs1[i]);
-                objs.push(obj);
-            }
-
-            if (refinePose(pose, cam1, pixs, objs, 1) == false) return false;
-            
-            const SP_REAL d = pose.pos.length();
-            if (d < SP_SMALL) return false;
-
-            pose.pos /= d;
         }
 
         return true;

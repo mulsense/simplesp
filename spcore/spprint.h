@@ -41,15 +41,6 @@ namespace sp {
         SP_PRINTF("%g", val);
     }
 
-    SP_CPUFUNC void _print(const Cmp &cmp) {
-        SP_PRINTF("[ %+.5lf, %+.5lf ]", static_cast<double>(cmp.re), static_cast<double>(cmp.im));
-    }
-    SP_CPUFUNC void print(const Cmp &cmp) {
-        SP_PRINTF("Cmp ");
-        _print(cmp);
-        SP_PRINTF("\n");
-    }
-
     SP_CPUFUNC void _print(const int dim, const int *dsize) {
         SP_PRINTF("[ ");
         for (int d = 0; d < dim; d++) {

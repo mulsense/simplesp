@@ -21,7 +21,6 @@
 #include "spapp/spimg/spbin.h"
 
 // geometry
-#include "spapp/spgeom/spxmat.h"
 #include "spapp/spgeom/spgeom.h"
 #include "spapp/spgeom/spdepth.h"
 #include "spapp/spgeom/spicp.h"
