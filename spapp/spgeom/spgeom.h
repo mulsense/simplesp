@@ -29,7 +29,7 @@ namespace sp {
     }
 
     SP_CPUFUNC SP_REAL calcPrjErr(const Pose &pose, const CamParam &cam, const Vec2 &pix, const Vec2 &obj) {
-        return calcPrjErr(pose, cam, pix, getVec3(obj.x, obj.y, 0.0));
+        return calcPrjErr(pose, cam, pix, Vec3(obj.x, obj.y, 0.0));
     }
 
     SP_CPUFUNC Mem1<SP_REAL> calcPrjErr(const Pose &pose, const CamParam &cam, const Mem1<Vec2> &pixs, const Mem1<Vec3> &objs) {
@@ -86,7 +86,7 @@ namespace sp {
             Mat result;
             if (solver::solveAX_B(result, J, E, solver::calcW(errs, 2)) == false) return false;
 
-            pnt += getVec3(result[0], result[1], result[2]);
+            pnt += Vec3(result[0], result[1], result[2]);
         }
 
         for (int i = 0; i < poses.size(); i++) {
@@ -134,7 +134,7 @@ namespace sp {
         Mat result;
         if (solver::solveAX_B(result, M, V) == false) return false;
 
-        pnt = getVec3(result[0], result[1], result[2]);
+        pnt = Vec3(result[0], result[1], result[2]);
 
         for (int i = 0; i < poses.size(); i++) {
             if ((poses[i] * pnt).z <= 0.0) return false;
@@ -201,7 +201,7 @@ namespace sp {
 
         const Mat E = skewMat(stereo.pos) * getMat(stereo.rot);
 
-        const Vec3 epi = E * getVec3(npx0.x, npx0.y, 1.0);
+        const Vec3 epi = E * Vec3(npx0.x, npx0.y, 1.0);
         const Vec2 npx1 = npxUndistX(cam1, epi, (pix1x - cam1.cx) / cam1.fx);
 
         const SP_REAL div
@@ -213,7 +213,7 @@ namespace sp {
 
         const SP_REAL depth = (npx1.x * mat(2, 3) - mat(0, 3)) / div;
 
-        pnt = pose0 * (getVec3(npx0.x, npx0.y, 1.0) * depth);
+        pnt = pose0 * (Vec3(npx0.x, npx0.y, 1.0) * depth);
         return true;
     }
 
@@ -225,7 +225,7 @@ namespace sp {
 
         const Mat E = skewMat(stereo.pos) * getMat(stereo.rot);
 
-        const Vec3 epi = E * getVec3(npx0.x, npx0.y, 1.0);
+        const Vec3 epi = E * Vec3(npx0.x, npx0.y, 1.0);
         const Vec2 npx1 = npxUndistY(cam1, epi, (pix1y - cam1.cy) / cam1.fy);
 
         const SP_REAL div
@@ -236,7 +236,7 @@ namespace sp {
         if (fabs(div) < SP_SMALL) return false;
 
         const SP_REAL depth = (npx1.y * mat(2, 3) - mat(1, 3)) / div;
-        pnt = pose0 * (getVec3(npx0.x, npx0.y, 1.0) * depth);
+        pnt = pose0 * (Vec3(npx0.x, npx0.y, 1.0) * depth);
         return true;
     }
 
@@ -265,8 +265,8 @@ namespace sp {
             R[0] = getRot((U * W * trnMat(V)).ptr, 3, 3);
             R[1] = getRot((U * trnMat(W) * trnMat(V)).ptr, 3, 3);
 
-            T[0] = getVec3(U(0, 2), U(1, 2), U(2, 2));
-            T[1] = getVec3(U(0, 2), U(1, 2), U(2, 2)) * (-1);
+            T[0] = Vec3(U(0, 2), U(1, 2), U(2, 2));
+            T[1] = Vec3(U(0, 2), U(1, 2), U(2, 2)) * (-1);
         }
 
         int maxv = 0;
@@ -372,11 +372,6 @@ namespace sp {
         return true;
     }
 
-    // 2D-2D pose (planar object)
-    SP_CPUFUNC bool refinePose(Pose &pose, const CamParam &cam, const Mem1<Vec2> &pixs, const Mem1<Vec2> &objs, const int maxit = 10) {
-        return refinePose(pose, cam, pixs, getVec3(objs, 0.0), maxit);
-    }
-
     // 2D-2D pose (stereo camera)
     SP_CPUFUNC bool refinePose(Pose &pose, const CamParam &cam0, const Mem1<Vec2> &pixs0, const CamParam &cam1, const Mem1<Vec2> &pixs1, const int maxit = 10) {
         SP_ASSERT(pixs0.size() == pixs1.size());
@@ -467,7 +462,7 @@ namespace sp {
         Mem1<Vec3> nrms;
         for (int i = 0; i < 3; i++) {
             const Vec2 npx = invCamD(cam, pixs[i]);
-            const Vec3 vec = getVec3(npx.x, npx.y, 1.0);
+            const Vec3 vec = Vec3(npx.x, npx.y, 1.0);
             const Vec3 nrm = vec / normVec(vec);
             nrms.push(nrm);
         }
@@ -573,7 +568,7 @@ namespace sp {
                     R(r, c) = U(r * 4 + c, 0);
                 }
             }
-            Vec3 T = getVec3(U(3, 0), U(7, 0), U(11, 0));
+            Vec3 T = Vec3(U(3, 0), U(7, 0), U(11, 0));
 
             const Vec3 pos = R * mean(objs) + T;
             if (pos.z < 0.0) {
@@ -628,9 +623,9 @@ namespace sp {
 
         const Mat mat = invMat(getMat(cam)) * h;
 
-        const Vec3 m0 = getVec3(mat(0, 0), mat(1, 0), mat(2, 0));
-        const Vec3 m1 = getVec3(mat(0, 1), mat(1, 1), mat(2, 1));
-        const Vec3 m2 = getVec3(mat(0, 2), mat(1, 2), mat(2, 2));
+        const Vec3 m0 = Vec3(mat(0, 0), mat(1, 0), mat(2, 0));
+        const Vec3 m1 = Vec3(mat(0, 1), mat(1, 1), mat(2, 1));
+        const Vec3 m2 = Vec3(mat(0, 2), mat(1, 2), mat(2, 2));
 
         const Vec3 n0 = unitVec(m0);
         const Vec3 n1 = unitVec(m1);
@@ -643,46 +638,6 @@ namespace sp {
         const Vec3 Y = unitVec(subVec(A, B));
 
         pose = getPose(getRotAxis(X, Y, Z), m2 / sqrt(normVec(m0) * normVec(m1)));
-        return true;
-    }
-
-    // 2D-2D pose (planar object)
-    SP_CPUFUNC bool calcPose(Pose &pose, const CamParam &cam, const Mem1<Vec2> &pixs, const Mem1<Vec2> &objs, const int maxit = 10) {
-        SP_ASSERT(pixs.size() == objs.size());
-
-        const int unit = 4;
-        if (pixs.size() < unit) return false;
-
-        const Mem1<Vec2> udpixs = pixUndist(cam, pixs);
-
-        Mat hom;
-        if (calcHMat(hom, udpixs, objs) == false) return false;
-
-        if (calcPose(pose, cam, hom) == false) return false;
-
-        if (maxit - 1 > 0) {
-            if (refinePose(pose, cam, pixs, getVec3(objs, 0.0), maxit) == false) return false;
-        }
-
-        return true;
-    }
-
-    // 2D-2D pose (stereo camera)
-    SP_CPUFUNC bool calcPose(Pose &pose, const CamParam &cam0, const Mem1<Vec2> &pixs0, const CamParam &cam1, const Mem1<Vec2> &pixs1, const int maxit = 10) {
-        SP_ASSERT(pixs0.size() == pixs1.size());
-
-        const Mem1<Vec2> npxs0 = invCamD(cam0, pixs0);
-        const Mem1<Vec2> npxs1 = invCamD(cam1, pixs1);
-
-        Mat E;
-        if (calcEMat(E, npxs0, npxs1) == false) return false;
-
-        if (dcmpEMat(pose, E, npxs0, npxs1) == false) return false;
-
-        if (maxit - 1 > 0) {
-            if (refinePose(pose, cam0, pixs0, cam1, pixs1) == false) return false;
-        }
-
         return true;
     }
 
@@ -804,171 +759,5 @@ namespace sp {
         return true;
     }
 
-    // 2D-3D pose
-    SP_CPUFUNC bool calcPoseRANSAC(Pose &pose, const CamParam &cam, const Mem1<Vec2> &pixs, const Mem1<Vec3> &objs, const SP_REAL thresh = 4.0) {
-        SP_ASSERT(pixs.size() == objs.size());
-      
-        const int num = pixs.size();
-        const int unit = 3;
-
-        if (num < unit) return false;
-        if (num < unit * 2) {
-            return calcPose(pose, cam, pixs, objs);
-        }
-
-        int maxit = ransacAdaptiveStop(SP_RANSAC_MINEVAL, unit);
-
-        RandomSample<Vec2> _pixs(pixs, unit);
-        RandomSample<Vec3> _objs(objs, unit);
-
-        SP_REAL maxe = 0.0;
-        int it = 0;
-        for (it = 0; it < maxit; it++) {
-            const Mem1<Vec2> rpixs = _pixs.gen(it);
-            const Mem1<Vec3> robjs = _objs.gen(it);
-
-            Mem1<Pose> tests;
-            if (calcPoseP3P(tests, cam, rpixs, robjs) == false) continue;
-
-            for (int i = 0; i < tests.size(); i++) {
-
-                const Mem1<SP_REAL> errs = calcPrjErr(tests[i], cam, pixs, objs);
-                const SP_REAL eval = ransacEval(errs, unit, thresh);
-
-                if (eval > maxe) {
-                    //SP_PRINTD("eval %lf\n", eval);
-                    maxe = eval;
-                    maxit = ransacAdaptiveStop(eval, unit);
-
-                    pose = tests[i];
-                }
-            }
-        }
-        //SP_PRINTD("RANSAC iteration %d rate %.2lf\n", it, maxe);
-        if (maxe < SP_RANSAC_MINEVAL) return false;
-
-        // refine
-        {
-            const Mem1<SP_REAL> errs = calcPrjErr(pose, cam, pixs, objs);
-            const Mem1<Vec2> dpixs = filter(pixs, errs, thresh * 2);
-            const Mem1<Vec3> dobjs = filter(objs, errs, thresh * 2);
-
-            if (refinePose(pose, cam, dpixs, dobjs) == false) return false;
-        }
-
-        return true;
-    }
-
-    // 2D-2D pose (planar object)
-    SP_CPUFUNC bool calcPoseRANSAC(Pose &pose, const CamParam &cam, const Mem1<Vec2> &pixs, const Mem1<Vec2> &objs, const SP_REAL thresh = 4.0) {
-        SP_ASSERT(pixs.size() == objs.size());
-
-        const int num = pixs.size();
-        const int unit = 4;
-
-        if (num < unit) return false;
-        if (num < unit * 2) {
-            return calcPose(pose, cam, pixs, objs);
-        }
-
-        int maxit = ransacAdaptiveStop(SP_RANSAC_MINEVAL, unit);
-
-        RandomSample<Vec2> _pixs(pixs, unit);
-        RandomSample<Vec2> _objs(objs, unit);
-
-        SP_REAL maxe = 0.0;
-        int it = 0;
-        for (it = 0; it < maxit; it++) {
-
-            const Mem1<Vec2> rpixs = _pixs.gen(it);
-            const Mem1<Vec2> robjs = _objs.gen(it);
-
-            Pose test;
-            if (calcPose(test, cam, rpixs, robjs, 1) == false) continue;
-
-            const Mem1<SP_REAL> errs = calcPrjErr(test, cam, pixs, getVec3(objs, 0.0));
-            const SP_REAL eval = ransacEval(errs, unit, thresh);
-
-            if (eval > maxe) {
-                //SP_PRINTD("eval %lf\n", eval);
-                maxe = eval;
-                maxit = ransacAdaptiveStop(eval, unit);
-
-                pose = test;
-            }
-        }
-        //SP_PRINTD("RANSAC iteration %d rate %.2lf\n", it, maxe);
-        if (maxe < SP_RANSAC_MINEVAL) return false;
-
-        // refine
-        {
-            const Mem1<SP_REAL> errs = calcPrjErr(pose, cam, pixs, getVec3(objs, 0.0));
-            const Mem1<Vec2> dpixs = filter(pixs, errs, thresh * 2);
-            const Mem1<Vec2> dobjs = filter(objs, errs, thresh * 2);
-
-            if (refinePose(pose, cam, dpixs, dobjs) == false) return false;
-        }
-
-        return true;
-    }
-
-    // 2D-2D pose (stereo camera)
-    SP_CPUFUNC bool calcPoseRANSAC(Pose &pose, const CamParam &cam0, const Mem1<Vec2> &pixs0, const CamParam &cam1, const Mem1<Vec2> &pixs1, const SP_REAL thresh = 2.0) {
-        SP_ASSERT(pixs0.size() == pixs1.size());
-
-        const Mem1<Vec2> npxs0 = invCamD(cam0, pixs0);
-        const Mem1<Vec2> npxs1 = invCamD(cam1, pixs1);
-
-        const double nth = thresh / ((cam0.fx + cam0.fy + cam1.fx + cam1.fy) / 4.0);
-
-        Mat E;
-        if (calcEMatRANSAC(E, npxs0, npxs1, nth) == false) return false;
-        const Mem1<SP_REAL> errs = errMatType2(E, npxs0, npxs1);
-
-        const Mem1<Vec2> dnpxs0 = filter(npxs0, errs, nth * 2);
-        const Mem1<Vec2> dnpxs1 = filter(npxs1, errs, nth * 2);
-        if (dcmpEMat(pose, E, dnpxs0, dnpxs1) == false) return false;
-
-        const Mem1<Vec2> dpixs0 = filter(pixs0, errs, nth * 2);
-        const Mem1<Vec2> dpixs1 = filter(pixs1, errs, nth * 2);
-        if (refinePose(pose, cam0, dpixs0, cam1, dpixs1) == false) return false;
-        return true;
-    }
-
-
-    //--------------------------------------------------------------------------------
-    // stereo
-    //--------------------------------------------------------------------------------
- 
-    SP_CPUFUNC SP_REAL evalStereo(const CamParam &cam0, const Mem1<Vec2> &pixs0, const CamParam &cam1, const Mem1<Vec2> &pixs1, const SP_REAL minAngle = 2.0 * SP_PI / 180.0) {
-
-        Pose pose = zeroPose();
-        if (calcPoseRANSAC(pose, cam0, pixs0, cam1, pixs1) == false) return 0.0;
-
-        Mem1<Vec3> pnts;
-        {
-            Mem1<bool> mask;
-            if (calcPnt3d(pnts, mask, zeroPose(), cam0, pixs0, pose, cam1, pixs1) == false) return 0.0;
-            pnts = filter(pnts, mask);
-        }
-
-        Mem1<SP_REAL> zlist;
-        for (int i = 0; i < pnts.size(); i++) {
-            const Pose base = zeroPose();
-
-            const Vec3 vec0 = unitVec(base.pos - pnts[i]);
-            const Vec3 vec1 = unitVec(pose.pos - pnts[i]);
-            const SP_REAL angle = acos(dotVec(vec0, vec1));
-
-            if (angle > minAngle) {
-                zlist.push(pnts[i].z);
-            }
-        }
-        if (zlist.size() == 0) return 0.0;
-
-        const SP_REAL pnum = min(10.0, log2(zlist.size()));
-        const SP_REAL eval = pnum / 10.0;
-        return eval;
-    }
 }
 #endif

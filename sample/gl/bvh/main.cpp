@@ -44,7 +44,7 @@ private:
         m_model = loadBunny(SP_DATA_DIR "/stanford/bun_zipper.ply");
         SP_ASSERT(m_model.size() > 0);
 
-        m_pose = getPose(getVec3(0.0, 0.0, getModelDistance(m_model, m_cam)));
+        m_pose = getPose(Vec3(0.0, 0.0, getModelDistance(m_model, m_cam)));
 
         static Material mat;
         mat.col = getCol4f(0.9, 0.2, 0.2, 1.0);
@@ -88,8 +88,8 @@ private:
 
             for (int v = 0; v < depth.dsize[1]; v++) {
                 for (int u = 0; u < depth.dsize[0]; u++) {
-                    const Vec2 prj = invCam(m_cam, getVec2(u, v));
-                    const Vec3 vec = unitVec(getVec3(prj.x, prj.y, 1.0));
+                    const Vec2 prj = invCam(m_cam, Vec2(u, v));
+                    const Vec3 vec = unitVec(Vec3(prj.x, prj.y, 1.0));
                     VecPD3 ray;
                     ray.pos = ipose.pos;
                     ray.drc = irmat * (vec);
@@ -118,18 +118,18 @@ private:
                 const Vec3 B = nodes[i]->box.pos[1];
 
                 glBegin(GL_LINE_LOOP);
-                glVertex(getVec3(A.x, A.y, A.z)); glVertex(getVec3(B.x, A.y, A.z)); glVertex(getVec3(B.x, B.y, A.z)); glVertex(getVec3(A.x, B.y, A.z));
+                glVertex(Vec3(A.x, A.y, A.z)); glVertex(Vec3(B.x, A.y, A.z)); glVertex(Vec3(B.x, B.y, A.z)); glVertex(Vec3(A.x, B.y, A.z));
                 glEnd();
 
                 glBegin(GL_LINE_LOOP);
-                glVertex(getVec3(A.x, A.y, B.z)); glVertex(getVec3(B.x, A.y, B.z)); glVertex(getVec3(B.x, B.y, B.z)); glVertex(getVec3(A.x, B.y, B.z));
+                glVertex(Vec3(A.x, A.y, B.z)); glVertex(Vec3(B.x, A.y, B.z)); glVertex(Vec3(B.x, B.y, B.z)); glVertex(Vec3(A.x, B.y, B.z));
                 glEnd();
 
                 glBegin(GL_LINES);
-                glVertex(getVec3(A.x, A.y, A.z)); glVertex(getVec3(A.x, A.y, B.z));
-                glVertex(getVec3(B.x, A.y, A.z)); glVertex(getVec3(B.x, A.y, B.z));
-                glVertex(getVec3(A.x, B.y, A.z)); glVertex(getVec3(A.x, B.y, B.z));
-                glVertex(getVec3(B.x, B.y, A.z)); glVertex(getVec3(B.x, B.y, B.z));
+                glVertex(Vec3(A.x, A.y, A.z)); glVertex(Vec3(A.x, A.y, B.z));
+                glVertex(Vec3(B.x, A.y, A.z)); glVertex(Vec3(B.x, A.y, B.z));
+                glVertex(Vec3(A.x, B.y, A.z)); glVertex(Vec3(A.x, B.y, B.z));
+                glVertex(Vec3(B.x, B.y, A.z)); glVertex(Vec3(B.x, B.y, B.z));
                 glEnd();
             }
         }

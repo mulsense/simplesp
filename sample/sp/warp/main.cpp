@@ -22,10 +22,10 @@ int main(){
         const int w = imgs[0].dsize[0];
         const int h = imgs[0].dsize[1];
 
-        vtxs.push(getVec2(0.0, 0.0));
-        vtxs.push(getVec2(w, 0.0));
-        vtxs.push(getVec2(w, h));
-        vtxs.push(getVec2(0.0, h));
+        vtxs.push(Vec2(0.0, 0.0));
+        vtxs.push(Vec2(w, 0.0));
+        vtxs.push(Vec2(w, h));
+        vtxs.push(Vec2(0.0, h));
     }
 
     // homograpy

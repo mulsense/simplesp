@@ -25,7 +25,7 @@ namespace sp{
     //--------------------------------------------------------------------------------
 
     SP_CPUFUNC Vec3 getModelCent(const Mem1<Mesh3> &model){
-        Vec3 sum = getVec3(0.0, 0.0, 0.0);
+        Vec3 sum = Vec3(0.0, 0.0, 0.0);
         for (int i = 0; i < model.size(); i++){
             sum += getMeshCent(model[i]);
         }
@@ -58,7 +58,7 @@ namespace sp{
         const int num = getGeodesicMeshNum(0);
         for (int i = 0; i < num; i++){
             const Vec3 v = getMeshCent(getGeodesicMesh(0, i)) * (-1.0);
-            const Pose pose = getPose(getRotDirection(v), getVec3(0.0, 0.0, distance));
+            const Pose pose = getPose(getRotDirection(v), Vec3(0.0, 0.0, distance));
             Mem2<VecPD3> map;
             renderVecPD(map, cam, pose, model);
 
@@ -203,7 +203,7 @@ namespace sp{
 
             for (int i = 0; i < num; i++) {
                 const Vec3 v = getMeshCent(getGeodesicMesh(level, i)) * (-1.0);
-                const Pose pose = getPose(getRotDirection(v), getVec3(0.0, 0.0, distance));
+                const Pose pose = getPose(getRotDirection(v), Vec3(0.0, 0.0, distance));
                
                 pmodels[i].pose = pose;
             }
@@ -349,22 +349,22 @@ namespace sp{
         Vec3 a, b, c, d;
         switch(xyz){
         case 0:
-            a = getVec3(0.0, -hs, -hs);
-            b = getVec3(0.0, +hs, -hs);
-            c = getVec3(0.0, +hs, +hs);
-            d = getVec3(0.0, -hs, +hs);
+            a = Vec3(0.0, -hs, -hs);
+            b = Vec3(0.0, +hs, -hs);
+            c = Vec3(0.0, +hs, +hs);
+            d = Vec3(0.0, -hs, +hs);
             break;
         case 1:
-            a = getVec3(-hs, 0.0, -hs);
-            b = getVec3(-hs, 0.0, +hs);
-            c = getVec3(+hs, 0.0, +hs);
-            d = getVec3(+hs, 0.0, -hs);
+            a = Vec3(-hs, 0.0, -hs);
+            b = Vec3(-hs, 0.0, +hs);
+            c = Vec3(+hs, 0.0, +hs);
+            d = Vec3(+hs, 0.0, -hs);
             break;
         case 2:
-            a = getVec3(-hs, -hs, 0.0);
-            b = getVec3(+hs, -hs, 0.0);
-            c = getVec3(+hs, +hs, 0.0);
-            d = getVec3(-hs, +hs, 0.0);
+            a = Vec3(-hs, -hs, 0.0);
+            b = Vec3(+hs, -hs, 0.0);
+            c = Vec3(+hs, +hs, 0.0);
+            d = Vec3(-hs, +hs, 0.0);
             break;
 
         }
@@ -400,10 +400,10 @@ namespace sp{
                 for (int x = -1; x <= +1; x += 2) {
                     if ((x * y * z) > 0) continue;
 
-                    const Vec3 p0 = getVec3(+x, +y, +z) * half;
-                    const Vec3 px = getVec3(-x, +y, +z) * half;
-                    const Vec3 py = getVec3(+x, -y, +z) * half;
-                    const Vec3 pz = getVec3(+x, +y, -z) * half;
+                    const Vec3 p0 = Vec3(+x, +y, +z) * half;
+                    const Vec3 px = Vec3(-x, +y, +z) * half;
+                    const Vec3 py = Vec3(+x, -y, +z) * half;
+                    const Vec3 pz = Vec3(+x, +y, -z) * half;
 
                     model.push(getMesh3(p0, py, px));
                     model.push(getMesh3(p0, pz, py));
@@ -418,8 +418,8 @@ namespace sp{
     SP_CPUFUNC Mem1<Mesh3> loadCone(const Vec3 &drc, const double radius, const int div = 36) {
         Mem1<Mesh3> model;
 
-        const Vec3 nx = invRot(getRotDirection(drc)) * getVec3(1.0, 0.0, 0.0);
-        const Vec3 ny = invRot(getRotDirection(drc)) * getVec3(0.0, 1.0, 0.0);
+        const Vec3 nx = invRot(getRotDirection(drc)) * Vec3(1.0, 0.0, 0.0);
+        const Vec3 ny = invRot(getRotDirection(drc)) * Vec3(0.0, 1.0, 0.0);
 
         const double step = 360.0 / div;
         for (int i = 0; i < div; i++) {
@@ -430,7 +430,7 @@ namespace sp{
             const Vec3 c = drc;
 
             model.push(getMesh3(a, b, c));
-            model.push(getMesh3(b, a, getVec3(0.0, 0.0, 0.0)));
+            model.push(getMesh3(b, a, Vec3(0.0, 0.0, 0.0)));
         }
 
         return model;
@@ -439,8 +439,8 @@ namespace sp{
     SP_CPUFUNC Mem1<Mesh3> loadCylinder(const Vec3 &drc, const double radius, const int div = 36) {
         Mem1<Mesh3> model;
 
-        const Vec3 nx = invRot(getRotDirection(drc)) * getVec3(1.0, 0.0, 0.0);
-        const Vec3 ny = invRot(getRotDirection(drc)) * getVec3(0.0, 1.0, 0.0);
+        const Vec3 nx = invRot(getRotDirection(drc)) * Vec3(1.0, 0.0, 0.0);
+        const Vec3 ny = invRot(getRotDirection(drc)) * Vec3(0.0, 1.0, 0.0);
 
         const double step = 360.0 / div;
         for (int i = 0; i < div; i++) {
@@ -453,8 +453,8 @@ namespace sp{
 
             model.push(getMesh3(a, b, d));
             model.push(getMesh3(d, c, a));
-            model.push(getMesh3(b, a, getVec3(0.0, 0.0, 0.0)));
-            model.push(getMesh3(a, b, getVec3(0.0, 0.0, 0.0)) + drc);
+            model.push(getMesh3(b, a, Vec3(0.0, 0.0, 0.0)));
+            model.push(getMesh3(a, b, Vec3(0.0, 0.0, 0.0)) + drc);
         }
 
         return model;

@@ -366,20 +366,13 @@ namespace sp{
     // vector util
     //--------------------------------------------------------------------------------
 
-    SP_CPUFUNC Mem1<Vec3> getVec3(const Mem1<Vec2> &vec, const double z) {
-        Mem<Vec3> dst(vec.dim, vec.dsize);
-        for (int i = 0; i < dst.size(); i++) {
-            dst[i] = getVec3(vec[i].x, vec[i].y, z);
-        }
-        return dst;
-    }
 
     SP_CPUFUNC Mem2<Vec2> grid(const int dsize0, const int dsize1) {
         Mem2<Vec2> map(dsize0, dsize1);
 
         for (int y = 0; y < dsize1; y++) {
             for (int x = 0; x < dsize0; x++) {
-                map(x, y) = getVec2(x, y);
+                map(x, y) = Vec2(x, y);
             }
         }
 

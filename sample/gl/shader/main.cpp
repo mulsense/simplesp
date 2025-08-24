@@ -64,10 +64,10 @@ private:
             const int x = ::rand() % 101 - 50;
             const int y = ::rand() % 101 - 50;
             const int z = ::rand() % 101 - 50;
-            m_vtxs.push(getVec3(x, y, z));
+            m_vtxs.push(Vec3(x, y, z));
         }
 
-        m_pose = getPose(getVec3(0.0, 0.0, getModelDistance(m_model, m_cam)));
+        m_pose = getPose(Vec3(0.0, 0.0, getModelDistance(m_model, m_cam)));
 
         //m_vbo.set(m_model.ptr, sizeof(Mesh3) * m_model.size());
 
@@ -260,7 +260,7 @@ private:
             }
 
             const Mat transform = glGetProjMat(m_cam, m_viewPos, m_viewScale) * m_pose;
-            const Vec3 light = invPose(m_pose) * getVec3(0, 0, -1000);
+            const Vec3 light = invPose(m_pose) * Vec3(0, 0, -1000);
 
             shader.enable();
             shader.setUniform4m("transform", transform.ptr);

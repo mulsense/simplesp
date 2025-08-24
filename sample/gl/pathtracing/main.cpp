@@ -43,10 +43,10 @@ private:
             m_model = loadGeodesicDorm(100.0, 1);
         }
 
-        //m_model.push(m_model + getVec3(0, 50, 100));
+        //m_model.push(m_model + Vec3(0, 50, 100));
         SP_ASSERT(m_model.size() > 0);
 
-        m_pose = getPose(getVec3(0.0, 0.0, getModelDistance(m_model, m_cam)));
+        m_pose = getPose(Vec3(0.0, 0.0, getModelDistance(m_model, m_cam)));
 
 
         static Mem1<Material> mats0;
@@ -70,7 +70,7 @@ private:
 
         Mem1<PathTrace::PntLight> lights;
         lights.push(PathTrace::PntLight());
-        lights[0].pos = invPose(m_pose) * getVec3(200.0, -200.0, 0.0);
+        lights[0].pos = invPose(m_pose) * Vec3(200.0, -200.0, 0.0);
 
         PathTrace::Light amb = PathTrace::Light();
         amb.val = 0.8f;
@@ -82,7 +82,7 @@ private:
         //m_pt.addModel(m_model, mats0);
         Mem1<Mat> poses;
         poses.push(eyeMat(4, 4));
-        poses.push(getMat(getPose(getVec3(100, 0, 0)), 4, 4));
+        poses.push(getMat(getPose(Vec3(100, 0, 0)), 4, 4));
         m_pt.addModel(m_model, mats0, poses);
         m_pt.build();
     }
@@ -111,7 +111,7 @@ private:
 
                 //Mem1<PathTrace::PntLight> lights;
                 //lights.push(PathTrace::PntLight());
-                //lights[0].pos = invPose(m_pose) * getVec3(200.0, -200.0, 0.0);
+                //lights[0].pos = invPose(m_pose) * Vec3(200.0, -200.0, 0.0);
                 //m_pt.setPntLights(lights);
             }
             m_thread.run([&]() {

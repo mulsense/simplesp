@@ -122,9 +122,9 @@ namespace sp {
         void setPos(const double x, const double y) {
 
             if (buttonL || buttonR || buttonM) {
-                move = getVec2(x, y) - pos;
+                move = Vec2(x, y) - pos;
             }
-            pos = getVec2(x, y);
+            pos = Vec2(x, y);
         }
 
         void setScroll(const double x, const double y) {
@@ -168,7 +168,7 @@ namespace sp {
         }
 
         if (mouse.buttonL && normVec(mouse.move) > 0.0) {
-            cpose.rot = getRotAngle(getVec3(+mouse.move.y, -mouse.move.x, 0.0), 0.01 * normVec(mouse.move)) * cpose.rot;
+            cpose.rot = getRotAngle(Vec3(+mouse.move.y, -mouse.move.x, 0.0), 0.01 * normVec(mouse.move)) * cpose.rot;
             ret = true;
         }
 
@@ -248,7 +248,7 @@ namespace sp {
         BaseWindow() {
             m_win = NULL;
 
-            m_viewPos = getVec2(0.0, 0.0);
+            m_viewPos = Vec2(0.0, 0.0);
             m_viewScale = 1.0;
 
             memset(m_key, 0, sizeof(m_key));

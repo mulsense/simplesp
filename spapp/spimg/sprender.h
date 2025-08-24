@@ -66,7 +66,7 @@ namespace sp{
 
         const double div = max(fabs(pix1.x - pix0.x), fabs(pix1.y - pix0.y));
         
-        const Vec2 step = (round(div) > 0) ? (pix1 - pix0) / div : getVec2(0.0, 0.0);
+        const Vec2 step = (round(div) > 0) ? (pix1 - pix0) / div : Vec2(0.0, 0.0);
         for (int i = 0; i <= round(div); i++) {
             renderPoint(dst, pix0 + step * i, val, thick);
         }
@@ -111,8 +111,8 @@ namespace sp{
         for (int r = 0; r < 36; r++){
             const double r0 = (r + 0) * SP_PI / 18.0;
             const double r1 = (r + 1) * SP_PI / 18.0;
-            const Vec2 pix0 = pix + getVec2(cos(r0), sin(r0)) * radius;
-            const Vec2 pix1 = pix + getVec2(cos(r1), sin(r1)) * radius;
+            const Vec2 pix0 = pix + Vec2(cos(r0), sin(r0)) * radius;
+            const Vec2 pix1 = pix + Vec2(cos(r1), sin(r1)) * radius;
             renderLine(dst, pix0, pix1, val, thick);
         }
     }
@@ -158,23 +158,23 @@ namespace sp{
         const TYPE g = cast<TYPE>(getCol3(50, 255, 50));
         const TYPE b = cast<TYPE>(getCol3(50, 50, 255));
 
-        renderLine(dst, cam, pose, getVec3(0.0, 0.0, 0.0), getVec3(length, 0.0, 0.0), r, thick);
-        renderLine(dst, cam, pose, getVec3(0.0, 0.0, 0.0), getVec3(0.0, length, 0.0), g, thick);
-        renderLine(dst, cam, pose, getVec3(0.0, 0.0, 0.0), getVec3(0.0, 0.0, length), b, thick);
+        renderLine(dst, cam, pose, Vec3(0.0, 0.0, 0.0), Vec3(length, 0.0, 0.0), r, thick);
+        renderLine(dst, cam, pose, Vec3(0.0, 0.0, 0.0), Vec3(0.0, length, 0.0), g, thick);
+        renderLine(dst, cam, pose, Vec3(0.0, 0.0, 0.0), Vec3(0.0, 0.0, length), b, thick);
     }
 
     template<typename TYPE>
     SP_CPUFUNC void renderCube(Mem<TYPE> &dst, const CamParam &cam, const Pose &pose, const double size, const TYPE &val, const double thick = 1.0){
 
         const double s = size / 2.0;
-        const Vec2 xyloop[4] = { getVec2(-s, -s), getVec2(+s, -s), getVec2(+s, +s), getVec2(-s, +s) };
+        const Vec2 xyloop[4] = { Vec2(-s, -s), Vec2(+s, -s), Vec2(+s, +s), Vec2(-s, +s) };
         for (int i = 0; i < 4; i++){
             const Vec2 a = xyloop[(i + 0) % 4];
             const Vec2 b = xyloop[(i + 1) % 4];
 
-            renderLine(dst, cam, pose, getVec3(a.x, a.y, -s), getVec3(b.x, b.y, -s), val, thick);
-            renderLine(dst, cam, pose, getVec3(a.x, a.y, +s), getVec3(b.x, b.y, +s), val, thick);
-            renderLine(dst, cam, pose, getVec3(a.x, a.y, -s), getVec3(a.x, a.y, +s), val, thick);
+            renderLine(dst, cam, pose, Vec3(a.x, a.y, -s), Vec3(b.x, b.y, -s), val, thick);
+            renderLine(dst, cam, pose, Vec3(a.x, a.y, +s), Vec3(b.x, b.y, +s), val, thick);
+            renderLine(dst, cam, pose, Vec3(a.x, a.y, -s), Vec3(a.x, a.y, +s), val, thick);
         }
     }
 
@@ -184,8 +184,8 @@ namespace sp{
         for (int i = 0; i < num; i++){
             const double half = length / 2.0;
             const double p = i * length / (num - 1);
-            renderLine(dst, cam, pose, getVec3(-half, -half + p, 0.0), getVec3(+half, -half + p, 0.0), val, thick);
-            renderLine(dst, cam, pose, getVec3(-half + p, -half, 0.0), getVec3(-half + p, +half, 0.0), val, thick);
+            renderLine(dst, cam, pose, Vec3(-half, -half + p, 0.0), Vec3(+half, -half + p, 0.0), val, thick);
+            renderLine(dst, cam, pose, Vec3(-half + p, -half, 0.0), Vec3(-half + p, +half, 0.0), val, thick);
         }
     }
 
@@ -197,9 +197,9 @@ namespace sp{
                 const double half = length / 2.0;
                 const double p = i * length / (num - 1);
                 const double q = j * length / (num - 1);
-                renderLine(dst, cam, pose, getVec3(-half, -half + p, -half + q), getVec3(+half, -half + p, -half + q), val, thick);
-                renderLine(dst, cam, pose, getVec3(-half + p, -half, -half + q), getVec3(-half + p, +half, -half + q), val, thick);
-                renderLine(dst, cam, pose, getVec3(-half + p, -half + q, -half), getVec3(-half + p, -half + q, +half), val, thick);
+                renderLine(dst, cam, pose, Vec3(-half, -half + p, -half + q), Vec3(+half, -half + p, -half + q), val, thick);
+                renderLine(dst, cam, pose, Vec3(-half + p, -half, -half + q), Vec3(-half + p, +half, -half + q), val, thick);
+                renderLine(dst, cam, pose, Vec3(-half + p, -half + q, -half), Vec3(-half + p, -half + q, +half), val, thick);
             }
         }
     }
@@ -210,12 +210,12 @@ namespace sp{
         const double w = (trg.dsize[0] / 2.0) / f * size;
         const double h = (trg.dsize[1] / 2.0) / f * size;
 
-        const Vec2 loop[4] = { getVec2(-w, -h), getVec2(+w, -h), getVec2(+w, +h), getVec2(-w, +h) };
+        const Vec2 loop[4] = { Vec2(-w, -h), Vec2(+w, -h), Vec2(+w, +h), Vec2(-w, +h) };
         for (int i = 0; i < 4; i++) {
             const Vec2 a = loop[(i + 0) % 4];
             const Vec2 b = loop[(i + 1) % 4];
-            renderLine(dst, cam, pose, getVec3(0.0, 0.0, 0.0), getVec3(a.x, a.y, size), val, thick);
-            renderLine(dst, cam, pose, getVec3(a.x, a.y, size), getVec3(b.x, b.y, size), val, thick);
+            renderLine(dst, cam, pose, Vec3(0.0, 0.0, 0.0), Vec3(a.x, a.y, size), val, thick);
+            renderLine(dst, cam, pose, Vec3(a.x, a.y, size), Vec3(b.x, b.y, size), val, thick);
         }
     }
 
@@ -223,10 +223,10 @@ namespace sp{
     SP_CPUFUNC void renderRect(Mem<TYPE> &dst, const CamParam &cam, const Pose &pose, const Vec2 &obj0, const Vec2 &obj1, const TYPE &val, const double thick = 1.0) {
 
         Mem1<Vec3> objs;
-        objs.push(getVec3(obj0.x, obj0.y, 0.0));
-        objs.push(getVec3(obj1.x, obj0.y, 0.0));
-        objs.push(getVec3(obj1.x, obj1.y, 0.0));
-        objs.push(getVec3(obj0.x, obj1.y, 0.0));
+        objs.push(Vec3(obj0.x, obj0.y, 0.0));
+        objs.push(Vec3(obj1.x, obj0.y, 0.0));
+        objs.push(Vec3(obj1.x, obj1.y, 0.0));
+        objs.push(Vec3(obj0.x, obj1.y, 0.0));
 
         for (int i = 0; i < 4; i++) {
             renderLine(dst, cam, pose, objs[i], objs[(i + 1) % 4], val, thick);
@@ -237,10 +237,10 @@ namespace sp{
     SP_CPUFUNC void renderRect(Mem<TYPE> &dst, const Mat &hom, const Vec2 &obj0, const Vec2 &obj1, const TYPE &val, const double thick = 1.0) {
 
         Mem1<Vec2> objs;
-        objs.push(getVec2(obj0.x, obj0.y));
-        objs.push(getVec2(obj1.x, obj0.y));
-        objs.push(getVec2(obj1.x, obj1.y));
-        objs.push(getVec2(obj0.x, obj1.y));
+        objs.push(Vec2(obj0.x, obj0.y));
+        objs.push(Vec2(obj1.x, obj0.y));
+        objs.push(Vec2(obj1.x, obj1.y));
+        objs.push(Vec2(obj0.x, obj1.y));
 
         for (int i = 0; i < 4; i++) {
             renderLine(dst, hom * objs[i], hom * objs[(i + 1) % 4], val, thick);
@@ -253,15 +253,15 @@ namespace sp{
         const int w = dst.dsize[0];
         const int h = dst.dsize[1];
 
-        const Vec3 line = F * getVec3(pix.x, pix.y, 1.0);
+        const Vec3 line = F * Vec3(pix.x, pix.y, 1.0);
         if (fabs(line.y) > fabs(line.x)){
-            const Vec2 pix0 = getVec2(0, -(0 * line.x + line.z) / line.y);
-            const Vec2 pix1 = getVec2(w, -(w * line.x + line.z) / line.y);
+            const Vec2 pix0 = Vec2(0, -(0 * line.x + line.z) / line.y);
+            const Vec2 pix1 = Vec2(w, -(w * line.x + line.z) / line.y);
             renderLine(dst, pix0, pix1, val, thick);
         }
         if (fabs(line.x) > fabs(line.y)){
-            const Vec2 pix0 = getVec2(-(0 * line.y + line.z) / line.x, 0);
-            const Vec2 pix1 = getVec2(-(h * line.y + line.z) / line.x, h);
+            const Vec2 pix0 = Vec2(-(0 * line.y + line.z) / line.x, 0);
+            const Vec2 pix1 = Vec2(-(h * line.y + line.z) / line.x, h);
             renderLine(dst, pix0, pix1, val, thick);
         }
     }
@@ -285,19 +285,19 @@ namespace sp{
 
         const double radius = normVec(mrkMap[0] - mrkMap[1]) * 0.1;
 
-        const Vec3 base = pose * getVec3(0.0, 0.0, 0.0);
-        const Vec3 A = pose * getVec3(1.0, 0.0, 0.0) - base;
-        const Vec3 B = pose * getVec3(0.0, 1.0, 0.0) - base;
+        const Vec3 base = pose * Vec3(0.0, 0.0, 0.0);
+        const Vec3 A = pose * Vec3(1.0, 0.0, 0.0) - base;
+        const Vec3 B = pose * Vec3(0.0, 1.0, 0.0) - base;
 
         SP_REAL mat[3 * 3] = { -A.x, -B.x, 0.0, -A.y, -B.y, 0.0, -A.z, -B.z, 0.0 };
         SP_REAL val[3] = { base.x, base.y, base.z };
         
-        //const Vec2 cent = getVec3(cam.cx, cam.cy);
+        //const Vec2 cent = Vec3(cam.cx, cam.cy);
 
         for (int v = 0; v < dst.dsize[1]; v++) {
             for (int u = 0; u < dst.dsize[0]; u++) {
-                const Vec2 npx = npxUndist(cam, invCam(cam, getVec2(u, v)));
-                const Vec3 vec = getVec3(npx.x, npx.y, 1.0);
+                const Vec2 npx = npxUndist(cam, invCam(cam, Vec2(u, v)));
+                const Vec3 vec = Vec3(npx.x, npx.y, 1.0);
 
                 dst(u, v) = 255;
 
@@ -311,7 +311,7 @@ namespace sp{
                 SP_REAL result[3];
                 mulMat(result, 3, 1, inv, 3, 3, val, 3, 1);
 
-                const Vec2 pos = getVec2(result[0], result[1]);
+                const Vec2 pos = Vec2(result[0], result[1]);
 
                 for (int i = 0; i < mrkMap.size(); i++) {
                     if (normVec(pos - mrkMap[i]) < radius) {
@@ -375,8 +375,8 @@ namespace sp{
 
         for (int v = rect.dbase[1]; v < rect.dbase[1] + rect.dsize[1]; v++) {
             for (int u = rect.dbase[0]; u < rect.dbase[0] + rect.dsize[0]; u++) {
-                const Vec2 prj = npxUndist(cam, invCam(cam, getVec2(u, v)));
-                const Vec3 vec = getVec3(prj.x, prj.y, 1.0);
+                const Vec2 prj = npxUndist(cam, invCam(cam, Vec2(u, v)));
+                const Vec3 vec = Vec3(prj.x, prj.y, 1.0);
 
                 mat[0 * 3 + 2] = vec.x;
                 mat[1 * 3 + 2] = vec.y;
@@ -461,9 +461,9 @@ namespace sp{
             for (int u = 0; u < cam.dsize[0]; u++) {
                 if (cmap(u, v).pos.z == 0.0) continue;
 
-                const Vec2 cpix = getVec2(u, v);
+                const Vec2 cpix = Vec2(u, v);
                 const Vec2 cnpx = invCam(cam, cpix);
-                const Vec3 cpos = getVec3(cnpx.x, cnpx.y, 1.0) * cmap(u, v).pos.z;
+                const Vec3 cpos = Vec3(cnpx.x, cnpx.y, 1.0) * cmap(u, v).pos.z;
 
                 const Vec3 ppos = cam2prj * cpos;
                 const Vec2 pnpx = prjVec(ppos);
@@ -492,7 +492,7 @@ namespace sp{
         const Pose &cam2prj, const CamParam &prj) {
 
         dst.resize(cam.dsize);
-        setElm(dst, getVec2(-1.0, -1.0));
+        setElm(dst, Vec2(-1.0, -1.0));
 
         Mem2<VecPD3> cmap;
         renderVecPD(cmap, cam, pose, meshes);
@@ -511,9 +511,9 @@ namespace sp{
             for (int u = 0; u < cam.dsize[0]; u++) {
                 if (cmap(u, v).pos.z == 0.0) continue;
 
-                const Vec2 cpix = getVec2(u, v);
+                const Vec2 cpix = Vec2(u, v);
                 const Vec2 cnpx = invCam(cam, cpix);
-                const Vec3 cpos = getVec3(cnpx.x, cnpx.y, 1.0) * cmap(u, v).pos.z;
+                const Vec3 cpos = Vec3(cnpx.x, cnpx.y, 1.0) * cmap(u, v).pos.z;
 
                 const Vec3 ppos = cam2prj * cpos;
                 const Vec2 pnpx = prjVec(ppos);

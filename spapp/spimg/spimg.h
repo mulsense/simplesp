@@ -164,7 +164,7 @@ namespace sp{
         else{
             const double cv = cos(-angle);
             const double sv = sin(-angle);
-            const Vec2 cent = getVec2((rect.dbase[0] + rect.dsize[0] - 1) * 0.5, (rect.dbase[1] + rect.dsize[1] - 1) * 0.5);
+            const Vec2 cent = Vec2((rect.dbase[0] + rect.dsize[0] - 1) * 0.5, (rect.dbase[1] + rect.dsize[1] - 1) * 0.5);
             for (int v = 0; v < rect.dsize[1]; v++){
                 for (int u = 0; u < rect.dsize[0]; u++){
                     const double x = u + rect.dbase[0] - cent.x;
@@ -347,7 +347,7 @@ namespace sp{
 
         for (int v = 0; v < dst.dsize[1]; v++){
             for (int u = 0; u < dst.dsize[0]; u++){
-                const Vec2 vec = imat * getVec2(u, v);
+                const Vec2 vec = imat * Vec2(u, v);
                 if (inRect(rect, vec.x, vec.y) == false) continue;
 
                 for (int c = 0; c < ch; c++){
@@ -435,7 +435,7 @@ namespace sp{
             if (src[i] < 0) continue;
 
             srand(src[i]);
-            cnvHSVToCol(dst[i], getVec3((randu() + 1.0) * SP_PI, 1.0, 1.0));
+            cnvHSVToCol(dst[i], Vec3((randu() + 1.0) * SP_PI, 1.0, 1.0));
         }
     }
 

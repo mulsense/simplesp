@@ -25,7 +25,7 @@ int main(){
         const double x = randu() * 10;
         const double y = a * x + b + noise;
 
-        data.push(getVec2(x, y));
+        data.push(Vec2(x, y));
     }
 
     // lsm
@@ -62,7 +62,7 @@ int main(){
         const double x = randu() * 10;
         const double y = randu() * 10;
 
-        data.push(getVec2(x, y));
+        data.push(Vec2(x, y));
     }
 
     // lsm

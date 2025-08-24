@@ -121,11 +121,11 @@ namespace sp {
             const double vx = vmap(x + 1, y, z) - vmap(x - 1, y, z);
             const double vy = vmap(x, y + 1, z) - vmap(x, y - 1, z);
             const double vz = vmap(x, y, z + 1) - vmap(x, y, z - 1);
-            return unitVec(getVec3(-vx, -vy, -vz));
+            return unitVec(Vec3(-vx, -vy, -vz));
         }
 
         Vec3 center() const {
-            return getVec3(dsize[0] - 1, dsize[1] - 1, dsize[2] - 1) * 0.5;
+            return Vec3(dsize[0] - 1, dsize[1] - 1, dsize[2] - 1) * 0.5;
         }
 
     };
@@ -160,7 +160,7 @@ namespace sp {
             for (int z = 0; z < voxel.dsize[2]; z++) {
                 for (int y = 0; y < voxel.dsize[1]; y++) {
                     for (int x = 0; x < voxel.dsize[0]; x++) {
-                        const Vec3 mpos = getVec3(x, y, z);
+                        const Vec3 mpos = Vec3(x, y, z);
                         const Vec3 cpos = pose * ((mpos - cent) * unit);
 
                         const Vec2 pix = mulCam(cam, prjVec(cpos));
@@ -406,7 +406,7 @@ namespace sp {
 
                         for (int k = 0; k < 8; k++) {
                             const Vec3 &vi = orders[ord][k];
-                            p[k] = getVec3(x + vi.x, y + vi.y, z + vi.z);
+                            p[k] = Vec3(x + vi.x, y + vi.y, z + vi.z);
                             v[k] = vmap(round(vi.x), round(vi.y), round(vi.z));
                         }
 
@@ -494,10 +494,10 @@ namespace sp {
                         // hole filling
                         {
                             auto fill = [&](const int a, const int b, const int c, const int d, const Vec3 &n) {
-                                const Vec3 p0 = getVec3(x, y, z) + getVec3(orders[ord][a].x, orders[ord][a].y, orders[ord][a].z) + n;
-                                const Vec3 p1 = getVec3(x, y, z) + getVec3(orders[ord][b].x, orders[ord][b].y, orders[ord][b].z) + n;
-                                const Vec3 p2 = getVec3(x, y, z) + getVec3(orders[ord][c].x, orders[ord][c].y, orders[ord][c].z) + n;
-                                const Vec3 p3 = getVec3(x, y, z) + getVec3(orders[ord][d].x, orders[ord][d].y, orders[ord][d].z) + n;
+                                const Vec3 p0 = Vec3(x, y, z) + Vec3(orders[ord][a].x, orders[ord][a].y, orders[ord][a].z) + n;
+                                const Vec3 p1 = Vec3(x, y, z) + Vec3(orders[ord][b].x, orders[ord][b].y, orders[ord][b].z) + n;
+                                const Vec3 p2 = Vec3(x, y, z) + Vec3(orders[ord][c].x, orders[ord][c].y, orders[ord][c].z) + n;
+                                const Vec3 p3 = Vec3(x, y, z) + Vec3(orders[ord][d].x, orders[ord][d].y, orders[ord][d].z) + n;
 
                                 int cnt = 0;
                                 cnt += (voxel.getv(round(p0.x), round(p0.y), round(p0.z)) >= 0) ? 1 : 0;
@@ -514,32 +514,32 @@ namespace sp {
 
                             // +dx
                             if (pid == 7 || pid == 11 || pid == 12) {
-                                const Vec3 nx = getVec3(orders[ord][1].x, orders[ord][1].y, orders[ord][1].z) - getVec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
+                                const Vec3 nx = Vec3(orders[ord][1].x, orders[ord][1].y, orders[ord][1].z) - Vec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
                                 fill(3, 1, 7, 5, +nx);
                             }
                             // -dx
                             if (pid == 6 || pid == 7) {
-                                const Vec3 nx = getVec3(orders[ord][1].x, orders[ord][1].y, orders[ord][1].z) - getVec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
+                                const Vec3 nx = Vec3(orders[ord][1].x, orders[ord][1].y, orders[ord][1].z) - Vec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
                                 fill(0, 2, 4, 6, -nx);
                             }
                             // +dy
                             if (pid == 3 || pid == 6 || pid == 7 || pid == 12) {
-                                const Vec3 ny = getVec3(orders[ord][2].x, orders[ord][2].y, orders[ord][2].z) - getVec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
+                                const Vec3 ny = Vec3(orders[ord][2].x, orders[ord][2].y, orders[ord][2].z) - Vec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
                                 fill(2, 3, 6, 7, +ny);
                             }
                             // -dy
                             if (pid == 7) {
-                                const Vec3 ny = getVec3(orders[ord][2].x, orders[ord][2].y, orders[ord][2].z) - getVec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
+                                const Vec3 ny = Vec3(orders[ord][2].x, orders[ord][2].y, orders[ord][2].z) - Vec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
                                 fill(1, 0, 5, 4, -ny);
                             }
                             // +dz
                             if (pid == 7 || pid == 13) {
-                                const Vec3 nz = getVec3(orders[ord][4].x, orders[ord][4].y, orders[ord][4].z) - getVec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
+                                const Vec3 nz = Vec3(orders[ord][4].x, orders[ord][4].y, orders[ord][4].z) - Vec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
                                 fill(6, 7, 4, 5, +nz);
                             }
                             // -dz
                             if (pid == 7 || pid == 12 || pid == 13) {
-                                const Vec3 nz = getVec3(orders[ord][4].x, orders[ord][4].y, orders[ord][4].z) - getVec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
+                                const Vec3 nz = Vec3(orders[ord][4].x, orders[ord][4].y, orders[ord][4].z) - Vec3(orders[ord][0].x, orders[ord][0].y, orders[ord][0].z);
                                 fill(0, 1, 2, 3, -nz);
                             }
                         }
@@ -773,7 +773,7 @@ namespace sp {
             for (int z = 0; z < voxel.dsize[2]; z++) {
                 for (int y = 0; y < voxel.dsize[1]; y++) {
                     for (int x = 0; x < voxel.dsize[0]; x++) {
-                        const Vec3 mpos = getVec3(x, y, z);
+                        const Vec3 mpos = Vec3(x, y, z);
                         const Vec3 cpos = pose * ((mpos - cent) * unit);
 
                         const Vec2 pix = mulCam(cam, prjVec(cpos));
@@ -810,7 +810,7 @@ namespace sp {
         for (int z = 0; z < voxel.dsize[2]; z++) {
             for (int y = 0; y < voxel.dsize[1]; y++) {
                 for (int x = 0; x < voxel.dsize[0]; x++) {
-                    const Vec3 mpos = getVec3(x, y, z);
+                    const Vec3 mpos = Vec3(x, y, z);
                     const Vec3 cpos = pose * ((mpos - cent) * voxel.unit);
 
                     const Vec2 pix = mulCam(cam, prjVec(cpos));
@@ -840,7 +840,7 @@ namespace sp {
 #endif
         for (int v = 0; v < map.dsize[1]; v++) {
             for (int u = 0; u < map.dsize[0]; u++) {
-                const Vec3 cvec = getVec3(invCam(cam, getVec2(u, v)), 1.0);
+                const Vec3 cvec = Vec3(invCam(cam, Vec2(u, v)), 1.0);
                 const Vec3 mvec = ipose.rot * cvec;
 
                 double maxv = -SP_INFINITY;

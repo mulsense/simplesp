@@ -27,7 +27,7 @@ void glRenderVoxel(const Voxel<> &voxel) {
                     const char &val = voxel.vmap(x, y, z);
                     if (val < 0) continue;
 
-                    const Vec3 mpos = getVec3(x, y, z);
+                    const Vec3 mpos = Vec3(x, y, z);
                     const Vec3 cpos = ((mpos - cent) * voxel.unit);
 
                     glPushMatrix();
@@ -86,7 +86,7 @@ private:
         savePLY("model.ply", m_model);
 
         const double distance = getModelDistance(m_model, m_cam);
-        m_pose = getPose(getVec3(0.0, 0.0, distance));
+        m_pose = getPose(Vec3(0.0, 0.0, distance));
     }
 
     virtual void keyFun(int key, int scancode, int action, int mods) {

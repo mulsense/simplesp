@@ -188,7 +188,7 @@ namespace sp {
                 layout.pose = poses[i];
                 layout.invp = invMat(poses[i]);
 
-                const Vec3 n = layout.pose.part(0, 0, 3, 3) * getVec3(0.0, 0.0, 1.0);
+                const Vec3 n = layout.pose.part(0, 0, 3, 3) * Vec3(0.0, 0.0, 1.0);
                 layout.scale = normVec(n);
             }
 
@@ -370,7 +370,7 @@ namespace sp {
                         const int a = (j & 0x01) ? 1 : 0;
                         const int b = (j & 0x02) ? 1 : 0;
                         const int c = (j & 0x04) ? 1 : 0;
-                        const Vec3 v = getVec3(unit.nodes[0].box.pos[a].x, unit.nodes[0].box.pos[b].y, unit.nodes[0].box.pos[c].z);
+                        const Vec3 v = Vec3(unit.nodes[0].box.pos[a].x, unit.nodes[0].box.pos[b].y, unit.nodes[0].box.pos[c].z);
                         idxs[i].box = orBox(idxs[i].box, m_layouts[i].pose * v);
                     }
                     idxs[i].cent = getBoxCent(idxs[i].box);
@@ -535,7 +535,7 @@ namespace sp {
             Vec3 pos;
 
             PntLight() : Light() {
-                pos = getVec3(0.0, 0.0, 0.0);
+                pos = Vec3(0.0, 0.0, 0.0);
             }
             PntLight(const PntLight &light) : Light() {
                 *this = light;
@@ -610,7 +610,7 @@ namespace sp {
             memset(&m_lim, 0, sizeof(Cnt));
             m_lim.msk = SAMPLE_UNIT * SAMPLE_UNIT;
 
-            setCam(getCamParam(640, 480), getPose(getVec3(0.0, 0.0, 1000.0)));
+            setCam(getCamParam(640, 480), getPose(Vec3(0.0, 0.0, 1000.0)));
             reset();
         }
 
@@ -667,7 +667,7 @@ namespace sp {
                         const double du = ((i / SAMPLE_UNIT) + 1) * delta;
                         const double dv = ((i % SAMPLE_UNIT) + 1) * delta;
 
-                        const Vec2 npx = invCam(m_cam, getVec2(u - 0.5 + du, v - 0.5 + dv));
+                        const Vec2 npx = invCam(m_cam, Vec2(u - 0.5 + du, v - 0.5 + dv));
 
                         VecPD3 &vec = m_raymap(u, v)[i];
                         if (m_cam.type == CamParam_Pers) {
@@ -675,8 +675,8 @@ namespace sp {
                             vec.drc = wrot * unitVec(prjVec(npx, 1.0, true));
                         }
                         else {
-                            vec.pos = wpose.pos + wrot * getVec3(npx.x, npx.y, -1000.0 * 10);
-                            vec.drc = wrot * getVec3(0.0, 0.0, 1.0);
+                            vec.pos = wpose.pos + wrot * Vec3(npx.x, npx.y, -1000.0 * 10);
+                            vec.drc = wrot * Vec3(0.0, 0.0, 1.0);
                         }
                     }
 

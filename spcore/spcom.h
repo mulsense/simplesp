@@ -157,12 +157,40 @@ namespace sp{
     // vector
     //--------------------------------------------------------------------------------
 
-    struct Vec2{
+    class Vec2 {
+    public:
         SP_REAL x, y;
+		Vec2() {
+            x = static_cast<SP_REAL>(0.0);
+            y = static_cast<SP_REAL>(0.0);
+        }
+
+        Vec2(const double x, const double y) {
+            this->x = static_cast<SP_REAL>(x);
+            this->y = static_cast<SP_REAL>(y);
+        }
     };
 
-    struct Vec3 {
+    class Vec3 {
+    public:
         SP_REAL x, y, z;
+        Vec3() {
+            x = static_cast<SP_REAL>(0.0);
+            y = static_cast<SP_REAL>(0.0);
+            z = static_cast<SP_REAL>(0.0);
+        }
+
+        Vec3(const double x, const double y, const double z) {
+            this->x = static_cast<SP_REAL>(x);
+            this->y = static_cast<SP_REAL>(y);
+            this->z = static_cast<SP_REAL>(z);
+        }
+
+        Vec3(const Vec2 &vec, const double z) {
+            this->x = static_cast<SP_REAL>(vec.x);
+            this->y = static_cast<SP_REAL>(vec.y);
+            this->z = static_cast<SP_REAL>(z);
+        }
     };
 
     //--------------------------------------------------------------------------------

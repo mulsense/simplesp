@@ -15,47 +15,22 @@
 
 namespace sp {
 
-    //--------------------------------------------------------------------------------
-    // vector
-    //--------------------------------------------------------------------------------
-
-    // get vector
-    SP_GENFUNC Vec2 getVec2(const double x, const double y) {
-        Vec2 dst;
-        dst.x = static_cast<SP_REAL>(x);
-        dst.y = static_cast<SP_REAL>(y);
-        return dst;
-    }
-
-    // get vector
-    SP_GENFUNC Vec3 getVec3(const double x, const double y, const double z) {
-        Vec3 dst;
-        dst.x = static_cast<SP_REAL>(x);
-        dst.y = static_cast<SP_REAL>(y);
-        dst.z = static_cast<SP_REAL>(z);
-        return dst;
-    }
-
-    // get vector
-    SP_GENFUNC Vec3 getVec3(const Vec2 &vec, const double z) {
-        return getVec3(vec.x, vec.y, z);
-    }
     
     //--------------------------------------------------------------------------------
     // vector operator
     //--------------------------------------------------------------------------------
     
-    SP_GENFUNC Vec2 addVec(const Vec2 &vec0, const Vec2 &vec1) { return getVec2(vec0.x + vec1.x, vec0.y + vec1.y); }
-    SP_GENFUNC Vec3 addVec(const Vec3 &vec0, const Vec3 &vec1) { return getVec3(vec0.x + vec1.x, vec0.y + vec1.y, vec0.z + vec1.z);  }
+    SP_GENFUNC Vec2 addVec(const Vec2 &vec0, const Vec2 &vec1) { return Vec2(vec0.x + vec1.x, vec0.y + vec1.y); }
+    SP_GENFUNC Vec3 addVec(const Vec3 &vec0, const Vec3 &vec1) { return Vec3(vec0.x + vec1.x, vec0.y + vec1.y, vec0.z + vec1.z);  }
     
-    SP_GENFUNC Vec2 subVec(const Vec2 &vec0, const Vec2 &vec1) { return getVec2(vec0.x - vec1.x, vec0.y - vec1.y); }
-    SP_GENFUNC Vec3 subVec(const Vec3 &vec0, const Vec3 &vec1) { return getVec3(vec0.x - vec1.x, vec0.y - vec1.y, vec0.z - vec1.z); }
+    SP_GENFUNC Vec2 subVec(const Vec2 &vec0, const Vec2 &vec1) { return Vec2(vec0.x - vec1.x, vec0.y - vec1.y); }
+    SP_GENFUNC Vec3 subVec(const Vec3 &vec0, const Vec3 &vec1) { return Vec3(vec0.x - vec1.x, vec0.y - vec1.y, vec0.z - vec1.z); }
 
-    SP_GENFUNC Vec2 mulVec(const Vec2 &vec, const double val) { return getVec2(vec.x * val, vec.y * val); }
-    SP_GENFUNC Vec3 mulVec(const Vec3 &vec, const double val) { return getVec3(vec.x * val, vec.y * val, vec.z * val); }
+    SP_GENFUNC Vec2 mulVec(const Vec2 &vec, const double val) { return Vec2(vec.x * val, vec.y * val); }
+    SP_GENFUNC Vec3 mulVec(const Vec3 &vec, const double val) { return Vec3(vec.x * val, vec.y * val, vec.z * val); }
 
-    SP_GENFUNC Vec2 divVec(const Vec2 &vec, const double val) { SP_ASSERT(fabs(val) > SP_SMALL); return getVec2(vec.x / val, vec.y / val); }
-    SP_GENFUNC Vec3 divVec(const Vec3 &vec, const double val) { SP_ASSERT(fabs(val) > SP_SMALL); return getVec3(vec.x / val, vec.y / val, vec.z / val); }
+    SP_GENFUNC Vec2 divVec(const Vec2 &vec, const double val) { SP_ASSERT(fabs(val) > SP_SMALL); return Vec2(vec.x / val, vec.y / val); }
+    SP_GENFUNC Vec3 divVec(const Vec3 &vec, const double val) { SP_ASSERT(fabs(val) > SP_SMALL); return Vec3(vec.x / val, vec.y / val, vec.z / val); }
 
     SP_GENFUNC Vec2 operator + (const Vec2 &vec0, const Vec2 &vec1) { return addVec(vec0, vec1); }
     SP_GENFUNC Vec3 operator + (const Vec3 &vec0, const Vec3 &vec1) { return addVec(vec0, vec1); }
@@ -102,16 +77,16 @@ namespace sp {
     }
     // cross production
     SP_GENFUNC Vec3 crsVec(const Vec3 &vec0, const Vec3 &vec1) {
-        return getVec3(vec0.y * vec1.z - vec0.z * vec1.y, vec0.z * vec1.x - vec0.x * vec1.z, vec0.x * vec1.y - vec0.y * vec1.x);
+        return Vec3(vec0.y * vec1.z - vec0.z * vec1.y, vec0.z * vec1.x - vec0.x * vec1.z, vec0.x * vec1.y - vec0.y * vec1.x);
     }
 
     // projection vec3 to vec2
     SP_GENFUNC Vec2 prjVec(const Vec3 &vec, const bool pers = true) {
-        return (pers == true) ? getVec2(vec.x, vec.y) / vec.z : getVec2(vec.x, vec.y);
+        return (pers == true) ? Vec2(vec.x, vec.y) / vec.z : Vec2(vec.x, vec.y);
     }
     // projection vec2 to vec3
     SP_GENFUNC Vec3 prjVec(const Vec2 &vec, const double z, const bool pers = true) {
-        return (pers == true) ? getVec3(vec.x, vec.y, 1.0) * z : getVec3(vec.x, vec.y, z);
+        return (pers == true) ? Vec3(vec.x, vec.y, 1.0) * z : Vec3(vec.x, vec.y, z);
     }
 
     // sq
@@ -135,67 +110,67 @@ namespace sp {
     // unit vector
     SP_GENFUNC Vec2 unitVec(const Vec2 &vec) {
         const double norm = normVec(vec);
-        return (norm > SP_SMALL) ? vec / norm : getVec2(0.0, 0.0);
+        return (norm > SP_SMALL) ? vec / norm : Vec2(0.0, 0.0);
     }
     // unit vector
     SP_GENFUNC Vec3 unitVec(const Vec3 &vec) {
         const double norm = normVec(vec);
-        return (norm > SP_SMALL) ? vec / norm : getVec3(0.0, 0.0, 0.0);
+        return (norm > SP_SMALL) ? vec / norm : Vec3(0.0, 0.0, 0.0);
     }
 
     // round
     SP_GENFUNC Vec2 roundVec(const Vec2 &vec) {
-        return getVec2(round(vec.x), round(vec.y));
+        return Vec2(round(vec.x), round(vec.y));
     }
     // round
     SP_GENFUNC Vec3 roundVec(const Vec3 &vec) {
-        return getVec3(round(vec.x), round(vec.y), round(vec.z));
+        return Vec3(round(vec.x), round(vec.y), round(vec.z));
     }
 
     // random uniform
     SP_CPUFUNC Vec2 randuVec2(const double x, const double y) {
-        return getVec2(randu() * x, randu() * y);
+        return Vec2(randu() * x, randu() * y);
     }
     // random uniform
     SP_CPUFUNC Vec2 randuVec2(const double x, const double y, const int seed) {
         const unsigned int s0 = static_cast<unsigned int>(seed);
         const unsigned int s1 = _snext(s0);
-        return getVec2(randu(s0) * x, randu(s1) * y);
+        return Vec2(randu(s0) * x, randu(s1) * y);
     }
 
     // random uniform
     SP_CPUFUNC Vec3 randuVec3(const double x, const double y, const double z) {
-        return getVec3(randu() * x, randu() * y, randu() * z);
+        return Vec3(randu() * x, randu() * y, randu() * z);
     }
     // random uniform
     SP_CPUFUNC Vec3 randuVec3(const double x, const double y, const double z, const int seed) {
         const unsigned int s0 = static_cast<unsigned int>(seed);
         const unsigned int s1 = _snext(s0);
         const unsigned int s2 = _snext(s1);
-        return getVec3(randu(s0) * x, randu(s1) * y, randu(s2) * z);
+        return Vec3(randu(s0) * x, randu(s1) * y, randu(s2) * z);
     }
 
     // random gauss
     SP_CPUFUNC Vec2 randgVec2(const double x, const double y) {
-        return getVec2(randg() * x, randg() * y);
+        return Vec2(randg() * x, randg() * y);
     }
     // random gauss
     SP_CPUFUNC Vec2 randgVec2(const double x, const double y, const int seed) {
         const unsigned int s0 = static_cast<unsigned int>(seed);
         const unsigned int s1 = _snext(s0);
-        return getVec2(randg(s0) * x, randg(s1) * y);
+        return Vec2(randg(s0) * x, randg(s1) * y);
     }
 
     // random gauss
     SP_CPUFUNC Vec3 randgVec3(const double x, const double y, const double z) {
-        return getVec3(randg() * x, randg() * y, randg() * z);
+        return Vec3(randg() * x, randg() * y, randg() * z);
     }
     // random gauss
     SP_CPUFUNC Vec3 randgVec3(const double x, const double y, const double z, const int seed) {
         const unsigned int s0 = static_cast<unsigned int>(seed);
         const unsigned int s1 = _snext(s0);
         const unsigned int s2 = _snext(s1);
-        return getVec3(randg(s0) * x, randg(s1) * y, randg(s2) * z);
+        return Vec3(randg(s0) * x, randg(s1) * y, randg(s2) * z);
     }
 
     //--------------------------------------------------------------------------------
@@ -203,7 +178,7 @@ namespace sp {
     //--------------------------------------------------------------------------------
 
     SP_GENFUNC Vec2 mulMat(const SP_REAL *mat, const int rows, const int cols, const Vec2 &vec) {
-        Vec2 dst = getVec2(0.0, 0.0);
+        Vec2 dst = Vec2(0.0, 0.0);
         if (rows == 2 && cols == 2) {
             dst.x = static_cast<SP_REAL>(mat[0 * 2 + 0] * vec.x + mat[0 * 2 + 1] * vec.y);
             dst.y = static_cast<SP_REAL>(mat[1 * 2 + 0] * vec.x + mat[1 * 2 + 1] * vec.y);
@@ -230,7 +205,7 @@ namespace sp {
     }
 
     SP_GENFUNC Vec3 mulMat(const SP_REAL *mat, const int rows, const int cols, const Vec3 &vec) {
-        Vec3 dst = getVec3(0.0, 0.0, 0.0);
+        Vec3 dst = Vec3(0.0, 0.0, 0.0);
         if (rows == 3 && cols == 3) {
             dst.x = static_cast<SP_REAL>(mat[0 * 3 + 0] * vec.x + mat[0 * 3 + 1] * vec.y + mat[0 * 3 + 2] * vec.z);
             dst.y = static_cast<SP_REAL>(mat[1 * 3 + 0] * vec.x + mat[1 * 3 + 1] * vec.y + mat[1 * 3 + 2] * vec.z);
@@ -623,7 +598,7 @@ namespace sp {
                     for (int k = 0; k < 2; k++) {
                         const double s[2] = { -1.0, +1.0 };
                         const double v[3] = { 0.0, s[j], s[k] * u };
-                        p[cnt++] = getVec3(v[(i + 0) % 3], v[(i + 1) % 3], v[(i + 2) % 3]);
+                        p[cnt++] = Vec3(v[(i + 0) % 3], v[(i + 1) % 3], v[(i + 2) % 3]);
                     }
                 }
             }
@@ -694,7 +669,7 @@ namespace sp {
 
     // get box
     SP_GENFUNC Box3 nullBox3() {
-        return getBox3(getVec3(1.0, 1.0, 1.0) * (+SP_INFINITY), getVec3(1.0, 1.0, 1.0) * (-SP_INFINITY));
+        return getBox3(Vec3(1.0, 1.0, 1.0) * (+SP_INFINITY), Vec3(1.0, 1.0, 1.0) * (-SP_INFINITY));
     }
 
     // get box
@@ -928,13 +903,13 @@ namespace sp {
             h += 2 * SP_PI;
         }
 
-        hsv = getVec3(h, s, v);
+        hsv = Vec3(h, s, v);
     }
 
 
     SP_GENFUNC void cnvXYZToLab(Vec3 &lab, const Vec3 &xyz) {
 
-        const Vec3 w = getVec3(0.95047, 1.00000, 1.0883); // D65
+        const Vec3 w = Vec3(0.95047, 1.00000, 1.0883); // D65
 
         auto f = [](const double v)-> SP_REAL {
             return static_cast<SP_REAL>((v > 0.008856) ? pow(v, 1.0 / 3.0) : (7.787 * v) + (16.0 / 116.0));
@@ -949,13 +924,13 @@ namespace sp {
         const double a = 500.0 * (val.x - val.y);
         const double b = 200.0 * (val.y - val.z);
 
-        lab = getVec3(l, a, b);
+        lab = Vec3(l, a, b);
     }
 
 
     SP_GENFUNC void cnvLabToXYZ(Vec3 &xyz, const Vec3 &lab) {
 
-        const Vec3 w = getVec3(0.95047, 1.00000, 1.0883); // D65
+        const Vec3 w = Vec3(0.95047, 1.00000, 1.0883); // D65
 
         auto f = [](const SP_REAL v)-> SP_REAL {
             return static_cast<SP_REAL>((v > 0.206897) ? pow(v, 3.0) : 0.001107 * (116.0 * v - 16.0));
@@ -1172,13 +1147,13 @@ namespace sp {
         Col3 col;
         if (i == 0) {
             const float vlist[] = { 1.00f, 0.90f, 0.80f, 0.70f, 0.60f, 0.50f, 0.40f, 0.30f };
-            cnvHSVToCol(col, sp::getVec3(0.0f, 0.0f, vlist[v]));
+            cnvHSVToCol(col, sp::Vec3(0.0f, 0.0f, vlist[v]));
         }
         else {
             const float h = (i - 1) * 2.0f * SP_PI / 12.0f;
             const float slist[] = { 0.16f, 0.26f, 0.38f, 0.50f, 0.62f, 0.74f, 0.86f, 0.98f };
             const float vlist[] = { 0.98f, 0.95f, 0.91f, 0.86f, 0.80f, 0.73f, 0.65f, 0.56f };
-            cnvHSVToCol(col, sp::getVec3(h, slist[v], vlist[v]));
+            cnvHSVToCol(col, sp::Vec3(h, slist[v], vlist[v]));
         }
         return col;
     }
@@ -1186,7 +1161,7 @@ namespace sp {
     SP_GENFUNC Col3 getCol3(const int label) {
         srand(max(label + 1, 0));
         Col3 col;
-        cnvHSVToCol(col, getVec3((randu() + 1.0) * SP_PI, 1.0, 1.0));
+        cnvHSVToCol(col, Vec3((randu() + 1.0) * SP_PI, 1.0, 1.0));
         return col;
     }
 
@@ -1705,7 +1680,7 @@ namespace sp {
             if (fabs(j) < SP_SMALL) break;
             x += err / j;
         }
-        return getVec2(x, a * x + b);
+        return Vec2(x, a * x + b);
     }
 
     // undistortion y
@@ -1741,7 +1716,7 @@ namespace sp {
             if (fabs(j) < SP_SMALL) break;
             y += err / j;
         }
-        return getVec2(a * y + b, y);
+        return Vec2(a * y + b, y);
     }
 
     // update
@@ -1902,7 +1877,7 @@ namespace sp {
     }
 
     SP_GENFUNC Vec3 mulRot(const Rot &rot, const Vec2 &vec) {
-        return mulRot(rot, getVec3(vec.x, vec.y, 0.0));
+        return mulRot(rot, Vec3(vec.x, vec.y, 0.0));
     }
 
     SP_GENFUNC Vec3 operator * (const Rot &rot, const Vec3 &vec) { return mulRot(rot, vec); }
@@ -2012,19 +1987,19 @@ namespace sp {
     }
 
     SP_GENFUNC Rot getRotAngleX(const double angle) {
-        return getRotAngle(getVec3(1.0, 0.0, 0.0), angle);
+        return getRotAngle(Vec3(1.0, 0.0, 0.0), angle);
     }
 
     SP_GENFUNC Rot getRotAngleY(const double angle) {
-        return getRotAngle(getVec3(0.0, 1.0, 0.0), angle);
+        return getRotAngle(Vec3(0.0, 1.0, 0.0), angle);
     }
 
     SP_GENFUNC Rot getRotAngleZ(const double angle) {
-        return getRotAngle(getVec3(0.0, 0.0, 1.0), angle);
+        return getRotAngle(Vec3(0.0, 0.0, 1.0), angle);
     }
 
     SP_GENFUNC Vec3 getAngle(const Rot &rot) {
-        Vec3 vec = getVec3(0.0, 0.0, 0.0);
+        Vec3 vec = Vec3(0.0, 0.0, 0.0);
 
         if (cmp(rot, getRot(0.0, 0.0, 0.0, 1.0)) == false) {
             const SP_REAL angle = acos(rot.qw) * 2.0;
@@ -2047,11 +2022,11 @@ namespace sp {
             return getRotAngleX(angle);
         }
         else {
-            const Vec3 v0 = crsVec(getVec3(0.0, 1.0, 0.0), getVec3(nrm.x, nrm.y, 0.0));
+            const Vec3 v0 = crsVec(Vec3(0.0, 1.0, 0.0), Vec3(nrm.x, nrm.y, 0.0));
             const SP_REAL a0 = acos(nrm.y / sqrt(nrm.x * nrm.x + nrm.y * nrm.y));
             const Rot rot0 = getRotAngle(v0, a0);
 
-            const Vec3 v1 = crsVec(getVec3(0.0, 0.0, 1.0), nrm);
+            const Vec3 v1 = crsVec(Vec3(0.0, 0.0, 1.0), nrm);
             const SP_REAL a1 = acos(nrm.z);
             const Rot rot1 = getRotAngle(v1, a1);
 
@@ -2105,14 +2080,14 @@ namespace sp {
 
     // update
     SP_GENFUNC Rot updateRot(const Rot &rot, const SP_REAL *delta) {
-        return getRotAngle(getVec3(delta[0], delta[1], delta[2])) * rot;
+        return getRotAngle(Vec3(delta[0], delta[1], delta[2])) * rot;
     }
 
     // angle
     SP_GENFUNC SP_REAL getAngle(const Rot &rot, const int axis) {
         SP_ASSERT(axis >= 0 && axis < 3);
 
-        const Vec3 v0 = getVec3(axis == 0 ? 1.0 : 0.0, axis == 1 ? 1.0 : 0.0, axis == 2 ? 1.0 : 0.0);
+        const Vec3 v0 = Vec3(axis == 0 ? 1.0 : 0.0, axis == 1 ? 1.0 : 0.0, axis == 2 ? 1.0 : 0.0);
         const Vec3 v1 = rot * v0;
         const SP_REAL angle = acos(dotVec(v0, v1));
         return angle;
@@ -2164,7 +2139,7 @@ namespace sp {
     }
 
     SP_GENFUNC Pose getPose(const Rot &rot) {
-        return getPose(rot, getVec3(0.0, 0.0, 0.0));
+        return getPose(rot, Vec3(0.0, 0.0, 0.0));
     }
 
     SP_GENFUNC Pose getPose(const Vec3 &trn) {
@@ -2175,12 +2150,12 @@ namespace sp {
         Pose dst;
         if ((rows == 3 || rows == 4) && cols == 4) {
             dst.rot = getRot(mat, rows, cols);
-            dst.pos = getVec3(mat[0 * cols + 3], mat[1 * cols + 3], mat[2 * cols + 3]);
+            dst.pos = Vec3(mat[0 * cols + 3], mat[1 * cols + 3], mat[2 * cols + 3]);
         }
         if ((rows == 6 && cols == 1) || (rows == 1 && cols == 6)) {
-            Vec3 euler = getVec3(mat[0], mat[1], mat[2]);
+            Vec3 euler = Vec3(mat[0], mat[1], mat[2]);
             dst.rot = getRotEuler(euler);
-            dst.pos = getVec3(mat[3], mat[4], mat[5]);
+            dst.pos = Vec3(mat[3], mat[4], mat[5]);
         }
         return dst;
     }
@@ -2206,7 +2181,7 @@ namespace sp {
     }
 
     SP_GENFUNC Pose zeroPose() {
-        return getPose(zeroRot(), getVec3(0.0, 0.0, 0.0));
+        return getPose(zeroRot(), Vec3(0.0, 0.0, 0.0));
     }
 
     SP_GENFUNC Pose invPose(const Pose &pose) {
@@ -2237,7 +2212,7 @@ namespace sp {
     }
 
     SP_GENFUNC Vec3 mulPose(const Pose &pose, const Vec2 &vec) {
-        return mulPose(pose, getVec3(vec.x, vec.y, 0.0));
+        return mulPose(pose, Vec3(vec.x, vec.y, 0.0));
     }
 
     SP_GENFUNC VecPD3 mulPose(const Pose &pose, const VecPD3 &vec) {
@@ -2293,14 +2268,14 @@ namespace sp {
     SP_GENFUNC Pose updatePose(const Pose &pose, const SP_REAL *delta) {
         Pose dst;
         dst.rot = updateRot(pose.rot, &delta[0]);
-        dst.pos = pose.pos + getVec3(delta[3], delta[4], delta[5]);
+        dst.pos = pose.pos + Vec3(delta[3], delta[4], delta[5]);
         return dst;
     }
 
 
     SP_GENFUNC Pose getGeodesicPose(const int level, const int id, const double distance = 0.0) {
         const Vec3 v = getMeshCent(getGeodesicMesh(level, id)) * (-1.0);
-        const Pose pose = getPose(getRotDirection(v), getVec3(0.0, 0.0, distance));
+        const Pose pose = getPose(getRotDirection(v), Vec3(0.0, 0.0, distance));
         return pose;
     }
 

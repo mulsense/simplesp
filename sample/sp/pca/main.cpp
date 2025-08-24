@@ -24,7 +24,7 @@ int main() {
             mat(1, 1) = +::cos(angle);
 
             for (int i = 0; i < 200; i++) {
-                const Vec2 vec = mat * randgVec2(20.0, 5.0) + getVec2(50.0, 50.0);
+                const Vec2 vec = mat * randgVec2(20.0, 5.0) + Vec2(50.0, 50.0);
                 data.push(vec);
             }
         }

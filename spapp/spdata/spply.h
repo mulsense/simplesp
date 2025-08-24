@@ -41,7 +41,7 @@ namespace sp{
             Col3 col;
 
             Vertex() {
-                pos = getVec3(0.0, 0.0, 0.0);
+                pos = Vec3(0.0, 0.0, 0.0);
                 col = getCol3(0, 0, 0);
             }
             Vertex(const Vertex &vtx) {
