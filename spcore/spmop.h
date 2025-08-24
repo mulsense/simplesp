@@ -243,10 +243,6 @@ namespace sp{
         return dst;
     }
 
-    SP_CPUFUNC SP_REAL normMat(const Mat &mat){
-        return normMat(mat.ptr, mat.rows(), mat.cols());
-    }
-
     SP_CPUFUNC SP_REAL detMat(const Mat &mat){
         Mat buf(mat.dsize);
         return detMat(mat.ptr, mat.rows(), mat.cols(), buf.ptr);
@@ -752,116 +748,6 @@ namespace sp{
     SP_CPUFUNC SP_REAL mean(const Mem<f32> &mem) { return _meanval(mem); }
     SP_CPUFUNC SP_REAL mean(const Mem<f64> &mem) { return _meanval(mem); }
 
-    //--------------------------------------------------------------------------------
-    // sq sum & mean
-    //--------------------------------------------------------------------------------
-
-    template<typename TYPE>
-    SP_CPUFUNC SP_REAL _sqsumval(const Mem<TYPE> &mem) {
-        SP_ASSERT(mem.size() != 0);
-        SP_REAL ret = 0.0;
-        for (int i = 0; i < mem.size(); i++) {
-            ret += sq(mem[i]);
-        }
-        return ret;
-    }
-    template<typename TYPE>
-    SP_CPUFUNC SP_REAL _sqmeanval(const Mem<TYPE> &mem) {
-        SP_ASSERT(mem.size() != 0);
-        return _sqsumval(mem) / mem.size();
-    }
-
-    SP_CPUFUNC SP_REAL sqsum(const Mem<s08> &mem) { return _sqsumval(mem); }
-    SP_CPUFUNC SP_REAL sqsum(const Mem<u08> &mem) { return _sqsumval(mem); }
-    SP_CPUFUNC SP_REAL sqsum(const Mem<s16> &mem) { return _sqsumval(mem); }
-    SP_CPUFUNC SP_REAL sqsum(const Mem<u16> &mem) { return _sqsumval(mem); }
-    SP_CPUFUNC SP_REAL sqsum(const Mem<s32> &mem) { return _sqsumval(mem); }
-    SP_CPUFUNC SP_REAL sqsum(const Mem<u32> &mem) { return _sqsumval(mem); }
-    SP_CPUFUNC SP_REAL sqsum(const Mem<f32> &mem) { return _sqsumval(mem); }
-    SP_CPUFUNC SP_REAL sqsum(const Mem<f64> &mem) { return _sqsumval(mem); }
-
-    SP_CPUFUNC SP_REAL sqmean(const Mem<s08> &mem) { return _sqmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqmean(const Mem<u08> &mem) { return _sqmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqmean(const Mem<s16> &mem) { return _sqmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqmean(const Mem<u16> &mem) { return _sqmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqmean(const Mem<s32> &mem) { return _sqmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqmean(const Mem<u32> &mem) { return _sqmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqmean(const Mem<f32> &mem) { return _sqmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqmean(const Mem<f64> &mem) { return _sqmeanval(mem); }
-
-    //--------------------------------------------------------------------------------
-    // sqrt sum & mean
-    //--------------------------------------------------------------------------------
-
-    template<typename TYPE>
-    SP_CPUFUNC SP_REAL _sqrtsumval(const Mem<TYPE> &mem) {
-        SP_ASSERT(mem.size() != 0);
-        SP_REAL ret = 0.0;
-        for (int i = 0; i < mem.size(); i++) {
-            ret += sqrt(mem[i]);
-        }
-        return ret;
-    }
-    template<typename TYPE>
-    SP_CPUFUNC SP_REAL _sqrtmeanval(const Mem<TYPE> &mem) {
-        SP_ASSERT(mem.size() != 0);
-        return _sqrtsumval(mem) / mem.size();
-    }
-
-    SP_CPUFUNC SP_REAL sqrtsum(const Mem<s08> &mem) { return _sqrtsumval(mem); }
-    SP_CPUFUNC SP_REAL sqrtsum(const Mem<u08> &mem) { return _sqrtsumval(mem); }
-    SP_CPUFUNC SP_REAL sqrtsum(const Mem<s16> &mem) { return _sqrtsumval(mem); }
-    SP_CPUFUNC SP_REAL sqrtsum(const Mem<u16> &mem) { return _sqrtsumval(mem); }
-    SP_CPUFUNC SP_REAL sqrtsum(const Mem<s32> &mem) { return _sqrtsumval(mem); }
-    SP_CPUFUNC SP_REAL sqrtsum(const Mem<u32> &mem) { return _sqrtsumval(mem); }
-    SP_CPUFUNC SP_REAL sqrtsum(const Mem<f32> &mem) { return _sqrtsumval(mem); }
-    SP_CPUFUNC SP_REAL sqrtsum(const Mem<f64> &mem) { return _sqrtsumval(mem); }
-
-    SP_CPUFUNC SP_REAL sqrtmean(const Mem<s08> &mem) { return _sqrtmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqrtmean(const Mem<u08> &mem) { return _sqrtmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqrtmean(const Mem<s16> &mem) { return _sqrtmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqrtmean(const Mem<u16> &mem) { return _sqrtmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqrtmean(const Mem<s32> &mem) { return _sqrtmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqrtmean(const Mem<u32> &mem) { return _sqrtmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqrtmean(const Mem<f32> &mem) { return _sqrtmeanval(mem); }
-    SP_CPUFUNC SP_REAL sqrtmean(const Mem<f64> &mem) { return _sqrtmeanval(mem); }
-
-    //--------------------------------------------------------------------------------
-    // abs sum & mean
-    //--------------------------------------------------------------------------------
-
-    template<typename TYPE>
-    SP_CPUFUNC SP_REAL _abssumval(const Mem<TYPE> &mem) {
-        SP_ASSERT(mem.size() != 0);
-        SP_REAL ret = 0.0;
-        for (int i = 0; i < mem.size(); i++) {
-            ret += sqrt(mem[i]);
-        }
-        return ret;
-    }
-    template<typename TYPE>
-    SP_CPUFUNC SP_REAL _absmeanval(const Mem<TYPE> &mem) {
-        SP_ASSERT(mem.size() != 0);
-        return _abssumval(mem) / mem.size();
-    }
-
-    SP_CPUFUNC SP_REAL abssum(const Mem<s08> &mem) { return _abssumval(mem); }
-    SP_CPUFUNC SP_REAL abssum(const Mem<u08> &mem) { return _abssumval(mem); }
-    SP_CPUFUNC SP_REAL abssum(const Mem<s16> &mem) { return _abssumval(mem); }
-    SP_CPUFUNC SP_REAL abssum(const Mem<u16> &mem) { return _abssumval(mem); }
-    SP_CPUFUNC SP_REAL abssum(const Mem<s32> &mem) { return _abssumval(mem); }
-    SP_CPUFUNC SP_REAL abssum(const Mem<u32> &mem) { return _abssumval(mem); }
-    SP_CPUFUNC SP_REAL abssum(const Mem<f32> &mem) { return _abssumval(mem); }
-    SP_CPUFUNC SP_REAL abssum(const Mem<f64> &mem) { return _abssumval(mem); }
-
-    SP_CPUFUNC SP_REAL absmean(const Mem<s08> &mem) { return _absmeanval(mem); }
-    SP_CPUFUNC SP_REAL absmean(const Mem<u08> &mem) { return _absmeanval(mem); }
-    SP_CPUFUNC SP_REAL absmean(const Mem<s16> &mem) { return _absmeanval(mem); }
-    SP_CPUFUNC SP_REAL absmean(const Mem<u16> &mem) { return _absmeanval(mem); }
-    SP_CPUFUNC SP_REAL absmean(const Mem<s32> &mem) { return _absmeanval(mem); }
-    SP_CPUFUNC SP_REAL absmean(const Mem<u32> &mem) { return _absmeanval(mem); }
-    SP_CPUFUNC SP_REAL absmean(const Mem<f32> &mem) { return _absmeanval(mem); }
-    SP_CPUFUNC SP_REAL absmean(const Mem<f64> &mem) { return _absmeanval(mem); }
 
     //--------------------------------------------------------------------------------
     // median
@@ -922,65 +808,6 @@ namespace sp{
         return sum(mat, axis) / ((axis == 0) ? mat.rows() : mat.cols());
     }
 
-    SP_CPUFUNC Mat sqsum(const Mat &mat, const int axis) {
-        SP_ASSERT(axis == 0 || axis == 1);
-
-        Mat ret((axis == 1) ? mat.rows() : 1, (axis == 0) ? mat.cols() : 1);
-        ret.zero();
-
-        const SP_REAL *pMat = mat.ptr;
-
-        for (int r = 0; r < mat.rows(); r++) {
-            for (int c = 0; c < mat.cols(); c++) {
-                ret[(axis == 0) ? c : r] += sq(*pMat++);
-            }
-        }
-        return ret;
-    }
-    SP_CPUFUNC Mat sqmean(const Mat &mat, const int axis) {
-        return sqsum(mat, axis) / ((axis == 0) ? mat.rows() : mat.cols());
-    }
-
-    SP_CPUFUNC Mat abssum(const Mat &mat, const int axis) {
-        SP_ASSERT(axis == 0 || axis == 1);
-
-        Mat ret((axis == 1) ? mat.rows() : 1, (axis == 0) ? mat.cols() : 1);
-        ret.zero();
-
-        const SP_REAL *pMat = mat.ptr;
-
-        for (int r = 0; r < mat.rows(); r++) {
-            for (int c = 0; c < mat.cols(); c++) {
-                ret[(axis == 0) ? c : r] += fabs(*pMat++);
-            }
-        }
-        return ret;
-    }
-
-    SP_CPUFUNC Mat absmean(const Mat &mat, const int axis) {
-        return abssum(mat, axis) / ((axis == 0) ? mat.rows() : mat.cols());
-    }
-
-    //--------------------------------------------------------------------------------
-    // histogram
-    //--------------------------------------------------------------------------------
-
-    template<typename TYPE, typename ELEM = TYPE>
-    SP_CPUFUNC void histogram(Mem<int> &hist, const Mem<TYPE> &src, const int bins) {
-
-        const int ch = sizeof(TYPE) / sizeof(ELEM);
-        const int dsize[2] = { bins, ch };
-
-        hist.resize((ch == 1) ? 1 : 2, dsize);
-        hist.zero();
-
-        for (int i = 0; i < src.size(); i++) {
-            for (int c = 0; c < ch; c++) {
-                const int val = acs1<TYPE, ELEM>(src, i, c);
-                acs2(hist, val, c)++;
-            }
-        }
-    }
 
 }
 

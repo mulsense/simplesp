@@ -6,10 +6,6 @@ add_subdirectory(pca)
 add_subdirectory(kdtree)
 add_subdirectory(code)
 
-## geom
-add_subdirectory(pose)
-add_subdirectory(hmat)
-add_subdirectory(fmat)
 
 
 

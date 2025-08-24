@@ -166,16 +166,6 @@ namespace sp {
         dst[2 * 3 + 2] = 0.0;
     }
 
-    // norm
-    SP_GENFUNC SP_REAL normMat(const SP_REAL *mat, const int rows, const int cols, const SP_REAL *base = NULL) {
-        SP_REAL norm = 0.0;
-        for (int i = 0; i < rows * cols; i++) {
-            norm += (base == NULL) ? sq(mat[i]) : sq(mat[i] - base[i]);
-        }
-        return sqrt(norm);
-    }
-
-
     //--------------------------------------------------------------------------------
     // matrix determinant
     //--------------------------------------------------------------------------------

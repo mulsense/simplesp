@@ -18,7 +18,6 @@
 #include "spapp/spimg/spimg.h"
 #include "spapp/spimg/sprender.h"
 #include "spapp/spimg/splabel.h"
-#include "spapp/spimg/spbin.h"
 
 // geometry
 #include "spapp/spgeom/spray.h"

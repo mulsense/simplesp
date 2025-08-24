@@ -6,7 +6,7 @@
 #define __SP_LABEL_H__
 
 #include "spcore/spcore.h"
-#include "spapp/spimg/spbin.h"
+#include "spapp/spimg/spimg.h"
 
 namespace sp{
 

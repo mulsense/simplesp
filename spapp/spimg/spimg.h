@@ -79,65 +79,22 @@ namespace sp{
     }
 
 
-    //--------------------------------------------------------------------------------
-    // pyramid down 
-    //--------------------------------------------------------------------------------
+    SP_CPUFUNC void binalize(Mem2<Byte>& dst, const Mem2<Byte>& src, const int thresh, const bool inv = false) {
+        dst.resize(src.dsize);
+        const Mem2<Byte>& tmp = (&dst != &src) ? src : clone(src);
 
-    template <typename TYPE>
-    SP_CPUFUNC void pyrdown(Mem<TYPE> &dst, const Mem<TYPE> &src) {
-
-        const Mem<TYPE> &tmp = (reinterpret_cast<const Mem<TYPE>*>(&dst) != &src) ? src : clone(src);
-
-        const int sdsize0 = src.dsize[0];
-        const int sdsize1 = src.dsize[1];
-
-        const int ddsize0 = (sdsize0 + 1) / 2;
-        const int ddsize1 = (sdsize1 + 1) / 2;
-        const int ddsize[2] = { ddsize0, ddsize1 };
-
-        dst.resize(2, ddsize);
-
-        const TYPE *psrc = tmp.ptr;
-        TYPE *pdst = dst.ptr;
-
-        for (int v = 0; v < ddsize1; v++) {
-            const int sv = 2 * v;
-
-            const int sv0 = sv + ((sv == 0) ? 0 : -1);
-            const int sv1 = sv + 0;
-            const int sv2 = sv + ((sv == sdsize1 - 1) ? 0 : +1);
-
-            const TYPE *psrc0 = &psrc[sv0 * sdsize0];
-            const TYPE *psrc1 = &psrc[sv1 * sdsize0];
-            const TYPE *psrc2 = &psrc[sv2 * sdsize0];
-
-            TYPE *pd = &pdst[v * ddsize0];
-
-            for (int u = 0; u < ddsize0; u++) {
-                const int su = 2 * u;
-
-                const int su0 = su + ((su == 0) ? 0 : -1);
-                const int su1 = su + 0;
-                const int su2 = su + ((su == sdsize0 - 1) ? 0 : +1);
-                
-                const TYPE a00 = psrc0[su0];
-                const TYPE a01 = psrc0[su1];
-                const TYPE a02 = psrc0[su2];
-
-                const TYPE a10 = psrc1[su0];
-                const TYPE a11 = psrc1[su1];
-                const TYPE a12 = psrc1[su2];
-
-                const TYPE a20 = psrc2[su0];
-                const TYPE a21 = psrc2[su1];
-                const TYPE a22 = psrc2[su2];
-
-                const double d = ((a00 + 2.0 * a01 + a02) + 2.0 * (a10 + 2.0 * a11 + a12) + (a20 + 2.0 * a21 + a22)) / 16.0;
-                *pd++ = cast<TYPE>(d);
+        if (inv == false) {
+            for (int i = 0; i < dst.size(); i++) {
+                dst[i] = (tmp[i] >= thresh) ? 255 : 0;
             }
         }
-    }
+        else {
+            for (int i = 0; i < dst.size(); i++) {
+                dst[i] = (tmp[i] < thresh) ? 255 : 0;
+            }
+        }
 
+    }
 
     //--------------------------------------------------------------------------------
     // crop 

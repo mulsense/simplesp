@@ -15,13 +15,13 @@ int main(){
     // search target data
     Mem1<Vec2> targ;
     for (int i = 0; i < dataNum; i++) {
-        targ.push(randuVec2(100.0, 100.0));
+        targ.push(Vec2(100.0 * randu(), 100.0 * randu()));
     }
 
     // test data
     Mem1<Vec2> test;
     for (int i = 0; i < 1000; i++) {
-        test.push(randuVec2(100.0, 100.0));
+        test.push(Vec2(100.0 * randu(), 100.0 * randu()));
     }
 
 
@@ -71,9 +71,9 @@ int main(){
 
                 double minv = SP_INFINITY;
                 for (int j = 0; j < targ.size(); j++){
-                    const double sq = sqVec(test[i] - targ[j]);
-                    if (sq < minv){
-                        minv = sq;
+                    const double length = (test[i] - targ[j]).length();
+                    if (length < minv){
+                        minv = length;
                         crsp = j;
                     }
                 }

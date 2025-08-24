@@ -42,16 +42,6 @@ namespace sp{
     // util
     //--------------------------------------------------------------------------------
 
-  
-     // x * x
-    SP_GENFUNC SP_REAL sq(const double x) { return static_cast<SP_REAL>(x * x); }
-
-    // x * x * x
-    SP_GENFUNC SP_REAL cb(const double x) { return static_cast<SP_REAL>(x * x * x); }
-
-    // cubic root
-    SP_GENFUNC SP_REAL cbrt(const double x) { const double z = pow(fabs(x), 1.0 / 3.0); return static_cast<SP_REAL>((x >= 0.0) ? z : -z); }
-
     // sqrt(a * a + b * b) without destructive underflow or overflow
     SP_GENFUNC SP_REAL pythag(const double a, const double b) { 
         const double x = fabs(a);
