@@ -19,8 +19,8 @@ int main() {
         }
         const int maxv = max(src) + 1;
         {
-            const Mem1<Mem1<Byte>> table = hmMakeTableFromCnts(getCodeCnts(src, maxv));
-            const Mem1<Byte> enc = hmEncode(table, src);
+            const Mem1<Mem1<u08>> table = hmMakeTableFromCnts(getCodeCnts(src, maxv));
+            const Mem1<u08> enc = hmEncode(table, src);
             print("enc ", enc);
 
             const Mem1<int> dec = hmDecode(table, enc);
@@ -32,7 +32,7 @@ int main() {
 
             const Mem1<int> cnts = lzssCnts(encA, maxv);
 
-            const Mem1<Byte> encB = zlEncode(hmMakeTableFromCnts(cnts), encA, maxv, 6, 4);
+            const Mem1<u08> encB = zlEncode(hmMakeTableFromCnts(cnts), encA, maxv, 6, 4);
 
             const Mem1<int> decB = zlDecode(hmMakeTableFromCnts(cnts), encB, maxv, 6, 4);
             const Mem1<int> decA = lzssDecode(decB, 5);
@@ -49,17 +49,17 @@ int main() {
     // base 64 encode & decode
     //--------------------------------------------------------------------------------
     {
-        Mem1<Byte> src;
+        Mem1<u08> src;
         {
-            Byte _src[] = { 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 4, 3, 3, 0, 2, 1 };
-            src.push(_src, sizeof(_src) / sizeof(Byte));
+            u08 _src[] = { 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 4, 3, 3, 0, 2, 1 };
+            src.push(_src, sizeof(_src) / sizeof(u08));
 
             print("src ", src);
         }
         {
             const Mem1<char> enc = base64Encode(src.ptr, src.size());
 
-            const Mem1<Byte> dec = base64Decode(enc.ptr);
+            const Mem1<u08> dec = base64Decode(enc.ptr);
 
             printf("enc %s\n", enc.ptr);
             print("dec", dec);

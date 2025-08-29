@@ -12,8 +12,8 @@
 namespace sp {
 
     //! @param src 8bit array
-    SP_CPUFUNC Mem1<Byte> get1BitArray(const Mem1<Byte> &src, const int bits) {
-        Mem1<Byte> dst(bits);
+    SP_CPUFUNC Mem1<u08> get1BitArray(const Mem1<u08> &src, const int bits) {
+        Mem1<u08> dst(bits);
         dst.zero();
 
         for (int i = 0; i < dst.size(); i++) {
@@ -25,8 +25,8 @@ namespace sp {
     }
 
     //! @param src 1bit array
-    SP_CPUFUNC Mem1<Byte> get8BitArray(const Mem1<Byte> &src) {
-        Mem1<Byte> dst((src.size() + 7) / 8);
+    SP_CPUFUNC Mem1<u08> get8BitArray(const Mem1<u08> &src) {
+        Mem1<u08> dst((src.size() + 7) / 8);
         dst.zero();
 
         for (int i = 0; i < src.size(); i++) {
@@ -142,8 +142,8 @@ namespace sp {
     //--------------------------------------------------------------------------------
 
 
-    SP_CPUFUNC Mem1<Mem1<Byte>> hmMakeTableFromLngs(const Mem1<int> &lngs) {
-        Mem1<Mem1<Byte>> table(lngs.size());
+    SP_CPUFUNC Mem1<Mem1<u08>> hmMakeTableFromLngs(const Mem1<int> &lngs) {
+        Mem1<Mem1<u08>> table(lngs.size());
 
         int maxv = 0;
         int minv = SP_INTMAX;
@@ -157,7 +157,7 @@ namespace sp {
             return table;
         }
 
-        Mem1<Byte> bits;
+        Mem1<u08> bits;
         for (int j = 0; j < minv; j++) {
             bits.push(0);
         }
@@ -189,7 +189,7 @@ namespace sp {
         return table;
     }
 
-    SP_CPUFUNC Mem1<Mem1<Byte>> hmMakeTableFromCnts(const Mem1<int> &cnts) {
+    SP_CPUFUNC Mem1<Mem1<u08>> hmMakeTableFromCnts(const Mem1<int> &cnts) {
         {
             int n = 0;
             int id = -1;
@@ -200,10 +200,10 @@ namespace sp {
                 }
             }
             if (n == 0) {
-                return Mem1<Mem1<Byte>>();
+                return Mem1<Mem1<u08>>();
             }
             if (n == 1) {
-                Mem1<Mem1<Byte>> table(cnts.size());
+                Mem1<Mem1<u08>> table(cnts.size());
                 table[id].push(0);
                 return table;
             }
@@ -268,12 +268,12 @@ namespace sp {
 
 
     template<typename TYPE>
-    SP_CPUFUNC Mem1<Byte> hmEncode(const Mem1<Mem1<Byte>> &table, const Mem1<TYPE> &src) {
-        Mem1<Byte> dst;
+    SP_CPUFUNC Mem1<u08> hmEncode(const Mem1<Mem1<u08>> &table, const Mem1<TYPE> &src) {
+        Mem1<u08> dst;
 
         for (int i = 0; i < src.size(); i++) {
             const int s = src[i];
-            const Mem1<Byte> &bits = table[s];
+            const Mem1<u08> &bits = table[s];
             dst.push(bits);
         }
         return dst;
@@ -284,7 +284,7 @@ namespace sp {
         int child[2];
     };
 
-    SP_CPUFUNC Mem1<hmNode> hmMakeNode(const Mem1<Mem1<Byte>> &table) {
+    SP_CPUFUNC Mem1<hmNode> hmMakeNode(const Mem1<Mem1<u08>> &table) {
         Mem1<hmNode> nodes;
         nodes.reserve(2 * table.size() - 1);
 
@@ -294,12 +294,12 @@ namespace sp {
         nodes[0].child[1] = -1;
 
         for (int i = 0; i < table.size(); i++) {
-            const Mem1<Byte> &bits = table[i];
+            const Mem1<u08> &bits = table[i];
             if (bits.size() == 0) continue;
 
             hmNode *node = &nodes[0];
             for (int j = 0; j < bits.size(); j++) {
-                const Byte bit = bits[j];
+                const u08 bit = bits[j];
                 if (node->child[bit] == -1) {
                     node->child[bit] = nodes.size();
                     
@@ -317,14 +317,14 @@ namespace sp {
         return nodes;
     }
 
-    SP_CPUFUNC Mem1<int> hmDecode(const Mem1<Mem1<Byte>> &table, const Mem1<Byte> &src) {
+    SP_CPUFUNC Mem1<int> hmDecode(const Mem1<Mem1<u08>> &table, const Mem1<u08> &src) {
         Mem1<int> dst;
 
         const Mem1<hmNode> nodes = hmMakeNode(table);
 
         const hmNode *node = &nodes[0];
         for (int i = 0; i < src.size(); i++) {
-            const Byte bit = src[i];
+            const u08 bit = src[i];
 
             node = &nodes[node->child[bit]];
             const int val = node->val;
@@ -341,12 +341,12 @@ namespace sp {
 
 
     template<typename TYPE>
-    SP_CPUFUNC Mem1<Byte> zlEncode(const Mem1<Mem1<Byte>> &table, const Mem1<TYPE> &src, const int code, const int searchBit, const int lengthBit) {
-        Mem1<Byte> dst;
+    SP_CPUFUNC Mem1<u08> zlEncode(const Mem1<Mem1<u08>> &table, const Mem1<TYPE> &src, const int code, const int searchBit, const int lengthBit) {
+        Mem1<u08> dst;
 
         for (int i = 0; i < src.size(); i++) {
             const int s = src[i];
-            const Mem1<Byte> &bits = table[s];
+            const Mem1<u08> &bits = table[s];
 
             dst.push(bits);
             if (s == code) {
@@ -365,14 +365,14 @@ namespace sp {
         return dst;
     }
 
-    SP_CPUFUNC Mem1<int> zlDecode(const Mem1<Mem1<Byte>> &table, const Mem1<Byte> &src, const int code, const int searchBit, const int lengthBit) {
+    SP_CPUFUNC Mem1<int> zlDecode(const Mem1<Mem1<u08>> &table, const Mem1<u08> &src, const int code, const int searchBit, const int lengthBit) {
         Mem1<int> dst;
 
         const Mem1<hmNode> nodes = hmMakeNode(table);
 
         const hmNode *node = &nodes[0];
         for (int i = 0; i < src.size(); i++) {
-            const Byte bit = src[i];
+            const u08 bit = src[i];
 
             node = &nodes[node->child[bit]];
             const int val = node->val;
@@ -408,7 +408,7 @@ namespace sp {
     //--------------------------------------------------------------------------------
    
 
-    SP_CPUFUNC Mem1<char> base64Encode(const Byte* src, const int size, bool url = false) {
+    SP_CPUFUNC Mem1<char> base64Encode(const u08* src, const int size, bool url = false) {
 
         const char* table = (url == false) ?
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=" :
@@ -449,7 +449,7 @@ namespace sp {
     }
 
 
-    SP_CPUFUNC Byte base64Decode(const Byte src) {
+    SP_CPUFUNC u08 base64Decode(const u08 src) {
         if (src >= 'A' && src <= 'Z') return src - 'A';
         else if (src >= 'a' && src <= 'z') return src - 'a' + ('Z' - 'A' + 1);
         else if (src >= '0' && src <= '9') return src - '0' + ('Z' - 'A' + 1) + ('z' - 'a' + 1);
@@ -458,27 +458,27 @@ namespace sp {
         return 64;
     }
 
-    SP_CPUFUNC Mem1<Byte> base64Decode(const char* src) {
+    SP_CPUFUNC Mem1<u08> base64Decode(const char* src) {
 
         int size = strlen(src);
-        if (size == 0) return Mem1<Byte>();
+        if (size == 0) return Mem1<u08>();
 
-        Mem1<Byte> ret;
+        Mem1<u08> ret;
         ret.reserve(size / 4 * 3);
 
         for (int i = 0; i < size; i+= 4) {
 
-            const Byte v0 = base64Decode(src[i + 1]);
+            const u08 v0 = base64Decode(src[i + 1]);
 
-            ret.push((Byte)((base64Decode(src[i + 0]) << 2) + ((v0 & 0x30) >> 4)));
+            ret.push((u08)((base64Decode(src[i + 0]) << 2) + ((v0 & 0x30) >> 4)));
 
             if (src[i + 2] != '=' && src[i + 2] != '.') {
 
-                const Byte v1 = base64Decode(src[i + 2]);
-                ret.push((Byte)(((v0 & 0x0f) << 4) + ((v1 & 0x3c) >> 2)));
+                const u08 v1 = base64Decode(src[i + 2]);
+                ret.push((u08)(((v0 & 0x0f) << 4) + ((v1 & 0x3c) >> 2)));
 
                 if (src[i + 3] != '=' && src[i + 3] != '.') {
-                    ret.push((Byte)(((v1 & 0x03) << 6) + base64Decode(src[i + 3])));
+                    ret.push((u08)(((v1 & 0x03) << 6) + base64Decode(src[i + 3])));
                 }
             }
 

@@ -73,7 +73,7 @@ private:
 
         m_cam = getCamParam(640, 480);
 
-        m_model = loadBunny(SP_DATA_DIR "/stanford/bun_zipper.ply");
+        m_model = loadBunny("../../../../data/stanford/bun_zipper.ply");
         if (m_model.size() == 0) {
             // if could not find stanford bunny, load dummy model
             m_model = loadGeodesicDorm(100.0, 1);

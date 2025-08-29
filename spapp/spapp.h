@@ -10,12 +10,10 @@
 #include "spapp/spdata/spjson.h"
 #include "spapp/spdata/spply.h"
 #include "spapp/spdata/spstl.h"
-#include "spapp/spdata/spbmp.h"
 #include "spapp/spdata/spsvg.h"
 #include "spapp/spdata/spmodel.h"
 
 // image
-#include "spapp/spimg/spimg.h"
 #include "spapp/spimg/sprender.h"
 #include "spapp/spimg/splabel.h"
 

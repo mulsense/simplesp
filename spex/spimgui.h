@@ -20,7 +20,7 @@
 
 #define ImGuiWindowFlags_Block (ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoFocusOnAppearing)
 
-static ImVec4 getImVec4(const sp::Col3 &spcol, const sp::Byte a = SP_BYTEMAX) {
+static ImVec4 getImVec4(const sp::Col3 &spcol, const sp::u08 a = SP_BYTEMAX) {
     const ImVec4 vec(static_cast<float>(spcol.r) / SP_BYTEMAX, static_cast<float>(spcol.g) / SP_BYTEMAX, static_cast<float>(spcol.b) / SP_BYTEMAX, static_cast<float>(a) / SP_BYTEMAX);
     return vec;
 }
@@ -249,15 +249,15 @@ namespace sp {
 
 
     SP_CPUFUNC void _cast(Col3 &dst, const ImVec4 &imv) {
-        dst.r = static_cast<Byte>(imv.x * SP_BYTEMAX + 0.5);
-        dst.g = static_cast<Byte>(imv.y * SP_BYTEMAX + 0.5);
-        dst.b = static_cast<Byte>(imv.z * SP_BYTEMAX + 0.5);
+        dst.r = static_cast<u08>(imv.x * SP_BYTEMAX + 0.5);
+        dst.g = static_cast<u08>(imv.y * SP_BYTEMAX + 0.5);
+        dst.b = static_cast<u08>(imv.z * SP_BYTEMAX + 0.5);
     }
     SP_CPUFUNC void _cast(Col4 &dst, const ImVec4 &imv) {
-        dst.r = static_cast<Byte>(imv.x * SP_BYTEMAX + 0.5);
-        dst.g = static_cast<Byte>(imv.y * SP_BYTEMAX + 0.5);
-        dst.b = static_cast<Byte>(imv.z * SP_BYTEMAX + 0.5);
-        dst.a = static_cast<Byte>(imv.w * SP_BYTEMAX + 0.5);
+        dst.r = static_cast<u08>(imv.x * SP_BYTEMAX + 0.5);
+        dst.g = static_cast<u08>(imv.y * SP_BYTEMAX + 0.5);
+        dst.b = static_cast<u08>(imv.z * SP_BYTEMAX + 0.5);
+        dst.a = static_cast<u08>(imv.w * SP_BYTEMAX + 0.5);
     }
     SP_CPUFUNC void _cast(Col3f &dst, const ImVec4 &imv) {
         dst.r = imv.x;
@@ -545,7 +545,7 @@ namespace sp {
 
                     ImGui::ColorButton("##std color", getImVec4(sp::stdcol(r, list[c])), ImGuiColorEditFlags_NoEdit, ImVec2(14.0f, 14.0f));
                     if (ImGui::IsItemClicked(0)) {
-                        imcol = getImVec4(sp::stdcol(r, list[c]), static_cast<sp::Byte>(imcol.w * SP_BYTEMAX));
+                        imcol = getImVec4(sp::stdcol(r, list[c]), static_cast<sp::u08>(imcol.w * SP_BYTEMAX));
                     }
                     ImGui::PopID();
                 }

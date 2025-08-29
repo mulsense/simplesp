@@ -107,9 +107,9 @@ namespace sp{
                 if (elem.prop[p] == "y") vtx.pos.y = val;
                 if (elem.prop[p] == "z") vtx.pos.z = val;
 
-                if (elem.prop[p] == "red") vtx.col.r = cast<Byte>(val);
-                if (elem.prop[p] == "green") vtx.col.g = cast<Byte>(val);
-                if (elem.prop[p] == "blue") vtx.col.b = cast<Byte>(val);
+                if (elem.prop[p] == "red") vtx.col.r = cast<u08>(val);
+                if (elem.prop[p] == "green") vtx.col.g = cast<u08>(val);
+                if (elem.prop[p] == "blue") vtx.col.b = cast<u08>(val);
             }
 
             return vtx;

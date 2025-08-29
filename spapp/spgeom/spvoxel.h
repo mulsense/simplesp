@@ -220,12 +220,12 @@ namespace sp {
             return orders;
         }
 
-        SP_CPUFUNC Mem1<Mem1<Byte> > getPattern() {
-            Mem1<Mem1<Byte> > ptns;
+        SP_CPUFUNC Mem1<Mem1<u08> > getPattern() {
+            Mem1<Mem1<u08> > ptns;
             Mem1<Mem1<Vec3> > orders = getVertexOrder();
             
             // 15 pattern
-            const Byte list[][8] = {
+            const u08 list[][8] = {
                 { +0, +0, +0, +0, +0, +0, +0, +0 },{ +0, +0, +0, +0, +0, +0, +1, +0 },{ +0, +0, +0, +0, +0, +0, +1, +1 },
                 { +0, +0, +0, +1, +0, +0, +1, +0 },{ +0, +0, +0, +0, +1, +1, +0, +1 },{ +0, +0, +0, +0, +1, +1, +1, +1 },
                 { +0, +0, +1, +0, +1, +1, +0, +1 },{ +1, +0, +0, +1, +0, +1, +1, +0 },{ +1, +0, +0, +0, +1, +1, +1, +0 },
@@ -234,10 +234,10 @@ namespace sp {
             };
 
             for (int p = 0; p < 15; p++) {
-                Mem1<Byte> tmps;
+                Mem1<u08> tmps;
                 for (int o = 0; o < orders.size(); o++) {
 
-                    Byte b = 0;
+                    u08 b = 0;
                     for (int i = 0; i < 8; i++) {
                         setBit(&b, round(orders[o][i].z * 4 + orders[o][i].y * 2 + orders[o][i].x), list[p][i]);
                     }
@@ -336,7 +336,7 @@ namespace sp {
 
         meshes.clear();
 
-        const Mem1<Mem1<Byte> > ptns = _mc::getPattern();
+        const Mem1<Mem1<u08> > ptns = _mc::getPattern();
         const Mem1<Mem1<Vec3> > orders = _mc::getVertexOrder();
 
         Rect3 vrect = getRect3(voxel.dsize);
@@ -365,14 +365,14 @@ namespace sp {
                             }
                         }
   
-                        Byte bb = 0;
+                        u08 bb = 0;
                         cnvBit<char>(&bb, 1, vmap.ptr, 8, 0);
 
                         const int bcnt = cntBit(bb);
                         if (bcnt == 8 || bcnt == 0) continue;
 
                         if (bcnt > 4) {
-                            bb = (Byte)~bb;
+                            bb = (u08)~bb;
                         }
 
                         // pattern id
@@ -384,7 +384,7 @@ namespace sp {
                         for (int p = 1; p < ptns.size(); p++) {
                             if (bcnt != cntBit(ptns[p][0]) && 8-bcnt != cntBit(ptns[p][0])) continue;
 
-                            const Byte *b = ptns[p].ptr;
+                            const u08 *b = ptns[p].ptr;
                             for (int o = 0; o < 24; o++) {
                                 if (b[o] != bb) continue;
 
@@ -745,7 +745,7 @@ namespace sp {
     // visual hull
     //--------------------------------------------------------------------------------
 
-    SP_CPUFUNC bool visualHull(Voxel<> &voxel, const Mem1<Mem2<Byte> > &imgs, const Mem1<CamParam> &cams, const Mem1<Pose> &poses, const SP_REAL unit = 1.0) {
+    SP_CPUFUNC bool visualHull(Voxel<> &voxel, const Mem1<Mem2<u08> > &imgs, const Mem1<CamParam> &cams, const Mem1<Pose> &poses, const SP_REAL unit = 1.0) {
 
         SP_REAL meanDist = 0.0;
         {
@@ -762,7 +762,7 @@ namespace sp {
         const Vec3 cent = voxel.center();
 
         for (int i = 0; i < imgs.size(); i++) {
-            const Mem2<Byte> &img = imgs[i];
+            const Mem2<u08> &img = imgs[i];
             const CamParam &cam = cams[i];
             const Pose &pose = poses[i];
 
@@ -779,7 +779,7 @@ namespace sp {
                         const Vec2 pix = mulCam(cam, prjVec(cpos));
                         if (inRect(img.dsize, pix.x, pix.y) == false) continue;
 
-                        const Byte &val = img(round(pix.x), round(pix.y));
+                        const u08 &val = img(round(pix.x), round(pix.y));
 
                         if (val == 0) {
                             voxel.update(x, y, z, -1.0);

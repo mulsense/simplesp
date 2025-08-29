@@ -36,7 +36,7 @@ private:
         m_img.resize(m_cam.dsize);
         m_img.zero();
 
-        m_model = loadBunny(SP_DATA_DIR "/stanford/bun_zipper.ply");
+        m_model = loadBunny("../../../../data/stanford/bun_zipper.ply");
         //loadPLY("C:/work/model.ply", m_model);
         if (m_model.size() == 0) {
             // if could not find stanford bunny, load dummy model

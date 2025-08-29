@@ -41,7 +41,7 @@ private:
         m_img.resize(m_cam.dsize);
         m_img.zero();
 
-        m_model = loadBunny(SP_DATA_DIR "/stanford/bun_zipper.ply");
+        m_model = loadBunny("../../../../data/stanford/bun_zipper.ply");
         SP_ASSERT(m_model.size() > 0);
 
         m_pose = getPose(Vec3(0.0, 0.0, getModelDistance(m_model, m_cam)));

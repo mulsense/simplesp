@@ -17,16 +17,6 @@
 #pragma warning(disable:4838)
 #endif
 
-
-#ifndef SP_ROOT_DIR
-#define SP_ROOT_DIR "../../../.."
-#endif
-
-#ifndef SP_DATA_DIR
-#define SP_DATA_DIR "../../../../data"
-#endif
-
-
 #include "spcore/spcore.h"
 #include "spapp/spapp.h"
 

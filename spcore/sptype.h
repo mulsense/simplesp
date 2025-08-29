@@ -419,7 +419,7 @@ namespace sp {
 namespace sp {
    
     // get color
-    SP_GENFUNC Col3 getCol3(const Byte r, const Byte g, const Byte b) {
+    SP_GENFUNC Col3 getCol3(const u08 r, const u08 g, const u08 b) {
         Col3 dst;
         dst.r = r;
         dst.g = g;
@@ -428,7 +428,7 @@ namespace sp {
     }
 
     // get color
-    SP_GENFUNC Col4 getCol4(const Byte r, const Byte g, const Byte b, const Byte a) {
+    SP_GENFUNC Col4 getCol4(const u08 r, const u08 g, const u08 b, const u08 a) {
         Col4 dst;
         dst.r = r;
         dst.g = g;
@@ -438,7 +438,7 @@ namespace sp {
     }
 
     // get color
-    SP_GENFUNC Col4 getCol4(const Col3 &col, const Byte a) {
+    SP_GENFUNC Col4 getCol4(const Col3 &col, const u08 a) {
         return getCol4(col.r, col.g, col.b, a);
     }
 
@@ -505,9 +505,9 @@ namespace sp {
     SP_GENFUNC void cnvPhaseToCol(Col3 &col, const double phase) {
         const double p = max(0.0, min(phase, 1.0));
 
-        col.r = static_cast<Byte>(255 * (sin(1.5 * SP_PI * p + SP_PI * (9.0 / 4.0)) + 1.0) / 2.0);
-        col.g = static_cast<Byte>(255 * (sin(1.5 * SP_PI * p + SP_PI * (7.0 / 4.0)) + 1.0) / 2.0);
-        col.b = static_cast<Byte>(255 * (sin(1.5 * SP_PI * p + SP_PI * (5.0 / 4.0)) + 1.0) / 2.0);
+        col.r = static_cast<u08>(255 * (sin(1.5 * SP_PI * p + SP_PI * (9.0 / 4.0)) + 1.0) / 2.0);
+        col.g = static_cast<u08>(255 * (sin(1.5 * SP_PI * p + SP_PI * (7.0 / 4.0)) + 1.0) / 2.0);
+        col.b = static_cast<u08>(255 * (sin(1.5 * SP_PI * p + SP_PI * (5.0 / 4.0)) + 1.0) / 2.0);
     }
 
     // convert hsv to col3, hsv = Vec3(h = [0, 2 * PI], s = [0, 1], v = [0, 1])
@@ -520,10 +520,10 @@ namespace sp {
         const double D = (r * 180.0 / SP_PI) / 60.0;
 
         const double f = D - floor(D);
-        const Byte uv = static_cast<Byte>(v * 255.0 + 0.5);
-        const Byte ua = static_cast<Byte>(v * 255.0 * (1.0 - s) + 0.5);
-        const Byte ub = static_cast<Byte>(v * 255.0 * (1.0 - s * f) + 0.5);
-        const Byte uc = static_cast<Byte>(v * 255.0 * (1.0 - s * (1.0 - f)) + 0.5);
+        const u08 uv = static_cast<u08>(v * 255.0 + 0.5);
+        const u08 ua = static_cast<u08>(v * 255.0 * (1.0 - s) + 0.5);
+        const u08 ub = static_cast<u08>(v * 255.0 * (1.0 - s * f) + 0.5);
+        const u08 uc = static_cast<u08>(v * 255.0 * (1.0 - s * (1.0 - f)) + 0.5);
 
         switch (floor(D) % 6) {
         case 0: col = getCol3(uv, uc, ua); break;
@@ -658,9 +658,9 @@ namespace sp {
     // convert geom to image
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC void cnvDepthToCol(Byte &dst, const double depth, const double nearPlane, const double farPlane) {
+    SP_GENFUNC void cnvDepthToCol(u08 &dst, const double depth, const double nearPlane, const double farPlane) {
         const double rate = 1.0 - (depth - nearPlane) / (farPlane - nearPlane);
-        dst = static_cast<Byte>(255 * rate + 0.5);
+        dst = static_cast<u08>(255 * rate + 0.5);
     }
 
     SP_GENFUNC void cnvDepthToCol(Col3 &dst, const double depth, const double nearPlane, const double farPlane) {
@@ -668,19 +668,19 @@ namespace sp {
         cnvPhaseToCol(dst, rate);
     }
 
-    SP_GENFUNC void cnvNormalToCol(Byte &dst, const Vec3 &nrm) {
-        dst = (nrm.z < 0) ? static_cast<Byte>(-255 * nrm.z) : 0;
+    SP_GENFUNC void cnvNormalToCol(u08 &dst, const Vec3 &nrm) {
+        dst = (nrm.z < 0) ? static_cast<u08>(-255 * nrm.z) : 0;
     }
 
     SP_GENFUNC void cnvNormalToCol(Col3 &dst, const Vec3 &nrm) {
-        dst.r = static_cast<Byte>(255 * (1.0 - nrm.x) / 2);
-        dst.g = static_cast<Byte>(255 * (1.0 - nrm.y) / 2);
-        dst.b = static_cast<Byte>(255 * (1.0 - nrm.z) / 2);
+        dst.r = static_cast<u08>(255 * (1.0 - nrm.x) / 2);
+        dst.g = static_cast<u08>(255 * (1.0 - nrm.y) / 2);
+        dst.b = static_cast<u08>(255 * (1.0 - nrm.z) / 2);
     }
 
-    SP_GENFUNC void cnvDispToCol(Byte &dst, const float &disp, const int maxDisp, const int minDisp) {
+    SP_GENFUNC void cnvDispToCol(u08 &dst, const float &disp, const int maxDisp, const int minDisp) {
         const double rate = 1.0 - (disp - minDisp) / (maxDisp - minDisp);
-        dst = static_cast<Byte>(255 * rate + 0.5);
+        dst = static_cast<u08>(255 * rate + 0.5);
     }
 
     SP_GENFUNC void cnvDispToCol(Col3 &dst, const float &disp, const int maxDisp, const int minDisp) {
@@ -692,13 +692,13 @@ namespace sp {
     // color util
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC Byte blendCol(const Byte col0, const double r0, const Byte col1, const double r1) {
+    SP_GENFUNC u08 blendCol(const u08 col0, const double r0, const u08 col1, const double r1) {
         if (r0 + r1 == 0.0f) return 0;
         if (r0 == 0.0) return col1;
         if (r1 == 0.0) return col0;
 
-        Byte col;
-        col = static_cast<Byte>((col0 * r0 + col1 * r1) / (r0 + r1) + 0.5);
+        u08 col;
+        col = static_cast<u08>((col0 * r0 + col1 * r1) / (r0 + r1) + 0.5);
         return col;
     }
 
@@ -718,9 +718,9 @@ namespace sp {
         if (r1 == 0.0) return col0;
 
         Col3 col;
-        col.r = static_cast<Byte>((col0.r * r0 + col1.r * r1) / (r0 + r1) + 0.5);
-        col.g = static_cast<Byte>((col0.g * r0 + col1.g * r1) / (r0 + r1) + 0.5);
-        col.b = static_cast<Byte>((col0.b * r0 + col1.b * r1) / (r0 + r1) + 0.5);
+        col.r = static_cast<u08>((col0.r * r0 + col1.r * r1) / (r0 + r1) + 0.5);
+        col.g = static_cast<u08>((col0.g * r0 + col1.g * r1) / (r0 + r1) + 0.5);
+        col.b = static_cast<u08>((col0.b * r0 + col1.b * r1) / (r0 + r1) + 0.5);
         return col;
     }
 
@@ -734,15 +734,15 @@ namespace sp {
         const float t1 = col1.a * r1;
 
         if (t0 + t1 > 0.0f) {
-            dst.r = static_cast<Byte>((col0.r * t0 + col1.r * t1) / (t0 + t1) + 0.5);
-            dst.g = static_cast<Byte>((col0.g * t0 + col1.g * t1) / (t0 + t1) + 0.5);
-            dst.b = static_cast<Byte>((col0.b * t0 + col1.b * t1) / (t0 + t1) + 0.5);
-            dst.a = static_cast<Byte>((t0 + t1) / (r0 + r1) + 0.5);
+            dst.r = static_cast<u08>((col0.r * t0 + col1.r * t1) / (t0 + t1) + 0.5);
+            dst.g = static_cast<u08>((col0.g * t0 + col1.g * t1) / (t0 + t1) + 0.5);
+            dst.b = static_cast<u08>((col0.b * t0 + col1.b * t1) / (t0 + t1) + 0.5);
+            dst.a = static_cast<u08>((t0 + t1) / (r0 + r1) + 0.5);
         }
         else {
-            dst.r = static_cast<Byte>((col0.r * r0 + col1.r * r1) / (r0 + r1) + 0.5);
-            dst.g = static_cast<Byte>((col0.g * r0 + col1.g * r1) / (r0 + r1) + 0.5);
-            dst.b = static_cast<Byte>((col0.b * r0 + col1.b * r1) / (r0 + r1) + 0.5);
+            dst.r = static_cast<u08>((col0.r * r0 + col1.r * r1) / (r0 + r1) + 0.5);
+            dst.g = static_cast<u08>((col0.g * r0 + col1.g * r1) / (r0 + r1) + 0.5);
+            dst.b = static_cast<u08>((col0.b * r0 + col1.b * r1) / (r0 + r1) + 0.5);
             dst.a = 0.0f;
         }
         return dst;

@@ -95,9 +95,9 @@ int main() {
         // sample
         {
             for(int i = 0; i < 50; i++){
-                Mem2<Byte> dst(mean.dsize);
+                Mem2<u08> dst(mean.dsize);
                 for (int j = 0; j < dst.size(); j++) {
-                    dst[j] = static_cast<Byte>(imgs[i][j] * 255 + 0.5);
+                    dst[j] = static_cast<u08>(imgs[i][j] * 255 + 0.5);
                 }
         
                 char path[256];
@@ -108,10 +108,10 @@ int main() {
 
         // mean
         {
-            Mem2<Byte> dst(mean.dsize);
+            Mem2<u08> dst(mean.dsize);
             {
                 for (int i = 0; i < dst.size(); i++) {
-                    dst[i] = static_cast<Byte>(mean[i] * 255 + 0.5);
+                    dst[i] = static_cast<u08>(mean[i] * 255 + 0.5);
                 }
             }
             saveBMP("mean.bmp", dst);
@@ -120,7 +120,7 @@ int main() {
         // principal component
         {
             for (int i = 0; i < 10; i++) {
-                Mem2<Byte> dst(mean.dsize);
+                Mem2<u08> dst(mean.dsize);
                 {
                     Mem2<double> tmp(mean.dsize);
 

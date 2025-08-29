@@ -6,15 +6,30 @@
 #define __SP_LABEL_H__
 
 #include "spcore/spcore.h"
-#include "spapp/spimg/spimg.h"
 
 namespace sp{
 
+    SP_CPUFUNC void binalize(Mem2<u08>& dst, const Mem2<u08>& src, const int thresh, const bool inv = false) {
+        dst.resize(src.dsize);
+        const Mem2<u08>& tmp = (&dst != &src) ? src : clone(src);
+
+        if (inv == false) {
+            for (int i = 0; i < dst.size(); i++) {
+                dst[i] = (tmp[i] >= thresh) ? 255 : 0;
+            }
+        }
+        else {
+            for (int i = 0; i < dst.size(); i++) {
+                dst[i] = (tmp[i] < thresh) ? 255 : 0;
+            }
+        }
+
+    }
     //--------------------------------------------------------------------------------
     // labeling
     //--------------------------------------------------------------------------------
 
-    SP_CPUFUNC int labeling(Mem2<int> &map, const Mem2<Byte> &bin, const bool near8 = false){
+    SP_CPUFUNC int labeling(Mem2<int> &map, const Mem2<u08> &bin, const bool near8 = false){
         
         const int step = bin.dsize[0];
 
@@ -28,7 +43,7 @@ namespace sp{
         const int linkNum = (near8 == true) ? 4 : 2;
         const int link[][2] = { { -1, 0 }, { 0, -1 }, { -1, -1 }, { +1, -1 } };
 
-        const Byte *pBin = bin.ptr;
+        const u08 *pBin = bin.ptr;
         int *pMap = map.ptr;
         int *pTable = table.ptr;
 

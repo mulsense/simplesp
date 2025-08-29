@@ -101,8 +101,6 @@ namespace sp{
     // type
     //--------------------------------------------------------------------------------
     
-    typedef unsigned char Byte;
-
     typedef char           s08;
     typedef unsigned char  u08;
     typedef short          s16;
@@ -665,11 +663,11 @@ namespace sp{
     //--------------------------------------------------------------------------------
 
     struct Col3{
-        Byte r, g, b;
+        u08 r, g, b;
     };
 
     struct Col4 : public Col3{
-        Byte a;
+        u08 a;
     };
 
     struct Col3f {
@@ -748,31 +746,31 @@ namespace sp {
     // byte
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC void _cast(Byte &dst, const int &src) {
-        dst = static_cast<Byte>((src < 0) ? 0 : (src > SP_BYTEMAX) ? SP_BYTEMAX : src);
+    SP_GENFUNC void _cast(u08 &dst, const int &src) {
+        dst = static_cast<u08>((src < 0) ? 0 : (src > SP_BYTEMAX) ? SP_BYTEMAX : src);
     }
 
-    SP_GENFUNC void _cast(Byte &dst, const double &src) {
-        dst = static_cast<Byte>((src < 0) ? 0 : (src > SP_BYTEMAX) ? SP_BYTEMAX : src + 0.5);
+    SP_GENFUNC void _cast(u08 &dst, const double &src) {
+        dst = static_cast<u08>((src < 0) ? 0 : (src > SP_BYTEMAX) ? SP_BYTEMAX : src + 0.5);
     }
 
-    SP_GENFUNC void _cast(Byte &dst, const Byte &src) {
+    SP_GENFUNC void _cast(u08 &dst, const u08 &src) {
         dst = src;
     }
 
-    SP_GENFUNC void _cast(Byte &dst, const Col3 &src) {
-        dst = static_cast<Byte>(0.299 * src.r + 0.587 * src.g + 0.114 * src.b + 0.5);
+    SP_GENFUNC void _cast(u08 &dst, const Col3 &src) {
+        dst = static_cast<u08>(0.299 * src.r + 0.587 * src.g + 0.114 * src.b + 0.5);
     }
  
-    SP_GENFUNC void _cast(Byte &dst, const Col4 &src) {
-        dst = static_cast<Byte>(0.299 * src.r + 0.587 * src.g + 0.114 * src.b + 0.5);
+    SP_GENFUNC void _cast(u08 &dst, const Col4 &src) {
+        dst = static_cast<u08>(0.299 * src.r + 0.587 * src.g + 0.114 * src.b + 0.5);
     }
 
     //--------------------------------------------------------------------------------
     // color 3
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC void _cast(Col3 &dst, const Byte &src) {
+    SP_GENFUNC void _cast(Col3 &dst, const u08 &src) {
         dst.r = src;
         dst.g = src;
         dst.b = src;
@@ -791,28 +789,28 @@ namespace sp {
     }
 
     SP_GENFUNC void _cast(Col3 &dst, const Vec3 &src) {
-        dst.r = static_cast<Byte>(((src.x < 0.0) ? 0.0 : ((src.x > 1.0) ? 1.0 : src.x)) * SP_BYTEMAX + 0.5);
-        dst.g = static_cast<Byte>(((src.y < 0.0) ? 0.0 : ((src.y > 1.0) ? 1.0 : src.y)) * SP_BYTEMAX + 0.5);
-        dst.b = static_cast<Byte>(((src.z < 0.0) ? 0.0 : ((src.z > 1.0) ? 1.0 : src.z)) * SP_BYTEMAX + 0.5);
+        dst.r = static_cast<u08>(((src.x < 0.0) ? 0.0 : ((src.x > 1.0) ? 1.0 : src.x)) * SP_BYTEMAX + 0.5);
+        dst.g = static_cast<u08>(((src.y < 0.0) ? 0.0 : ((src.y > 1.0) ? 1.0 : src.y)) * SP_BYTEMAX + 0.5);
+        dst.b = static_cast<u08>(((src.z < 0.0) ? 0.0 : ((src.z > 1.0) ? 1.0 : src.z)) * SP_BYTEMAX + 0.5);
     }
 
     SP_GENFUNC void _cast(Col3 &dst, const Col3f &src) {
-        dst.r = static_cast<Byte>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
-        dst.g = static_cast<Byte>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
-        dst.b = static_cast<Byte>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
+        dst.r = static_cast<u08>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
+        dst.g = static_cast<u08>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
+        dst.b = static_cast<u08>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
     }
 
     SP_GENFUNC void _cast(Col3 &dst, const Col4f &src) {
-        dst.r = static_cast<Byte>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
-        dst.g = static_cast<Byte>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
-        dst.b = static_cast<Byte>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
+        dst.r = static_cast<u08>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
+        dst.g = static_cast<u08>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
+        dst.b = static_cast<u08>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
     }
 
     //--------------------------------------------------------------------------------
     // color 4
     //--------------------------------------------------------------------------------
   
-    SP_GENFUNC void _cast(Col4 &dst, const Byte &src) {
+    SP_GENFUNC void _cast(Col4 &dst, const u08 &src) {
         dst.r = src;
         dst.g = src;
         dst.b = src;
@@ -834,17 +832,17 @@ namespace sp {
     }
 
     SP_GENFUNC void _cast(Col4 &dst, const Col3f &src) {
-        dst.r = static_cast<Byte>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
-        dst.g = static_cast<Byte>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
-        dst.b = static_cast<Byte>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
+        dst.r = static_cast<u08>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
+        dst.g = static_cast<u08>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
+        dst.b = static_cast<u08>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
         dst.a = SP_BYTEMAX;
     }
 
     SP_GENFUNC void _cast(Col4 &dst, const Col4f &src) {
-        dst.r = static_cast<Byte>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
-        dst.g = static_cast<Byte>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
-        dst.b = static_cast<Byte>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
-        dst.a = static_cast<Byte>(((src.a < 0.0) ? 0.0 : ((src.a > 1.0) ? 1.0 : src.a)) * SP_BYTEMAX + 0.5);
+        dst.r = static_cast<u08>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
+        dst.g = static_cast<u08>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
+        dst.b = static_cast<u08>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
+        dst.a = static_cast<u08>(((src.a < 0.0) ? 0.0 : ((src.a > 1.0) ? 1.0 : src.a)) * SP_BYTEMAX + 0.5);
     }
 
     //--------------------------------------------------------------------------------

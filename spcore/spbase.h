@@ -147,7 +147,7 @@ namespace sp{
         if (sizeof(TYPE) == 1) return;
 
         for (int i = 0; i < size; i++) {
-            Byte *tmp = (Byte*)&ptr[i];
+            u08 *tmp = (u08*)&ptr[i];
 
             for (int j = 0; j < n / 2; j++) {
                 swap(tmp[j], tmp[n - j - 1]);
@@ -187,15 +187,15 @@ namespace sp{
         4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8,
     };
 
-    SP_GENFUNC int cntBit(const Byte byte) {
+    SP_GENFUNC int cntBit(const u08 byte) {
         return SP_BITS_TABLE[byte];
     }
 
-    SP_GENFUNC int cntBit(const Byte byte0, const Byte byte1) {
+    SP_GENFUNC int cntBit(const u08 byte0, const u08 byte1) {
         return 8 - cntBit(byte0 ^ byte1);
     }
 
-    SP_GENFUNC int cntBit(const Byte *bytes0, const Byte *bytes1, const int bsize) {
+    SP_GENFUNC int cntBit(const u08 *bytes0, const u08 *bytes1, const int bsize) {
         int cnt = 0;
         for (int i = 0; i < bsize; i++) {
             cnt += cntBit(bytes0[i], bytes1[i]);
@@ -203,18 +203,18 @@ namespace sp{
         return cnt;
     }
 
-    SP_GENFUNC void setBit(Byte *byte, const int p, const Byte b) {
-        const Byte mask = 0x01 << p;
+    SP_GENFUNC void setBit(u08 *byte, const int p, const u08 b) {
+        const u08 mask = 0x01 << p;
         *byte = (b != 0) ? *byte | mask : *byte & ~mask;
     }
   
-    SP_GENFUNC Byte getBit(const Byte *byte, const int p) {
-        const Byte mask = 0x01 << p;
+    SP_GENFUNC u08 getBit(const u08 *byte, const int p) {
+        const u08 mask = 0x01 << p;
         return (*byte & mask) ? 1 : 0;
     }
 
     template<typename TYPE>
-    SP_GENFUNC void cnvBit(Byte *bytes, const int bsize, const TYPE *src, const int ssize, const TYPE thresh) {
+    SP_GENFUNC void cnvBit(u08 *bytes, const int bsize, const TYPE *src, const int ssize, const TYPE thresh) {
 
         for (int i = 0; i < bsize; i++) {
             bytes[i] = 0;
