@@ -230,9 +230,9 @@ namespace sp {
                 n->n0 = NULL;
                 n->n1 = NULL;
 
-                n->box = nullBox3();
+                n->box = Box3();
                 for (int i = base; i < base + size; i++) {
-                    n->box = orBox(n->box, idxs[i].box);
+                    n->box = n->box + idxs[i].box;
                 }
                 return n;
             };
@@ -244,19 +244,19 @@ namespace sp {
                     double mina = SP_INFINITY;
                     for (int a = 0; a < 3; a++) {
                         sort(&idxs[n.base], n.size, cmp[a]);
-                        Box3 bl = nullBox3();
-                        Box3 br = nullBox3();
+                        Box3 bl = Box3();
+                        Box3 br = Box3();
 
                         for (int i = 1; i < n.size; i++) {
                             const int l = i;
-                            bl = orBox(bl, idxs[n.base + l - 1].box);
+                            bl = bl + idxs[n.base + l - 1].box;
                             buff[n.base + l] = 0;
-                            buff[n.base + l] += getBoxArea(bl) * i;
+                            buff[n.base + l] += bl.area() * i;
                         }
                         for (int i = 1; i < n.size; i++) {
                             const int r = n.size - i;
-                            br = orBox(br, idxs[n.base + r].box);
-                            buff[n.base + r] += getBoxArea(br) * i;
+                            br = br + idxs[n.base + r].box;
+                            buff[n.base + r] += br.area() * i;
                         }
 
                         for (int i = 1; i < n.size; i++) {
@@ -298,8 +298,8 @@ namespace sp {
 
                     for (int i = 0; i < idxs.size(); i++) {
                         idxs[i].id = unit.idxs[i].id;
-                        idxs[i].box = getBox3(unit.data[idxs[i].id].mesh);
-                        idxs[i].cent = getMeshCent(unit.data[idxs[i].id].mesh);
+                        idxs[i].box = Box3(unit.data[idxs[i].id].mesh);
+                        idxs[i].cent = unit.data[idxs[i].id].mesh.center();
                     }
 
                     unit.nodes.clear();
@@ -365,15 +365,15 @@ namespace sp {
                 for (int i = 0; i < idxs.size(); i++) {
                     Unit &unit = m_units[m_layouts[i].uid];
                     idxs[i].id = i;
-                    idxs[i].box = nullBox3();
+                    idxs[i].box = Box3();
                     for (int j = 0; j < 8; j++) {
                         const int a = (j & 0x01) ? 1 : 0;
                         const int b = (j & 0x02) ? 1 : 0;
                         const int c = (j & 0x04) ? 1 : 0;
                         const Vec3 v = Vec3(unit.nodes[0].box.pos[a].x, unit.nodes[0].box.pos[b].y, unit.nodes[0].box.pos[c].z);
-                        idxs[i].box = orBox(idxs[i].box, m_layouts[i].pose * v);
+                        idxs[i].box = idxs[i].box + Box3(m_layouts[i].pose* v);
                     }
-                    idxs[i].cent = getBoxCent(idxs[i].box);
+                    idxs[i].cent = idxs[i].box.center();
                 }
 
                 m_nodes.clear();
@@ -474,7 +474,7 @@ namespace sp {
                         hit.mat = unit.data[minid].mat;
 
                         hit.vec.pos = layout.pose * (bray.pos + bray.drc * maxvB);
-                        hit.vec.drc = (layout.pose.part(0, 0, 3, 3) * getMeshNrm(unit.data[minid].mesh)).unit();
+                        hit.vec.drc = (layout.pose.part(0, 0, 3, 3) * unit.data[minid].mesh.normal()).unit();
                     }
                 }
             }

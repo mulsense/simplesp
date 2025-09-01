@@ -142,23 +142,6 @@ namespace sp {
         return dst;
     }
 
-    //--------------------------------------------------------------------------------
-    // extract z element
-    //--------------------------------------------------------------------------------
-
-    SP_GENFUNC SP_REAL extractZ(const VecPD3 &src) {
-        return src.pos.z;
-    }
-
-    SP_GENFUNC SP_REAL extractZ(const Vec3 &src) {
-        return src.z;
-    }
-
-    SP_GENFUNC SP_REAL extractZ(const double src) {
-        return src;
-    }
-
-
 
     //--------------------------------------------------------------------------------
     // line util
@@ -194,14 +177,6 @@ namespace sp {
     // matrix * mesh
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC Mesh2 mulMat(const SP_REAL *mat, const int rows, const int cols, const Mesh2 &mesh) {
-        Mesh2 dst;
-        dst.pos[0] = mulMat(mat, rows, cols, mesh.pos[0]);
-        dst.pos[1] = mulMat(mat, rows, cols, mesh.pos[1]);
-        dst.pos[2] = mulMat(mat, rows, cols, mesh.pos[2]);
-        return dst;
-    }
-
     SP_GENFUNC Mesh3 mulMat(const SP_REAL *mat, const int rows, const int cols, const Mesh3 &mesh) {
         Mesh3 dst;
         dst.pos[0] = mulMat(mat, rows, cols, mesh.pos[0]);
@@ -210,24 +185,7 @@ namespace sp {
         return dst;
     }
 
-    //--------------------------------------------------------------------------------
-    // mesh util
-    //--------------------------------------------------------------------------------
 
-    // get normal vector
-    SP_GENFUNC Vec3 getMeshNrm(const Mesh3 &mesh) {
-        return ((mesh.pos[1] - mesh.pos[0]).cross(mesh.pos[2] - mesh.pos[0])).unit();
-    }
-
-    // get center vector
-    SP_GENFUNC Vec2 getMeshCent(const Mesh2 &mesh) {
-        return (mesh.pos[0] + mesh.pos[1] + mesh.pos[2]) / 3.0;
-    }
-
-    // get center vector
-    SP_GENFUNC Vec3 getMeshCent(const Mesh3 &mesh) {
-        return (mesh.pos[0] + mesh.pos[1] + mesh.pos[2]) / 3.0;
-    }
     
     //--------------------------------------------------------------------------------
     // geodesic dorm
@@ -278,7 +236,7 @@ namespace sp {
 
             for (int i = 0; i < 20; i++) {
                 Mesh3 &m = model[i];
-                if (getMeshNrm(m).dot(getMeshCent(m)) < 0.0) {
+                if (m.normal().dot(m.center()) < 0.0) {
                     swap(m.pos[1], m.pos[2]);
                 }
             }
@@ -305,109 +263,6 @@ namespace sp {
             dst = mesh[tmp / num];
         }
         return dst;
-    }
-
-    
-    //--------------------------------------------------------------------------------
-    // box
-    //--------------------------------------------------------------------------------
-
-    // get box
-    SP_GENFUNC Box2 getBox2(const Vec2 &vec0, const Vec2 &vec1) {
-        Box2 dst;
-        dst.pos[0] = vec0;
-        dst.pos[1] = vec1;
-        return dst;
-    }
-
-    // get box
-    SP_GENFUNC Box3 getBox3(const Vec3 &vec0, const Vec3 &vec1) {
-        Box3 dst;
-        dst.pos[0] = vec0;
-        dst.pos[1] = vec1;
-        return dst;
-    }
-
-    // get box
-    SP_GENFUNC Box3 nullBox3() {
-        return getBox3(Vec3(1.0, 1.0, 1.0) * (+SP_INFINITY), Vec3(1.0, 1.0, 1.0) * (-SP_INFINITY));
-    }
-
-    // get box
-    SP_GENFUNC Box3 getBox3(const Mesh3 &mesh) {
-        Box3 dst = nullBox3();
-        for (int p = 0; p < 3; p++) {
-            const Vec3 &pos = mesh.pos[p];
-            for (int i = 0; i < 3; i++) {
-                acsv(dst.pos[0], i) = min(acsv(dst.pos[0], i), acsv(pos, i));
-                acsv(dst.pos[1], i) = max(acsv(dst.pos[1], i), acsv(pos, i));
-            }
-        }
-        return dst;
-    }
-
-
-    //--------------------------------------------------------------------------------
-    // box util
-    //--------------------------------------------------------------------------------
-
-    SP_GENFUNC Box2 orBox(const Box2 &box0, const Box2 &box1) {
-        Box2 dst = box0;
-        dst.pos[0].x = min(dst.pos[0].x, box1.pos[0].x);
-        dst.pos[1].x = max(dst.pos[1].x, box1.pos[1].x);
-        dst.pos[0].y = min(dst.pos[0].y, box1.pos[0].y);
-        dst.pos[1].y = max(dst.pos[1].y, box1.pos[1].y);
-        return dst;
-    }
-
-    SP_GENFUNC Box3 orBox(const Box3 &box0, const Box3 &box1) {
-        Box3 dst = box0;
-        dst.pos[0].x = min(dst.pos[0].x, box1.pos[0].x);
-        dst.pos[1].x = max(dst.pos[1].x, box1.pos[1].x);
-        dst.pos[0].y = min(dst.pos[0].y, box1.pos[0].y);
-        dst.pos[1].y = max(dst.pos[1].y, box1.pos[1].y);
-        dst.pos[0].z = min(dst.pos[0].z, box1.pos[0].z);
-        dst.pos[1].z = max(dst.pos[1].z, box1.pos[1].z);
-        return dst;
-    }
-
-    SP_GENFUNC Box3 orBox(const Box3 &box, const Vec3 &vec) {
-        Box3 dst = box;
-        dst.pos[0].x = min(dst.pos[0].x, vec.x);
-        dst.pos[1].x = max(dst.pos[1].x, vec.x);
-        dst.pos[0].y = min(dst.pos[0].y, vec.y);
-        dst.pos[1].y = max(dst.pos[1].y, vec.y);
-        dst.pos[0].z = min(dst.pos[0].z, vec.z);
-        dst.pos[1].z = max(dst.pos[1].z, vec.z);
-        return dst;
-    }
-
-    SP_GENFUNC Box3 orBox(const Box3 &box, const Mesh3 &mesh) {
-        Box3 dst = box;
-        dst = orBox(dst, mesh.pos[0]);
-        dst = orBox(dst, mesh.pos[1]);
-        dst = orBox(dst, mesh.pos[2]);
-        return dst;
-    }
-
-    // get box area
-    SP_GENFUNC SP_REAL getBoxArea(const Box2 &box) {
-        const Vec2 d = box.pos[1] - box.pos[0];
-        return d.x * d.y;
-    }
-    // get box area
-    SP_GENFUNC SP_REAL getBoxArea(const Box3 &box) {
-        const Vec3 d = box.pos[1] - box.pos[0];
-        return (d.x * d.y + d.y * d.z + d.z * d.x) * 2.0;
-    }
-
-    // get box center
-    SP_GENFUNC Vec2 getBoxCent(const Box2 &box) {
-        return (box.pos[0] + box.pos[1]) * 0.5;
-    }
-    // get box center
-    SP_GENFUNC Vec3 getBoxCent(const Box3 &box) {
-        return (box.pos[0] + box.pos[1]) * 0.5;
     }
 }
 
@@ -655,43 +510,26 @@ namespace sp {
     }
 
     //--------------------------------------------------------------------------------
-    // convert geom to image
-    //--------------------------------------------------------------------------------
-
-    SP_GENFUNC void cnvDepthToCol(u08 &dst, const double depth, const double nearPlane, const double farPlane) {
-        const double rate = 1.0 - (depth - nearPlane) / (farPlane - nearPlane);
-        dst = static_cast<u08>(255 * rate + 0.5);
-    }
-
-    SP_GENFUNC void cnvDepthToCol(Col3 &dst, const double depth, const double nearPlane, const double farPlane) {
-        const double rate = 1.0 - (depth - nearPlane) / (farPlane - nearPlane);
-        cnvPhaseToCol(dst, rate);
-    }
-
-    SP_GENFUNC void cnvNormalToCol(u08 &dst, const Vec3 &nrm) {
-        dst = (nrm.z < 0) ? static_cast<u08>(-255 * nrm.z) : 0;
-    }
-
-    SP_GENFUNC void cnvNormalToCol(Col3 &dst, const Vec3 &nrm) {
-        dst.r = static_cast<u08>(255 * (1.0 - nrm.x) / 2);
-        dst.g = static_cast<u08>(255 * (1.0 - nrm.y) / 2);
-        dst.b = static_cast<u08>(255 * (1.0 - nrm.z) / 2);
-    }
-
-    SP_GENFUNC void cnvDispToCol(u08 &dst, const float &disp, const int maxDisp, const int minDisp) {
-        const double rate = 1.0 - (disp - minDisp) / (maxDisp - minDisp);
-        dst = static_cast<u08>(255 * rate + 0.5);
-    }
-
-    SP_GENFUNC void cnvDispToCol(Col3 &dst, const float &disp, const int maxDisp, const int minDisp) {
-        const double rate = 1.0 - (disp - minDisp) / (maxDisp - minDisp);
-        cnvPhaseToCol(dst, rate);
-    }
-
-    //--------------------------------------------------------------------------------
     // color util
     //--------------------------------------------------------------------------------
+        // color id
+    SP_GENFUNC Col3 getCol3FromId(const int id) {
+        Col3 col = getCol3(0, 0, 0);
+        col.r = (id) % 256;
+        col.g = (id / (256)) % 256;
+        col.b = (id / (256 * 256)) % 256;
+        return col;
+    }
 
+    // color id
+    SP_GENFUNC int getIdFromCol3(const Col3& col) {
+        int id = 0;
+        id += col.r;
+        id += col.g * (256);
+        id += col.b * (256 * 256);
+        if (id == 256 * 256 * 256 - 1) id = -1;
+        return id;
+    }
     SP_GENFUNC u08 blendCol(const u08 col0, const double r0, const u08 col1, const double r1) {
         if (r0 + r1 == 0.0f) return 0;
         if (r0 == 0.0) return col1;
@@ -743,7 +581,7 @@ namespace sp {
             dst.r = static_cast<u08>((col0.r * r0 + col1.r * r1) / (r0 + r1) + 0.5);
             dst.g = static_cast<u08>((col0.g * r0 + col1.g * r1) / (r0 + r1) + 0.5);
             dst.b = static_cast<u08>((col0.b * r0 + col1.b * r1) / (r0 + r1) + 0.5);
-            dst.a = 0.0f;
+            dst.a = static_cast<u08>(0.0);
         }
         return dst;
     }
@@ -783,26 +621,21 @@ namespace sp {
         }
         return dst;
     }
+    SP_GENFUNC Col3 revCol(const Col3& col) {
+        Vec3 hsv;
+        cnvColToHSV(hsv, col);
+        hsv.z = static_cast<SP_REAL>((hsv.z > 0.5) ? hsv.z - 0.5 : hsv.z + 0.5);
 
-    // color id
-    SP_GENFUNC Col3 getCol3FromId(const int id) {
-        Col3 col = getCol3(0, 0, 0);
-        col.r = (id) % 256;
-        col.g = (id / (256)) % 256;
-        col.b = (id / (256 * 256)) % 256;
-        return col;
+        Col3 tmp;
+        cnvHSVToCol(tmp, hsv);
+
+        return tmp;
     }
 
-    // color id
-    SP_GENFUNC int getIdFromCol3(const Col3 &col) {
-        int id = 0;
-        id += col.r;
-        id += col.g * (256);
-        id += col.b * (256 * 256);
-        if (id == 256 * 256 * 256 - 1) id = -1;
-        return id;
+    SP_GENFUNC Col4 revCol(const Col4& col) {
+        Col3 c3 = revCol(getCol3(col.r, col.g, col.b));
+        return getCol4(c3.r, c3.g, c3.b, col.a);
     }
-
     // standord color i (0-12) v (0-7)
     SP_GENFUNC Col3 stdcol(const int i, const int v) {
         Col3 col;
@@ -817,29 +650,6 @@ namespace sp {
             cnvHSVToCol(col, sp::Vec3(h, slist[v], vlist[v]));
         }
         return col;
-    }
-
-    SP_GENFUNC Col3 getCol3(const int label) {
-        srand(max(label + 1, 0));
-        Col3 col;
-        cnvHSVToCol(col, Vec3((randu() + 1.0) * SP_PI, 1.0, 1.0));
-        return col;
-    }
-
-    SP_GENFUNC Col3 revCol(const Col3 &col) {
-        Vec3 hsv;
-        cnvColToHSV(hsv, col);
-        hsv.z = static_cast<SP_REAL>((hsv.z > 0.5) ? hsv.z - 0.5 : hsv.z + 0.5);
-
-        Col3 tmp;
-        cnvHSVToCol(tmp, hsv);
-
-        return tmp;
-    }
-
-    SP_GENFUNC Col4 revCol(const Col4 &col) {
-        Col3 c3 = revCol(getCol3(col.r, col.g, col.b));
-        return getCol4(c3.r, c3.g, c3.b, col.a);
     }
 
 }
@@ -1794,7 +1604,7 @@ namespace sp {
     //--------------------------------------------------------------------------------
 
     SP_GENFUNC Pose getGeodesicPose(const int level, const int id, const double distance = 0.0) {
-        const Vec3 v = getMeshCent(getGeodesicMesh(level, id)) * (-1.0);
+        const Vec3 v = getGeodesicMesh(level, id).center() * (-1.0);
         const Pose pose = getPose(getRotDirection(v), Vec3(0.0, 0.0, distance));
         return pose;
     }

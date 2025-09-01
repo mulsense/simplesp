@@ -526,8 +526,8 @@ namespace sp{
     //--------------------------------------------------------------------------------
     // triangle mesh
     //--------------------------------------------------------------------------------
-    
-    class Mesh2{
+
+    class Mesh2 {
     public:
         Vec2 pos[3];
 
@@ -540,7 +540,7 @@ namespace sp{
             pos[2] = vec2;
         }
 
-        friend Mesh2 operator + (const Mesh2& mesh, const Vec2 vec) { 
+        friend Mesh2 operator + (const Mesh2& mesh, const Vec2 vec) {
             return Mesh2(mesh.pos[0] + vec, mesh.pos[1] + vec, mesh.pos[2] + vec);
         }
         friend Mesh2 operator - (const Mesh2& mesh, const Vec2 vec) {
@@ -565,7 +565,13 @@ namespace sp{
             pos[1] *= val;
             pos[2] *= val;
         }
+
+        // get center vector
+        Vec2 center() const {
+            return (pos[0] + pos[1] + pos[2]) / 3.0;
+        }
     };
+
 
     class Mesh3 {
     public:
@@ -595,15 +601,27 @@ namespace sp{
             pos[1] += vec;
             pos[2] += vec;
         }
+
         void operator -= (const Vec3& vec) {
             pos[0] -= vec;
             pos[1] -= vec;
             pos[2] -= vec;
         }
+
         void operator *= (const double val) {
             pos[0] *= val;
             pos[1] *= val;
             pos[2] *= val;
+        }
+   
+        // get normal vector
+        Vec3 normal() const {
+            return ((pos[1] - pos[0]).cross(pos[2] - pos[0])).unit();
+        }
+
+        // get center vector
+        Vec3 center() const {
+            return (pos[0] + pos[1] + pos[2]) / 3.0;
         }
     };
 
@@ -611,12 +629,128 @@ namespace sp{
     // bounding box
     //--------------------------------------------------------------------------------
 
-    struct Box2 {
+    class Box2 {
+    private:
+        bool valid;
+
+    public:
         Vec2 pos[2];
+
+        Box2() {
+            valid = false;
+        }
+
+        Box2(const Box2& box) {
+            valid = box.valid;
+            pos[0] = box.pos[0];
+            pos[1] = box.pos[1];
+        }
+
+        Box2(const Vec2& vec0, const Vec2& vec1) {
+            valid = true;
+            pos[0] = vec0;
+            pos[1] = vec1;
+        }
+
+        Box2(const Vec2& vec) {
+            valid = true;
+            pos[0] = vec;
+            pos[1] = vec;
+        }
+
+        Box2(const Mesh2& mesh) {
+            *this = Box2(mesh.pos[0]) + Box2(mesh.pos[1]) + Box2(mesh.pos[2]);
+        }
+
+        friend Box2 operator + (const Box2& box0, const Box2& box1) {
+            Box2 dst = box0;
+
+            if (box0.valid == false) {
+                dst = box1;
+            }
+            else if (box1.valid == false) {
+                dst = box0;
+            }
+            else {
+                dst.pos[0].x = min(box0.pos[0].x, box1.pos[0].x);
+                dst.pos[1].x = max(box0.pos[1].x, box1.pos[1].x);
+                dst.pos[0].y = min(box0.pos[0].y, box1.pos[0].y);
+                dst.pos[1].y = max(box0.pos[1].y, box1.pos[1].y);
+            }
+            return dst;
+        }
+
+        SP_REAL area() const {
+            const Vec2 d = pos[1] - pos[0];
+            return d.x * d.y;
+        }
+
+        Vec2 center() const {
+            return (pos[0] + pos[1]) * 0.5;
+        }
     };
 
-    struct Box3 {
+    class Box3 {
+    private:
+        bool valid;
+
+    public:
         Vec3 pos[2];
+
+        Box3() {
+            valid = false;
+        }
+
+        Box3(const Box3& box) {
+            valid = box.valid;
+            pos[0] = box.pos[0];
+            pos[1] = box.pos[1];
+        }
+
+        Box3(const Vec3& vec0, const Vec3& vec1) {
+            valid = true;
+            pos[0] = vec0;
+            pos[1] = vec1;
+        }
+
+        Box3(const Vec3& vec) {
+            valid = true;
+            pos[0] = vec;
+            pos[1] = vec;
+        }
+
+        Box3(const Mesh3& mesh) {
+            *this = Box3(mesh.pos[0]) + Box3(mesh.pos[1]) + Box3(mesh.pos[2]);
+        }
+
+        friend Box3 operator + (const Box3& box0, const Box3& box1) {
+            Box3 dst = box0;
+
+            if (box0.valid == false) {
+                dst = box1;
+            }
+            else if (box1.valid == false) {
+                dst = box0;
+            }
+            else {
+                dst.pos[0].x = min(box0.pos[0].x, box1.pos[0].x);
+                dst.pos[1].x = max(box0.pos[1].x, box1.pos[1].x);
+                dst.pos[0].y = min(box0.pos[0].y, box1.pos[0].y);
+                dst.pos[1].y = max(box0.pos[1].y, box1.pos[1].y);
+                dst.pos[0].z = min(box0.pos[0].z, box1.pos[0].z);
+                dst.pos[1].z = max(box0.pos[1].z, box1.pos[1].z);
+            }
+            return dst;
+        }
+
+        SP_REAL area() const {
+            const Vec3 d = pos[1] - pos[0];
+            return d.x * d.y * d.z;
+        }
+
+        Vec3 center() const {
+            return (pos[0] + pos[1]) * 0.5;
+        }
     };
 
 
@@ -946,10 +1080,6 @@ namespace sp {
     }
 
     // compare mesh
-    SP_GENFUNC bool cmp(const Mesh2 &v0, const Mesh2 &v1, const double t = 1.0e-6) {
-        return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t) && cmp(v0.pos[2], v1.pos[2], t);
-    }
-    // compare mesh
     SP_GENFUNC bool cmp(const Mesh3 &v0, const Mesh3 &v1, const double t = 1.0e-6) {
         return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t) && cmp(v0.pos[2], v1.pos[2], t);
     }
@@ -1019,7 +1149,6 @@ namespace sp {
     SP_CMP_OPERATOR(VecPD3);
     SP_CMP_OPERATOR(Line2);
     SP_CMP_OPERATOR(Line3);
-    SP_CMP_OPERATOR(Mesh2);
     SP_CMP_OPERATOR(Mesh3);
     SP_CMP_OPERATOR(Rot);
     SP_CMP_OPERATOR(Pose);

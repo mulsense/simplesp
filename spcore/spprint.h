@@ -160,21 +160,6 @@ namespace sp {
         SP_PRINTF("\n");
     }
 
-    SP_CPUFUNC void _print(const Mesh2 &mesh) {
-        SP_PRINTF("[ ");
-        _print(mesh.pos[0]);
-        SP_PRINTF(", ");
-        _print(mesh.pos[1]);
-        SP_PRINTF(", ");
-        _print(mesh.pos[2]);
-        SP_PRINTF(" ]");
-    }
-    SP_CPUFUNC void print(const Mesh2 &mesh) {
-        SP_PRINTF("Mesh2 ");
-        _print(mesh);
-        SP_PRINTF("\n");
-    }
-
     SP_CPUFUNC void _print(const Mesh3 &mesh) {
         SP_PRINTF("[ ");
         _print(mesh.pos[0]);

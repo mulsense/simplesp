@@ -22,7 +22,7 @@ namespace sp{
         for (int i = 0; i < meshes.size(); i++){
             float f[3];
 
-            const Vec3 nrm = getMeshNrm(meshes[i]);
+            const Vec3 nrm = meshes[i].normal();
             f[0] = static_cast<float>(nrm.x);
             f[1] = static_cast<float>(nrm.y);
             f[2] = static_cast<float>(nrm.z);

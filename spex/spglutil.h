@@ -566,17 +566,9 @@ namespace sp {
         }
     }
 
-    SP_CPUFUNC void glMesh(const Mesh2 &mesh) {
-        glBegin(GL_TRIANGLES);
-        glVertex(mesh.pos[0]);
-        glVertex(mesh.pos[1]);
-        glVertex(mesh.pos[2]);
-        glEnd();
-    }
-
     SP_CPUFUNC void glMesh(const Mesh3 &mesh) {
         glBegin(GL_TRIANGLES);
-        glNormal(getMeshNrm(mesh));
+        glNormal(mesh.normal());
         glVertex(mesh.pos[0]);
         glVertex(mesh.pos[1]);
         glVertex(mesh.pos[2]);

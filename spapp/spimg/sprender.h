@@ -70,7 +70,7 @@ namespace sp{
             rect = andRect(getRect2(dst.dsize), getRect2(xs, ys, xe - xs, ye - ys));
         }
 
-        const Vec3 nrm = getMeshNrm(pm);
+        const Vec3 nrm = pm.normal();
 
         const Vec3 base = pm.pos[0];
         const Vec3 A = pm.pos[1] - base;
@@ -99,7 +99,7 @@ namespace sp{
                 const SP_REAL depth = result[2];
                 if (depth < SP_SMALL) continue;
 
-                const SP_REAL ref = extractZ(acs2(dst, u, v));
+                const SP_REAL ref = acs2(dst, u, v).pos.z;
                 if (ref == 0.0 || depth < ref) {
                     acs2(dst, u, v) = VecPD3(vec * depth, nrm);
                 }
@@ -113,6 +113,18 @@ namespace sp{
         for (int i = 0; i < meshes.size(); i++) {
             renderVecPD(dst, cam, pose, meshes[i]);
         }
+    }
+
+    SP_CPUFUNC SP_REAL extractZ(const VecPD3& src) {
+        return src.pos.z;
+    }
+
+    SP_CPUFUNC SP_REAL extractZ(const Vec3& src) {
+        return src.z;
+    }
+
+    SP_CPUFUNC SP_REAL extractZ(const double src) {
+        return src;
     }
 
     template<typename DEPTH>
