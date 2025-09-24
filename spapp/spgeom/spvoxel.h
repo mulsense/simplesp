@@ -102,7 +102,7 @@ namespace sp {
         char getv(const int x, const int y, const int z) const {
             char val = SP_VOXEL_NULL;
 
-            if (inRect(dsize, x, y, z) == true) {
+            if (Rect3(dsize).contains(x, y, z) == true) {
                 val = vmap(x, y, z);
             }
             return val;
@@ -164,7 +164,7 @@ namespace sp {
                         const Vec3 cpos = pose * ((mpos - cent) * unit);
 
                         const Vec2 pix = mulCam(cam, prjVec(cpos));
-                        if (inRect(pnmap.dsize, pix.x, pix.y) == false) continue;
+                        if (Rect2(pnmap.dsize).contains(pix.x, pix.y) == false) continue;
 
                         const Vec3 &pos = pnmap(round(pix.x), round(pix.y)).pos;
                         const Vec3 &drc = pnmap(round(pix.x), round(pix.y)).drc;
@@ -339,7 +339,7 @@ namespace sp {
         const Mem1<Mem1<u08> > ptns = _mc::getPattern();
         const Mem1<Mem1<Vec3> > orders = _mc::getVertexOrder();
 
-        Rect3 vrect = getRect3(voxel.dsize);
+        Rect3 vrect(voxel.dsize);
         for (int i = 0; i < 3; i++) {
             vrect.dbase[i] -= 1;
             vrect.dsize[i] += 1;
@@ -777,7 +777,7 @@ namespace sp {
                         const Vec3 cpos = pose * ((mpos - cent) * unit);
 
                         const Vec2 pix = mulCam(cam, prjVec(cpos));
-                        if (inRect(img.dsize, pix.x, pix.y) == false) continue;
+                        if (Rect2(img.dsize).contains(pix.x, pix.y) == false) continue;
 
                         const u08 &val = img(round(pix.x), round(pix.y));
 
@@ -814,7 +814,7 @@ namespace sp {
                     const Vec3 cpos = pose * ((mpos - cent) * voxel.unit);
 
                     const Vec2 pix = mulCam(cam, prjVec(cpos));
-                    if (inRect(depth.dsize, pix.x, pix.y) == false) continue;
+                    if (Rect2(depth.dsize).contains(pix.x, pix.y) == false) continue;
 
                     const SP_REAL d = depth(round(pix.x), round(pix.y));
                     if (d == 0.0) continue;
@@ -876,7 +876,7 @@ namespace sp {
                     const int y = round(mpos.y);
                     const int z = round(mpos.z);
 
-                    if (inRect(voxel.dsize, x, y, z) == false) continue;
+                    if (Rect3(voxel.dsize).contains(x, y, z) == false) continue;
 
                     const char val = voxel.vmap(x, y, z);
                     const char wei = voxel.wmap(x, y, z);
@@ -930,7 +930,7 @@ namespace sp {
         Mem1<int> table;
         table.reserve(vmap.size());
 
-        const Rect3 rect = getRect3(vmap.dsize);
+        const Rect3 rect(vmap.dsize);
 
         const int linkNum = 3;
         const int link[][3] = { { -1, 0, 0 },{ 0, -1, 0 },{ 0, 0, -1 } };
@@ -957,7 +957,7 @@ namespace sp {
                         const int ry = y + link[i][1];
                         const int rz = z + link[i][2];
 
-                        if (inRect(rect, rx, ry, rz) == false) continue;
+                        if (Rect3(rect).contains(rx, ry, rz) == false) continue;
                         const int rp = rz * step0 + ry * step1 + rx;
                         if ((cid != NULL && pBin[rp] != *cid) || pSub[rp] < 0) continue;
 

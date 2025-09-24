@@ -70,7 +70,7 @@ namespace ImGui {
     static sp::Rect2 GetWindowRect() {
         ImGuiWindow* window = ImGui::GetCurrentWindow();
 
-        return sp::getRect2(sp::round(window->Pos.x), sp::round(window->Pos.y), sp::round(window->Size.x), sp::round(window->Size.y));
+        return sp::Rect2(sp::round(window->Pos.x), sp::round(window->Pos.y), sp::round(window->Size.x), sp::round(window->Size.y));
     }
 
     static void Spacing(const float space) {

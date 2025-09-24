@@ -366,25 +366,25 @@ namespace sp{
     }
 
 
-    //--------------------------------------------------------------------------------
-    // rect
-    //--------------------------------------------------------------------------------
+    ////--------------------------------------------------------------------------------
+    //// rect
+    ////--------------------------------------------------------------------------------
 
-    SP_GENFUNC Rect2 getRect2(const Mem1<Vec2> &vecs) {
-        Rect2 rect = getRect2(vecs[0]);
-        for (int i = 1; i < vecs.size(); i++) {
-            rect = orRect(rect, getRect2(vecs[i]));
-        }
-        return rect;
-    }
+    //SP_GENFUNC Rect2 getRect2(const Mem1<Vec2> &vecs) {
+    //    Rect2 rect = getRect2(vecs[0]);
+    //    for (int i = 1; i < vecs.size(); i++) {
+    //        rect = orRect(rect, getRect2(vecs[i]));
+    //    }
+    //    return rect;
+    //}
 
-    SP_GENFUNC Rect3 getRect3(const Mem1<Vec3> &vecs) {
-        Rect3 rect = getRect3(vecs[0]);
-        for (int i = 1; i < vecs.size(); i++) {
-            rect = orRect(rect, getRect3(vecs[i]));
-        }
-        return rect;
-    }
+    //SP_GENFUNC Rect3 getRect3(const Mem1<Vec3> &vecs) {
+    //    Rect3 rect = getRect3(vecs[0]);
+    //    for (int i = 1; i < vecs.size(); i++) {
+    //        rect = orRect(rect, getRect3(vecs[i]));
+    //    }
+    //    return rect;
+    //}
 
 
     //--------------------------------------------------------------------------------

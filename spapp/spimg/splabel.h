@@ -38,7 +38,7 @@ namespace sp{
         Mem1<int> table;
         table.reserve(bin.size());
 
-        const Rect2 rect = getRect2(bin.dsize);
+        const Rect2 rect(bin.dsize);
 
         const int linkNum = (near8 == true) ? 4 : 2;
         const int link[][2] = { { -1, 0 }, { 0, -1 }, { -1, -1 }, { +1, -1 } };
@@ -61,7 +61,7 @@ namespace sp{
                     const int ru = u + link[i][0];
                     const int rv = v + link[i][1];
 
-                    if (inRect(rect, ru, rv) == false) continue;
+                    if (rect.contains(ru, rv) == false) continue;
                     if (pBin[rv * step + ru] == 0) continue;
 
                     const int refLabel = table[pMap[rv * step + ru]];
@@ -167,7 +167,7 @@ namespace sp{
                 if (id < 0) continue;
                 Rect2 &rect = pDst[id];
                 if (rect.dsize[0] == 0 || rect.dsize[1] == 0) {
-                    rect = getRect2(u, v, 1, 1);
+                    rect = Rect2(u, v, 1, 1);
                 }
                 else {
                     const int ru = rect.dbase[0];
@@ -220,7 +220,7 @@ namespace sp{
             const Rect2 rect = rects[i];
 
             if (useImgFrame == false){
-                if (inRect(getRect2(map.dsize) - 1, rect) == false) continue;
+                if ((Rect2(map.dsize) - 1).contains(rect) == false) continue;
             }
 
             int sx = 0;
@@ -250,7 +250,7 @@ namespace sp{
                         const int t = (s + j) % 8;
                         const int x = cx + order[t][0];
                         const int y = cy + order[t][1];
-                        if (inRect(rect, x, y) == false) continue;
+                        if (rect.contains(x, y) == false) continue;
 
                         if (map(x, y) == i) {
                             vec[0] = x - cx;
@@ -296,7 +296,7 @@ namespace sp{
                         const int t = (s + j) % 4;
                         const int x = cx + order[t][0];
                         const int y = cy + order[t][1];
-                        if (inRect(trect, x, y) == false) continue;
+                        if (trect.contains(x, y) == false) continue;
 
                         if (edge[t] == true) {
                             vec[0] = x - cx;
@@ -334,7 +334,7 @@ namespace sp{
             const Rect2 rect = rects[i];
 
             if (useImgFrame == false) {
-                if (inRect(getRect2(map.dsize) - 1, rect) == false) continue;
+                if ((Rect2(map.dsize) - 1).contains(rect) == false) continue;
             }
 
             const Mem1<Vec2> &contour = contours[i];

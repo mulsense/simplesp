@@ -165,27 +165,6 @@ namespace sp{
         int dsize[SP_DIMMAX];
     };
 
-    //--------------------------------------------------------------------------------
-    // rectangle
-    //--------------------------------------------------------------------------------
-
-    class Rect2 {
-    public:
-        // dimension base
-        int dbase[2];
-
-        // dimension size
-        int dsize[2];
-    };
-
-    class Rect3 {
-    public:
-        // dimension base
-        int dbase[3];
-
-        // dimension size
-        int dsize[3];
-    };
 
     //--------------------------------------------------------------------------------
     // vector
@@ -622,6 +601,249 @@ namespace sp{
         // get center vector
         Vec3 center() const {
             return (pos[0] + pos[1] + pos[2]) / 3.0;
+        }
+    };
+
+
+
+    //--------------------------------------------------------------------------------
+    // rectangle
+    //--------------------------------------------------------------------------------
+
+    class Rect2 {
+    public:
+        // dimension base
+        int dbase[2];
+
+        // dimension size
+        int dsize[2];
+
+        Rect2(const int dbase0, const int dbase1, const int dsize0, const int dsize1) {
+            this->dbase[0] = dbase0;
+            this->dbase[1] = dbase1;
+            this->dsize[0] = dsize0;
+            this->dsize[1] = dsize1;
+        }
+
+		Rect2() : Rect2(0, 0, 0, 0) {
+		}
+
+		Rect2(const int* dbase, const int* dsize) : Rect2(dbase[0], dbase[1], dsize[0], dsize[1]) {
+		}
+
+        Rect2(const int* dsize) : Rect2(0, 0, dsize[0], dsize[1]) {
+        }
+
+        Rect2(const Vec2& vec) : Rect2(round(vec.x), round(vec.y), 1, 1) {
+        }
+
+
+        //--------------------------------------------------------------------------------
+        // check in rect
+        //--------------------------------------------------------------------------------
+
+        template<typename TYPE>
+        bool contains(const TYPE* d) const {
+            for (int i = 0; i < 2; i++) {
+                if (d[i] < static_cast<TYPE>(this->dbase[i])) return false;
+                if (d[i] > static_cast<TYPE>(this->dbase[i] + this->dsize[i] - 1)) return false;
+            }
+            return true;
+        }
+
+        bool contains(const Rect2& rect) const {
+            for (int i = 0; i < 2; i++) {
+                if (rect.dbase[i] < this->dbase[i]) return false;
+                if (rect.dbase[i] + rect.dsize[i] > this->dbase[i] + this->dsize[i]) return false;
+            }
+            return true;
+        }
+
+
+        bool contains(const double d0, const double d1) const {
+            const double d[] = { d0, d1 };
+            return contains(d);
+        }
+
+
+        bool contains(const Vec2& vec) const {
+            const double d[] = { vec.x, vec.y };
+            return contains(d);
+        }
+
+
+        //--------------------------------------------------------------------------------
+        // rect util
+        //--------------------------------------------------------------------------------
+
+        friend Rect2 operator & (const Rect2& rect0, const Rect2& rect1) {
+            int dbase[2] = { 0 }, dsize[2] = { 0 };
+            for (int i = 0; i < 2; i++) {
+                dbase[i] = max(rect0.dbase[i], rect1.dbase[i]);
+                dsize[i] = max(0, min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
+            }
+            return Rect2(dbase, dsize);
+        }
+
+
+        friend Rect2 operator | (const Rect2& rect0, const Rect2& rect1) {
+            const bool b0 = (rect0.dsize[0] * rect0.dsize[1] > 0);
+            const bool b1 = (rect1.dsize[0] * rect1.dsize[1] > 0);
+            if (b0 && b1) {
+                int dbase[2] = { 0 }, dsize[2] = { 0 };
+                for (int i = 0; i < 2; i++) {
+                    dbase[i] = min(rect0.dbase[i], rect1.dbase[i]);
+                    dsize[i] = max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
+                    dsize[i] = max(0, dsize[i]);
+                }
+                return Rect2(dbase, dsize);
+            }
+            else {
+                return (b0) ? rect0 : rect1;
+            }
+        }
+
+
+        friend Rect2 operator + (const Rect2& rect, const int val) { return rect.extend(+val); }
+        friend void operator += (Rect2& rect, const int val) { rect = rect.extend(+val); }
+        friend Rect2 operator - (const Rect2& rect, const int val) { return rect.extend(-val); }
+        friend void operator -= (Rect2& rect, const int val) { rect = rect.extend(-val); }
+
+        Rect2 extend(const int val) const {
+            int dbase[2] = { 0 }, dsize[2] = { 0 };
+            for (int i = 0; i < 2; i++) {
+                const int t = max(val, -this->dsize[i] / 2);
+                dbase[i] = this->dbase[i] - t;
+                dsize[i] = this->dsize[i] + 2 * t;
+            }
+            return Rect2(dbase, dsize);
+        }
+
+        // get center vector
+        Vec2 center() const {
+            Vec2 vec;
+            vec.x = this->dbase[0] + (this->dsize[0] - 1) / 2.0;
+            vec.y = this->dbase[1] + (this->dsize[1] - 1) / 2.0;
+            return vec;
+        }
+    };
+
+    class Rect3 {
+    public:
+        // dimension base
+        int dbase[3];
+
+        // dimension size
+        int dsize[3];
+
+        Rect3(const int dbase0, const int dbase1, const int dbase2, const int dsize0, const int dsize1, const int dsize2) {
+            this->dbase[0] = dbase0;
+            this->dbase[1] = dbase1;
+            this->dbase[2] = dbase2;
+            this->dsize[0] = dsize0;
+            this->dsize[1] = dsize1;
+            this->dsize[2] = dsize2;
+        }
+        Rect3() : Rect3(0, 0, 0, 0, 0, 0) {
+        }
+        Rect3(const int* dbase, const int* dsize) : Rect3(dbase[0], dbase[1], dbase[2], dsize[0], dsize[1], dsize[2]) {
+        }
+
+        Rect3(const int* dsize) : Rect3(0, 0, 0, dsize[0], dsize[1], dsize[2]) {
+        }
+
+        Rect3(const Vec3& vec) : Rect3(round(vec.x), round(vec.y), round(vec.z), 1, 1, 1) {
+        }
+
+
+        //--------------------------------------------------------------------------------
+        // check in rect
+        //--------------------------------------------------------------------------------
+
+        template<typename TYPE>
+        bool contains(const TYPE* d) const {
+            for (int i = 0; i < 3; i++) {
+                if (d[i] < static_cast<TYPE>(this->dbase[i])) return false;
+                if (d[i] > static_cast<TYPE>(this->dbase[i] + this->dsize[i] - 1)) return false;
+            }
+            return true;
+        }
+
+        bool contains(const Rect3& rect) const {
+            for (int i = 0; i < 3; i++) {
+                if (rect.dbase[i] < this->dbase[i]) return false;
+                if (rect.dbase[i] + rect.dsize[i] > this->dbase[i] + this->dsize[i]) return false;
+            }
+            return true;
+        }
+
+
+        bool contains(const double d0, const double d1, const double d2) const {
+            const double d[] = { d0, d1, d2 };
+            return contains(d);
+        }
+
+
+        bool contains(const Vec3& vec) const {
+            const double d[] = { vec.x, vec.y, vec.z };
+            return contains(d);
+        }
+
+
+        //--------------------------------------------------------------------------------
+        // rect util
+        //--------------------------------------------------------------------------------
+
+        friend Rect3 operator & (const Rect3& rect0, const Rect3& rect1) {
+            int dbase[3] = { 0 }, dsize[3] = { 0 };
+            for (int i = 0; i < 3; i++) {
+                dbase[i] = max(rect0.dbase[i], rect1.dbase[i]);
+                dsize[i] = max(0, min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
+            }
+            return Rect3(dbase, dsize);
+        }
+
+
+        friend Rect3 operator | (const Rect3& rect0, const Rect3& rect1) {
+            const bool b0 = (rect0.dsize[0] * rect0.dsize[1] * rect0.dsize[2] > 0);
+            const bool b1 = (rect1.dsize[0] * rect1.dsize[1] * rect1.dsize[2] > 0);
+            if (b0 && b1) {
+                int dbase[3] = { 0 }, dsize[3] = { 0 };
+                for (int i = 0; i < 3; i++) {
+                    dbase[i] = min(rect0.dbase[i], rect1.dbase[i]);
+                    dsize[i] = max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
+                    dsize[i] = max(0, dsize[i]);
+                }
+                return Rect3(dbase, dsize);
+            }
+            else {
+                return (b0) ? rect0 : rect1;
+            }
+        }
+
+
+        friend Rect3 operator + (const Rect3& rect, const int val) { return rect.extend(+val); }
+        friend void operator += (Rect3& rect, const int val) { rect = rect.extend(+val); }
+        friend Rect3 operator - (const Rect3& rect, const int val) { return rect.extend(-val); }
+        friend void operator -= (Rect3& rect, const int val) { rect = rect.extend(-val); }
+
+        Rect3 extend(const int val) const {
+            int dbase[3] = { 0 }, dsize[3] = { 0 };
+            for (int i = 0; i < 3; i++) {
+                const int t = max(val, -this->dsize[i] / 2);
+                dbase[i] = this->dbase[i] - t;
+                dsize[i] = this->dsize[i] + 2 * t;
+            }
+            return Rect3(dbase, dsize);
+        }
+
+        // get center vector
+        Vec3 center() const {
+            Vec3 vec;
+            vec.x = this->dbase[0] + (this->dsize[0] - 1) / 2.0;
+            vec.y = this->dbase[1] + (this->dsize[1] - 1) / 2.0;
+            vec.z = this->dbase[2] + (this->dsize[2] - 1) / 2.0;
+            return vec;
         }
     };
 

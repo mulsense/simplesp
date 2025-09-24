@@ -67,7 +67,7 @@ namespace sp{
             }
             if (valid == false) return;
 
-            rect = andRect(getRect2(dst.dsize), getRect2(xs, ys, xe - xs, ye - ys));
+            rect = Rect2(dst.dsize) & Rect2(xs, ys, xe - xs, ye - ys);
         }
 
         const Vec3 nrm = pm.normal();
