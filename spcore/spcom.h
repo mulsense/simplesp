@@ -986,32 +986,85 @@ namespace sp{
         SP_REAL qx, qy, qz, qw;
 
         Rot(const SP_REAL qx, const SP_REAL qy, const SP_REAL qz, const SP_REAL qw) {
-            initialize(qx, qy, qz, qw);
+            this->qx = qx;
+            this->qy = qy;
+            this->qz = qz;
+            this->qw = qw;
         }
 
-        Rot() {
-            initialize(0.0, 0.0, 0.0, 1.0);
-        }
-
-        Rot(const SP_REAL* mat, const int rows, const int cols) {
-            initialize(mat, rows, cols);
-        }
-        Rot(const Vec3& vec) {
-            const SP_REAL angle = vec.length();
-            if (angle > SP_SMALL) {
-                const Vec3 nrm = vec.unit();
-
-                const SP_REAL s = sin(angle * 0.5);
-                const SP_REAL c = cos(angle * 0.5);
-                initialize(s * nrm.x, s * nrm.y, s * nrm.z, c);
-            }
-            else {
-                initialize(0.0, 0.0, 0.0, 1.0);
-            }
+        Rot() : Rot(0.0, 0.0, 0.0, 1.0) {
         }
 
         Rot inverse() const {
             return Rot(-this->qx, -this->qy, -this->qz, this->qw);
+        }
+
+        Vec3 axisAngle() const {
+            Vec3 vec = Vec3(0.0, 0.0, 0.0);
+
+            const SP_REAL angle = acos(this->qw) * 2.0;
+
+            if (fabs(angle) > SP_SMALL) {
+                const SP_REAL s = sin(angle * 0.5);
+                vec.x = this->qx / s * angle;
+                vec.y = this->qy / s * angle;
+                vec.z = this->qz / s * angle;
+            }
+            return vec;
+        }
+
+        // zyx eulter
+        Vec3 euler(const SP_REAL* mat, const int rows, const int cols) const {
+            Vec3 euler;
+            euler.y = asin(-mat[2 * 3 + 0]);
+
+            if (fabs(euler.y) < SP_PI / 2.0) {
+                euler.z = atan2(mat[1 * 3 + 0], mat[0 * 3 + 0]);
+                euler.x = atan2(mat[2 * 3 + 1], mat[2 * 3 + 2]);
+            }
+            else {
+                euler.z = atan2(-mat[1 * 3 + 2], mat[0 * 3 + 2]);
+                euler.x = 0.0;
+            }
+
+            return euler;
+        }
+
+        // zyx eulter
+        Vec3 euler() const {
+            SP_REAL mat[3 * 3];
+            this->toMatrix(mat, 3, 3);
+
+            return Rot::euler(mat, 3, 3);
+        }
+
+        void toMatrix(SP_REAL* matrix, const int rows, const int cols) const {
+            {
+                const double qx2 = this->qx * this->qx;
+                const double qy2 = this->qy * this->qy;
+                const double qz2 = this->qz * this->qz;
+                const double qw2 = this->qw * this->qw;
+
+                matrix[0 * cols + 0] = static_cast<SP_REAL>(qw2 + qx2 - qy2 - qz2);
+                matrix[1 * cols + 1] = static_cast<SP_REAL>(qw2 - qx2 + qy2 - qz2);
+                matrix[2 * cols + 2] = static_cast<SP_REAL>(qw2 - qx2 - qy2 + qz2);
+            }
+            {
+                const double qxy = this->qx * this->qy;
+                const double qzw = this->qz * this->qw;
+                matrix[0 * cols + 1] = static_cast<SP_REAL>(2 * (qxy - qzw));
+                matrix[1 * cols + 0] = static_cast<SP_REAL>(2 * (qxy + qzw));
+
+                const double qxz = this->qx * this->qz;
+                const double qyw = this->qy * this->qw;
+                matrix[0 * cols + 2] = static_cast<SP_REAL>(2 * (qxz + qyw));
+                matrix[2 * cols + 0] = static_cast<SP_REAL>(2 * (qxz - qyw));
+
+                const double qyz = this->qy * this->qz;
+                const double qxw = this->qx * this->qw;
+                matrix[1 * cols + 2] = static_cast<SP_REAL>(2 * (qyz - qxw));
+                matrix[2 * cols + 1] = static_cast<SP_REAL>(2 * (qyz + qxw));
+            }
         }
 
         //--------------------------------------------------------------------------------
@@ -1026,52 +1079,72 @@ namespace sp{
 
             return Rot(qx, qy, qz, qw);
         }
-        
 
-        static Rot x(const double angle) {
-            return Rot(Vec3(1.0, 0.0, 0.0) * angle);
+        static Rot fromMatrix(const SP_REAL* mat, const int rows, const int cols) {
+            SP_REAL qx = sqrt(max(0.0, 1 + mat[0 * cols + 0] - mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
+            SP_REAL qy = sqrt(max(0.0, 1 - mat[0 * cols + 0] + mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
+            SP_REAL qz = sqrt(max(0.0, 1 - mat[0 * cols + 0] - mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
+            SP_REAL qw = sqrt(max(0.0, 1 + mat[0 * cols + 0] + mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
+
+            qx *= sign(qx * (mat[2 * cols + 1] - mat[1 * cols + 2]));
+            qy *= sign(qy * (mat[0 * cols + 2] - mat[2 * cols + 0]));
+            qz *= sign(qz * (mat[1 * cols + 0] - mat[0 * cols + 1]));
+            return Rot(qx, qy, qz, qw);
         }
 
-        static Rot y(const double angle) {
-            return Rot(Vec3(0.0, 1.0, 0.0) * angle);
+        static Rot fromAxisAngle(const Vec3& vec) {
+            const SP_REAL angle = vec.length();
+            if (angle > SP_SMALL) {
+                const Vec3 nrm = vec.unit();
+
+                const SP_REAL s = sin(angle * 0.5);
+                const SP_REAL c = cos(angle * 0.5);
+                return Rot(s * nrm.x, s * nrm.y, s * nrm.z, c);
+            }
+            else {
+                return Rot(0.0, 0.0, 0.0, 1.0);
+            }
         }
 
-        static Rot z(const double angle) {
-            return Rot(Vec3(0.0, 0.0, 1.0) * angle);
+        static Rot fromAngleX(const double angle) {
+            return fromAxisAngle(Vec3(1.0, 0.0, 0.0) * angle);
         }
 
-        static Rot axis(const Vec3& x, const Vec3& y, const Vec3& z) {
-            const Vec3 nx = x.unit();
-            const Vec3 ny = y.unit();
-            const Vec3 nz = z.unit();
-            SP_REAL mat[3 * 3];
-            mat[0 * 3 + 0] = nx.x; mat[0 * 3 + 1] = ny.x; mat[0 * 3 + 2] = nz.x;
-            mat[1 * 3 + 0] = nx.y; mat[1 * 3 + 1] = ny.y; mat[1 * 3 + 2] = nz.y;
-            mat[2 * 3 + 0] = nx.z; mat[2 * 3 + 1] = ny.z; mat[2 * 3 + 2] = nz.z;
-            return Rot(mat, 3, 3);
+        static Rot fromAngleY(const double angle) {
+            return fromAxisAngle(Vec3(0.0, 1.0, 0.0) * angle);
         }
-        
+
+        static Rot fromAngleZ(const double angle) {
+            return fromAxisAngle(Vec3(0.0, 0.0, 1.0) * angle);
+        }
+
+
+        static Rot fromDirection(const Vec3& vec) {
+            const Vec3 nrm = vec.unit();
+
+            if (fabs(nrm.z) == 1.0) {
+                const SP_REAL angle = (nrm.z > 0) ? 0.0 : SP_PI;
+                return Rot::fromAngleX(angle);
+            }
+            else {
+                const Vec3 v0 = Vec3(0.0, 1.0, 0.0).cross(Vec3(nrm.x, nrm.y, 0.0));
+                const SP_REAL a0 = acos(nrm.y / sqrt(nrm.x * nrm.x + nrm.y * nrm.y));
+                const Rot rot0 = Rot::fromAxisAngle(v0 * a0);
+
+                const Vec3 v1 = Vec3(0.0, 0.0, 1.0).cross(nrm);
+                const SP_REAL a1 = acos(nrm.z);
+                const Rot rot1 = Rot::fromAxisAngle(v1 * a1);
+
+                return (rot1 * rot0).inverse();
+            }
+        }
+
+        // zyx eulter
+        static Rot fromEuler(const Vec3& euler) {
+            return Rot::fromAngleZ(euler.z) * Rot::fromAngleY(euler.y) * Rot::fromAngleX(euler.x);
+        }
+       
     private:
-
-        void initialize(const SP_REAL qx, const SP_REAL qy, const SP_REAL qz, const SP_REAL qw) {
-            this->qx = qx;
-            this->qy = qy;
-            this->qz = qz;
-            this->qw = qw;
-            normalize();
-        }
-
-        void initialize(const SP_REAL* mat, const int rows, const int cols) {
-            this->qx = sqrt(max(0.0, 1 + mat[0 * cols + 0] - mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
-            this->qy = sqrt(max(0.0, 1 - mat[0 * cols + 0] + mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
-            this->qz = sqrt(max(0.0, 1 - mat[0 * cols + 0] - mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
-            this->qw = sqrt(max(0.0, 1 + mat[0 * cols + 0] + mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
-
-            this->qx *= sign(this->qx * (mat[2 * cols + 1] - mat[1 * cols + 2]));
-            this->qy *= sign(this->qy * (mat[0 * cols + 2] - mat[2 * cols + 0]));
-            this->qz *= sign(this->qz * (mat[1 * cols + 0] - mat[0 * cols + 1]));
-            normalize();
-        }
 
         void normalize() {
             const double div = sqrt(this->qx * this->qx + this->qy * this->qy + this->qz * this->qz + this->qw * this->qw);
@@ -1090,6 +1163,8 @@ namespace sp{
                 this->qw = 1.0;
             }
         }
+
+        
     };
 
     struct Pose{

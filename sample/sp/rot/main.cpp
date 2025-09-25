@@ -6,7 +6,7 @@ int main(){
 
     // rotation test
     const Vec3 euler = Vec3(10.0, 20.0, 30.0) / 180.0 * SP_PI;
-    const Vec3 vec = getAngle(getRotEuler(euler));
+    const Vec3 vec = Rot::fromEuler(euler).axisAngle();
 
     // angle -> matrix
     {
@@ -48,7 +48,7 @@ int main(){
     {
         printf("------------------------------\n");
         printf("quaternion -> matrix\n");
-        const Rot rot = getRotEuler(euler);
+        const Rot rot = Rot::fromEuler(euler);
         const Mat mat = getMat(rot);
 
         print(rot);
@@ -87,7 +87,7 @@ int main(){
         printf("matrix -> vec\n");
 
         const Mat mat = getMatRodrigues(vec);
-        const Vec3 vec = getAngle(getRot(mat));
+        const Vec3 vec = getRot(mat).axisAngle();
 
         print(mat);
         print(vec);

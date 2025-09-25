@@ -137,7 +137,7 @@ namespace sp{
     SP_CPUFUNC Mat getMat(const Rot &rot) {
         Mat dst(3, 3);
 
-        getMat(dst.ptr, dst.rows(), dst.cols(), rot);
+        rot.toMatrix(dst.ptr, dst.rows(), dst.cols());
         return dst;
     }
 
@@ -177,11 +177,11 @@ namespace sp{
     }
 
     SP_GENFUNC Mat getMatEuler(const Vec3 &euler) {
-        return getMat(getRotEuler(euler));
+        return getMat(Rot::fromEuler(euler));
     }
 
     SP_CPUFUNC Vec3 getEuler(const Mat &mat) {
-        return getEuler(mat.ptr, mat.rows(), mat.cols());
+        return Rot::fromMatrix(mat.ptr, mat.rows(), mat.cols()).euler();
     }
 
     SP_GENFUNC Mat getMatRodrigues(const Vec3 &vec) {
@@ -392,7 +392,7 @@ namespace sp{
     //--------------------------------------------------------------------------------
 
     SP_GENFUNC Rot getRot(const Mat &mat) {
-        return Rot(mat.ptr, mat.rows(), mat.cols());
+        return Rot::fromMatrix(mat.ptr, mat.rows(), mat.cols());
     }
 
     SP_GENFUNC Pose getPose(const Mat &mat) {

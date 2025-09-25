@@ -168,7 +168,7 @@ namespace sp {
         }
 
         if (mouse.buttonL && mouse.move.length() > 0.0) {
-            cpose.rot = Rot(Vec3(+mouse.move.y, -mouse.move.x, 0.0) * 0.01 * mouse.move.length()) * cpose.rot;
+            cpose.rot = Rot::fromAxisAngle(Vec3(+mouse.move.y, -mouse.move.x, 0.0) * 0.01 * mouse.move.length()) * cpose.rot;
             ret = true;
         }
 

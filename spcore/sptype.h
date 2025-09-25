@@ -889,106 +889,10 @@ namespace sp {
 
 namespace sp {
 
-    SP_GENFUNC void getMat(SP_REAL* dst, const int rows, const int cols, const Rot& rot) {
-        {
-            const double qx2 = rot.qx * rot.qx;
-            const double qy2 = rot.qy * rot.qy;
-            const double qz2 = rot.qz * rot.qz;
-            const double qw2 = rot.qw * rot.qw;
-
-            dst[0 * cols + 0] = static_cast<SP_REAL>(qw2 + qx2 - qy2 - qz2);
-            dst[1 * cols + 1] = static_cast<SP_REAL>(qw2 - qx2 + qy2 - qz2);
-            dst[2 * cols + 2] = static_cast<SP_REAL>(qw2 - qx2 - qy2 + qz2);
-        }
-        {
-            const double qxy = rot.qx * rot.qy;
-            const double qzw = rot.qz * rot.qw;
-            dst[0 * cols + 1] = static_cast<SP_REAL>(2 * (qxy - qzw));
-            dst[1 * cols + 0] = static_cast<SP_REAL>(2 * (qxy + qzw));
-
-            const double qxz = rot.qx * rot.qz;
-            const double qyw = rot.qy * rot.qw;
-            dst[0 * cols + 2] = static_cast<SP_REAL>(2 * (qxz + qyw));
-            dst[2 * cols + 0] = static_cast<SP_REAL>(2 * (qxz - qyw));
-
-            const double qyz = rot.qy * rot.qz;
-            const double qxw = rot.qx * rot.qw;
-            dst[1 * cols + 2] = static_cast<SP_REAL>(2 * (qyz - qxw));
-            dst[2 * cols + 1] = static_cast<SP_REAL>(2 * (qyz + qxw));
-        }
-    }
-    SP_GENFUNC Vec3 getAngle(const Rot& rot) {
-        Vec3 vec = Vec3(0.0, 0.0, 0.0);
-
-        if (cmp(rot, Rot(0.0, 0.0, 0.0, 1.0)) == false) {
-            const SP_REAL angle = acos(rot.qw) * 2.0;
-
-            if (cmp(angle, 0.0) == false) {
-                const SP_REAL s = sin(angle * 0.5);
-                vec.x = rot.qx / s * angle;
-                vec.y = rot.qy / s * angle;
-                vec.z = rot.qz / s * angle;
-            }
-        }
-        return vec;
-    }
-
-    SP_GENFUNC Rot getRotDirection(const Vec3& vec) {
-        const Vec3 nrm = vec.unit();
-
-        if (fabs(nrm.z) == 1.0) {
-            const SP_REAL angle = (nrm.z > 0) ? 0.0 : SP_PI;
-            return Rot::x(angle);
-        }
-        else {
-            const Vec3 v0 = Vec3(0.0, 1.0, 0.0).cross(Vec3(nrm.x, nrm.y, 0.0));
-            const SP_REAL a0 = acos(nrm.y / sqrt(nrm.x * nrm.x + nrm.y * nrm.y));
-            const Rot rot0 = Rot(v0 * a0);
-
-            const Vec3 v1 = Vec3(0.0, 0.0, 1.0).cross(nrm);
-            const SP_REAL a1 = acos(nrm.z);
-            const Rot rot1 = Rot(v1 * a1);
-
-            return (rot1 * rot0).inverse();
-        }
-    }
-
-    // zyx eulter
-    SP_GENFUNC Rot getRotEuler(const Vec3& euler) {
-        const Rot rotx = Rot::x(euler.x);
-        const Rot roty = Rot::y(euler.y);
-        const Rot rotz = Rot::z(euler.z);
-        return rotz * roty * rotx;
-    }
-    // zyx eulter
-    SP_GENFUNC Vec3 getEuler(const SP_REAL* mat, const int rows, const int cols) {
-
-        Vec3 euler;
-        euler.y = asin(-mat[2 * 3 + 0]);
-
-        if (fabs(euler.y) < SP_PI / 2.0) {
-            euler.z = atan2(mat[1 * 3 + 0], mat[0 * 3 + 0]);
-            euler.x = atan2(mat[2 * 3 + 1], mat[2 * 3 + 2]);
-        }
-        else {
-            euler.z = atan2(-mat[1 * 3 + 2], mat[0 * 3 + 2]);
-            euler.x = 0.0;
-        }
-
-        return euler;
-    }
-
-    // zyx eulter
-    SP_GENFUNC Vec3 getEuler(const Rot& rot) {
-        SP_REAL mat[3 * 3];
-        getMat(mat, 3, 3, rot);
-
-        return getEuler(mat, 3, 3);
-    }
 
     SP_GENFUNC Vec3 mulRot(const Rot &rot, const Vec3 &vec) {
         SP_REAL rotMat[3 * 3];
-        getMat(rotMat, 3, 3, rot);
+        rot.toMatrix(rotMat, 3, 3);
 
         return mulMat(rotMat, 3, 3, vec);
     }
@@ -1104,7 +1008,7 @@ namespace sp {
 
     // dif
     SP_GENFUNC SP_REAL difRot(const Rot &rot0, const Rot &rot1) {
-        return getAngle(rot0 * rot1.inverse()).length();
+        return (rot0 * rot1.inverse()).axisAngle().length();
     }
 
     // dif
@@ -1136,12 +1040,12 @@ namespace sp {
     SP_GENFUNC Pose getPose(const SP_REAL *mat, const int rows, const int cols) {
         Pose dst;
         if ((rows == 3 || rows == 4) && cols == 4) {
-            dst.rot = Rot(mat, rows, cols);
+            dst.rot = Rot::fromMatrix(mat, rows, cols);
             dst.pos = Vec3(mat[0 * cols + 3], mat[1 * cols + 3], mat[2 * cols + 3]);
         }
         if ((rows == 6 && cols == 1) || (rows == 1 && cols == 6)) {
             Vec3 euler = Vec3(mat[0], mat[1], mat[2]);
-            dst.rot = getRotEuler(euler);
+            dst.rot = Rot::fromEuler(euler);
             dst.pos = Vec3(mat[3], mat[4], mat[5]);
         }
         return dst;
@@ -1150,14 +1054,14 @@ namespace sp {
     SP_GENFUNC void getMat(SP_REAL *dst, const int rows, const int cols, const Pose &pose) {
         if ((rows == 3 || rows == 4) && cols == 4) {
             eyeMat(dst, rows, cols);
-            getMat(dst, rows, cols, pose.rot);
+            pose.rot.toMatrix(dst, rows, cols);
 
             dst[0 * cols + 3] = pose.pos.x;
             dst[1 * cols + 3] = pose.pos.y;
             dst[2 * cols + 3] = pose.pos.z;
         }
         if ((rows == 6 && cols == 1) || (rows == 1 && cols == 6)) {
-            const Vec3 euler = getEuler(pose.rot);
+            const Vec3 euler = pose.rot.euler();
             dst[0] = euler.x;
             dst[1] = euler.y;
             dst[2] = euler.z;
@@ -1243,7 +1147,7 @@ namespace sp {
 
     SP_GENFUNC Pose getGeodesicPose(const int level, const int id, const double distance = 0.0) {
         const Vec3 v = getGeodesicMesh(level, id).center() * (-1.0);
-        const Pose pose = getPose(getRotDirection(v), Vec3(0.0, 0.0, distance));
+        const Pose pose = getPose(Rot::fromDirection(v), Vec3(0.0, 0.0, distance));
         return pose;
     }
 
@@ -1271,7 +1175,7 @@ namespace sp {
 
     SP_GENFUNC void jacobPoseToPos(SP_REAL *jacob, const Pose &pose, const Vec3 &pos) {
         SP_REAL rmat[3 * 3];
-        getMat(rmat, 3, 3, pose.rot);
+        pose.rot.toMatrix(rmat, 3, 3);
         const Vec3 v = mulMat(rmat, 3, 3, pos);
         jacob[0 * 6 + 0] = +0.0; jacob[0 * 6 + 1] = +v.z; jacob[0 * 6 + 2] = -v.y;
         jacob[1 * 6 + 0] = -v.z; jacob[1 * 6 + 1] = +0.0; jacob[1 * 6 + 2] = +v.x;

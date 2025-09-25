@@ -58,7 +58,7 @@ namespace sp{
         const int num = getGeodesicMeshNum(0);
         for (int i = 0; i < num; i++){
             const Vec3 v = getGeodesicMesh(0, i).center() * (-1.0);
-            const Pose pose = getPose(getRotDirection(v), Vec3(0.0, 0.0, distance));
+            const Pose pose = getPose(Rot::fromDirection(v), Vec3(0.0, 0.0, distance));
             Mem2<VecPD3> map;
             renderVecPD(map, cam, pose, model);
 
@@ -203,7 +203,7 @@ namespace sp{
 
             for (int i = 0; i < num; i++) {
                 const Vec3 v = getGeodesicMesh(level, i).center() * (-1.0);
-                const Pose pose = getPose(getRotDirection(v), Vec3(0.0, 0.0, distance));
+                const Pose pose = getPose(Rot::fromDirection(v), Vec3(0.0, 0.0, distance));
                
                 pmodels[i].pose = pose;
             }
@@ -402,8 +402,8 @@ namespace sp{
     SP_CPUFUNC Mem1<Mesh3> loadCone(const Vec3 &drc, const double radius, const int div = 36) {
         Mem1<Mesh3> model;
 
-        const Vec3 nx = getRotDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
-        const Vec3 ny = getRotDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
+        const Vec3 nx = Rot::fromDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
+        const Vec3 ny = Rot::fromDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
 
         const double step = 360.0 / div;
         for (int i = 0; i < div; i++) {
@@ -423,8 +423,8 @@ namespace sp{
     SP_CPUFUNC Mem1<Mesh3> loadCylinder(const Vec3 &drc, const double radius, const int div = 36) {
         Mem1<Mesh3> model;
 
-        const Vec3 nx = getRotDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
-        const Vec3 ny = getRotDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
+        const Vec3 nx = Rot::fromDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
+        const Vec3 ny = Rot::fromDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
 
         const double step = 360.0 / div;
         for (int i = 0; i < div; i++) {

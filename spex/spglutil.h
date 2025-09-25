@@ -450,7 +450,7 @@ namespace sp {
     SP_CPUFUNC void glCircle(const Vec3 &pos, const Vec3 &nrm, const double radius, const bool fill = false) {
         const int type = (fill == true) ? GL_TRIANGLE_FAN : GL_LINE_LOOP;
 
-        const Mat mat = getMat(getRotDirection(nrm));
+        const Mat mat = getMat(Rot::fromDirection(nrm));
         const Vec3 a = mat * Vec3(1.0, 0.0, 0.0);
         const Vec3 b = a.cross(nrm);
 
@@ -592,8 +592,8 @@ namespace sp {
         const int div = 36;
         const double step = 360.0 / div;
         const Vec3 drc = vtx1 - vtx0;
-        const Vec3 nx = getRotDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
-        const Vec3 ny = getRotDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
+        const Vec3 nx = Rot::fromDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
+        const Vec3 ny = Rot::fromDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
 
         for (int i = 0; i < div; i++) {
             const double pa = (i + 0) * step * SP_PI / 180.0;
@@ -612,8 +612,8 @@ namespace sp {
     SP_CPUFUNC void glVector(const Vec3 &vtx0, const Vec3 &vtx1, const double radius) {
         const int div = 36;
         const Vec3 drc = vtx1 - vtx0;
-        const Vec3 nx = getRotDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
-        const Vec3 ny = getRotDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
+        const Vec3 nx = Rot::fromDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
+        const Vec3 ny = Rot::fromDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
         const double step = 360.0 / div;
 
         const double seg0 = 8.0 * radius / drc.length();
