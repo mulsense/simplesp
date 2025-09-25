@@ -392,7 +392,7 @@ namespace sp{
     //--------------------------------------------------------------------------------
 
     SP_GENFUNC Rot getRot(const Mat &mat) {
-        return getRot(mat.ptr, mat.rows(), mat.cols());
+        return Rot(mat.ptr, mat.rows(), mat.cols());
     }
 
     SP_GENFUNC Pose getPose(const Mat &mat) {

@@ -889,55 +889,7 @@ namespace sp {
 
 namespace sp {
 
-    //--------------------------------------------------------------------------------
-    // rotation
-    //--------------------------------------------------------------------------------
-
-    SP_GENFUNC Rot nrmRot(const Rot &rot) {
-        Rot dst;
-
-        const double div = sqrt(rot.qx * rot.qx + rot.qy * rot.qy + rot.qz * rot.qz + rot.qw * rot.qw);
-        if (div > SP_SMALL) {
-            const double s = (sign(rot.qw) >= 0.0) ? +1 : -1;
-
-            dst.qx = rot.qx / div * s;
-            dst.qy = rot.qy / div * s;
-            dst.qz = rot.qz / div * s;
-            dst.qw = rot.qw / div * s;
-        }
-        else {
-            dst.qx = 0.0;
-            dst.qy = 0.0;
-            dst.qz = 0.0;
-            dst.qw = 1.0;
-        }
-        return dst;
-    }
-
-    SP_GENFUNC Rot getRot(const SP_REAL qx, const SP_REAL qy, const SP_REAL qz, const SP_REAL qw) {
-        Rot dst;
-        dst.qx = qx;
-        dst.qy = qy;
-        dst.qz = qz;
-        dst.qw = qw;
-        return nrmRot(dst);
-    }
-
-    SP_GENFUNC Rot getRot(const SP_REAL *mat, const int rows, const int cols) {
-        Rot dst;
-        dst.qx = sqrt(max(0.0, 1 + mat[0 * cols + 0] - mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
-        dst.qy = sqrt(max(0.0, 1 - mat[0 * cols + 0] + mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
-        dst.qz = sqrt(max(0.0, 1 - mat[0 * cols + 0] - mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
-        dst.qw = sqrt(max(0.0, 1 + mat[0 * cols + 0] + mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
-
-        dst.qx *= sign(dst.qx * (mat[2 * cols + 1] - mat[1 * cols + 2]));
-        dst.qy *= sign(dst.qy * (mat[0 * cols + 2] - mat[2 * cols + 0]));
-        dst.qz *= sign(dst.qz * (mat[1 * cols + 0] - mat[0 * cols + 1]));
-
-        return nrmRot(dst);
-    }
-
-    SP_GENFUNC void getMat(SP_REAL *dst, const int rows, const int cols, const Rot &rot) {
+    SP_GENFUNC void getMat(SP_REAL* dst, const int rows, const int cols, const Rot& rot) {
         {
             const double qx2 = rot.qx * rot.qx;
             const double qy2 = rot.qy * rot.qy;
@@ -965,28 +917,73 @@ namespace sp {
             dst[2 * cols + 1] = static_cast<SP_REAL>(2 * (qyz + qxw));
         }
     }
+    SP_GENFUNC Vec3 getAngle(const Rot& rot) {
+        Vec3 vec = Vec3(0.0, 0.0, 0.0);
 
-    SP_GENFUNC Rot zeroRot() {
-        return getRot(0.0, 0.0, 0.0, 1.0);
+        if (cmp(rot, Rot(0.0, 0.0, 0.0, 1.0)) == false) {
+            const SP_REAL angle = acos(rot.qw) * 2.0;
+
+            if (cmp(angle, 0.0) == false) {
+                const SP_REAL s = sin(angle * 0.5);
+                vec.x = rot.qx / s * angle;
+                vec.y = rot.qy / s * angle;
+                vec.z = rot.qz / s * angle;
+            }
+        }
+        return vec;
     }
 
-    SP_GENFUNC Rot invRot(const Rot &rot) {
-        return getRot(-rot.qx, -rot.qy, -rot.qz, rot.qw);
+    SP_GENFUNC Rot getRotDirection(const Vec3& vec) {
+        const Vec3 nrm = vec.unit();
+
+        if (fabs(nrm.z) == 1.0) {
+            const SP_REAL angle = (nrm.z > 0) ? 0.0 : SP_PI;
+            return Rot::x(angle);
+        }
+        else {
+            const Vec3 v0 = Vec3(0.0, 1.0, 0.0).cross(Vec3(nrm.x, nrm.y, 0.0));
+            const SP_REAL a0 = acos(nrm.y / sqrt(nrm.x * nrm.x + nrm.y * nrm.y));
+            const Rot rot0 = Rot(v0 * a0);
+
+            const Vec3 v1 = Vec3(0.0, 0.0, 1.0).cross(nrm);
+            const SP_REAL a1 = acos(nrm.z);
+            const Rot rot1 = Rot(v1 * a1);
+
+            return (rot1 * rot0).inverse();
+        }
     }
 
-    //--------------------------------------------------------------------------------
-    // rotation operator
-    //--------------------------------------------------------------------------------
+    // zyx eulter
+    SP_GENFUNC Rot getRotEuler(const Vec3& euler) {
+        const Rot rotx = Rot::x(euler.x);
+        const Rot roty = Rot::y(euler.y);
+        const Rot rotz = Rot::z(euler.z);
+        return rotz * roty * rotx;
+    }
+    // zyx eulter
+    SP_GENFUNC Vec3 getEuler(const SP_REAL* mat, const int rows, const int cols) {
 
-    SP_GENFUNC Rot mulRot(const Rot &rot0, const Rot &rot1) {
-        Rot dst;
-        dst.qx = static_cast<SP_REAL>((rot0.qw * rot1.qx) + (rot0.qx * rot1.qw) + (rot0.qy * rot1.qz) - (rot0.qz * rot1.qy));
-        dst.qy = static_cast<SP_REAL>((rot0.qw * rot1.qy) + (rot0.qy * rot1.qw) + (rot0.qz * rot1.qx) - (rot0.qx * rot1.qz));
-        dst.qz = static_cast<SP_REAL>((rot0.qw * rot1.qz) + (rot0.qz * rot1.qw) + (rot0.qx * rot1.qy) - (rot0.qy * rot1.qx));
+        Vec3 euler;
+        euler.y = asin(-mat[2 * 3 + 0]);
 
-        dst.qw = static_cast<SP_REAL>((rot0.qw * rot1.qw) - (rot0.qx * rot1.qx) - (rot0.qy * rot1.qy) - (rot0.qz * rot1.qz));
+        if (fabs(euler.y) < SP_PI / 2.0) {
+            euler.z = atan2(mat[1 * 3 + 0], mat[0 * 3 + 0]);
+            euler.x = atan2(mat[2 * 3 + 1], mat[2 * 3 + 2]);
+        }
+        else {
+            euler.z = atan2(-mat[1 * 3 + 2], mat[0 * 3 + 2]);
+            euler.x = 0.0;
+        }
 
-        return nrmRot(dst);
+        return euler;
+    }
+
+    // zyx eulter
+    SP_GENFUNC Vec3 getEuler(const Rot& rot) {
+        SP_REAL mat[3 * 3];
+        getMat(mat, 3, 3, rot);
+
+        return getEuler(mat, 3, 3);
     }
 
     SP_GENFUNC Vec3 mulRot(const Rot &rot, const Vec3 &vec) {
@@ -1002,9 +999,6 @@ namespace sp {
 
     SP_GENFUNC Vec3 operator * (const Rot &rot, const Vec3 &vec) { return mulRot(rot, vec); }
     SP_GENFUNC Vec3 operator * (const Rot &rot, const Vec2 &vec) { return mulRot(rot, vec); }
-
-    SP_GENFUNC Rot operator * (const Rot &rot0, const Rot &rot1) { return mulRot(rot0, rot1); }
-    SP_GENFUNC void operator *= (Rot &rot0, const Rot &rot1) { rot0 = mulRot(rot0, rot1); }
 
     //--------------------------------------------------------------------------------
     // rotation util
@@ -1076,124 +1070,6 @@ namespace sp {
         getMatRodrigues(dst, rows, cols, vec.unit() * angle);
     }
 
-    SP_GENFUNC Rot getRotAxis(const Vec3 &x, const Vec3 &y, const Vec3 &z) {
-        const Vec3 nx = x.unit();
-        const Vec3 ny = y.unit();
-        const Vec3 nz = z.unit();
-        SP_REAL mat[3 * 3];
-        mat[0 * 3 + 0] = nx.x; mat[0 * 3 + 1] = ny.x; mat[0 * 3 + 2] = nz.x;
-        mat[1 * 3 + 0] = nx.y; mat[1 * 3 + 1] = ny.y; mat[1 * 3 + 2] = nz.y;
-        mat[2 * 3 + 0] = nx.z; mat[2 * 3 + 1] = ny.z; mat[2 * 3 + 2] = nz.z;
-
-        return getRot(mat, 3, 3);
-    }
-
-    SP_GENFUNC Rot getRotAngle(const Vec3 &vec) {
-        const SP_REAL angle = vec.length();
-        if (angle > SP_SMALL) {
-            const Vec3 nrm = vec.unit();
-
-            const SP_REAL s = sin(angle * 0.5);
-            const SP_REAL c = cos(angle * 0.5);
-            return getRot(s * nrm.x, s * nrm.y, s * nrm.z, c);
-        }
-        else {
-            return zeroRot();
-        }
-    }
-
-    SP_GENFUNC Rot getRotAngle(const Vec3 &vec, const double angle) {
-        return getRotAngle(vec.unit() * angle);
-    }
-
-    SP_GENFUNC Rot getRotAngleX(const double angle) {
-        return getRotAngle(Vec3(1.0, 0.0, 0.0), angle);
-    }
-
-    SP_GENFUNC Rot getRotAngleY(const double angle) {
-        return getRotAngle(Vec3(0.0, 1.0, 0.0), angle);
-    }
-
-    SP_GENFUNC Rot getRotAngleZ(const double angle) {
-        return getRotAngle(Vec3(0.0, 0.0, 1.0), angle);
-    }
-
-    SP_GENFUNC Vec3 getAngle(const Rot &rot) {
-        Vec3 vec = Vec3(0.0, 0.0, 0.0);
-
-        if (cmp(rot, getRot(0.0, 0.0, 0.0, 1.0)) == false) {
-            const SP_REAL angle = acos(rot.qw) * 2.0;
-
-            if (cmp(angle, 0.0) == false) {
-                const SP_REAL s = sin(angle * 0.5);
-                vec.x = rot.qx / s * angle;
-                vec.y = rot.qy / s * angle;
-                vec.z = rot.qz / s * angle;
-            }
-        }
-        return vec;
-    }
-
-    SP_GENFUNC Rot getRotDirection(const Vec3 &vec) {
-        const Vec3 nrm = vec.unit();
-
-        if (fabs(nrm.z) == 1.0) {
-            const SP_REAL angle = (nrm.z > 0) ? 0.0 : SP_PI;
-            return getRotAngleX(angle);
-        }
-        else {
-            const Vec3 v0 = Vec3(0.0, 1.0, 0.0).cross(Vec3(nrm.x, nrm.y, 0.0));
-            const SP_REAL a0 = acos(nrm.y / sqrt(nrm.x * nrm.x + nrm.y * nrm.y));
-            const Rot rot0 = getRotAngle(v0, a0);
-
-            const Vec3 v1 = Vec3(0.0, 0.0, 1.0).cross(nrm);
-            const SP_REAL a1 = acos(nrm.z);
-            const Rot rot1 = getRotAngle(v1, a1);
-
-            return invRot(rot1 * rot0);
-        }
-    }
-
-    // zyx eulter
-    SP_GENFUNC Rot getRotEuler(const Vec3 &euler) {
-        const Rot rotx = getRotAngleX(euler.x);
-        const Rot roty = getRotAngleY(euler.y);
-        const Rot rotz = getRotAngleZ(euler.z);
-        return rotz * roty * rotx;
-    }
-
-    // zyx eulter
-    SP_GENFUNC Vec3 getEuler(const SP_REAL *mat, const int rows, const int cols) {
-
-        Vec3 euler;
-        euler.y = asin(-mat[2 * 3 + 0]);
-
-        if (fabs(euler.y) < SP_PI / 2.0) {
-            euler.z = atan2(mat[1 * 3 + 0], mat[0 * 3 + 0]);
-            euler.x = atan2(mat[2 * 3 + 1], mat[2 * 3 + 2]);
-        }
-        else {
-            euler.z = atan2(-mat[1 * 3 + 2], mat[0 * 3 + 2]);
-            euler.x = 0.0;
-        }
-
-        return euler;
-    }
-
-    // zyx eulter
-    SP_GENFUNC Vec3 getEuler(const Rot &rot) {
-        SP_REAL mat[3 * 3];
-        getMat(mat, 3, 3, rot);
-
-        return getEuler(mat, 3, 3);
-    }
-
-
-    // update
-    SP_GENFUNC Rot updateRot(const Rot &rot, const SP_REAL *delta) {
-        return getRotAngle(Vec3(delta[0], delta[1], delta[2])) * rot;
-    }
-
     // angle
     SP_GENFUNC SP_REAL getAngle(const Rot &rot, const int axis) {
         SP_ASSERT(axis >= 0 && axis < 3);
@@ -1228,12 +1104,12 @@ namespace sp {
 
     // dif
     SP_GENFUNC SP_REAL difRot(const Rot &rot0, const Rot &rot1) {
-        return getAngle(rot0 * invRot(rot1)).length();
+        return getAngle(rot0 * rot1.inverse()).length();
     }
 
     // dif
     SP_GENFUNC SP_REAL difRot(const Rot &rot0, const Rot &rot1, const int axis) {
-        return getAngle(rot0 * invRot(rot1), axis);
+        return getAngle(rot0 * rot1.inverse(), axis);
     }
 
 
@@ -1243,7 +1119,7 @@ namespace sp {
 
     SP_GENFUNC Pose getPose(const Rot &rot, const Vec3 &trn) {
         Pose dst;
-        dst.rot = nrmRot(rot);
+        dst.rot = rot;
         dst.pos = trn;
 
         return dst;
@@ -1254,13 +1130,13 @@ namespace sp {
     }
 
     SP_GENFUNC Pose getPose(const Vec3 &trn) {
-        return getPose(zeroRot(), trn);
+        return getPose(Rot(), trn);
     }
 
     SP_GENFUNC Pose getPose(const SP_REAL *mat, const int rows, const int cols) {
         Pose dst;
         if ((rows == 3 || rows == 4) && cols == 4) {
-            dst.rot = getRot(mat, rows, cols);
+            dst.rot = Rot(mat, rows, cols);
             dst.pos = Vec3(mat[0 * cols + 3], mat[1 * cols + 3], mat[2 * cols + 3]);
         }
         if ((rows == 6 && cols == 1) || (rows == 1 && cols == 6)) {
@@ -1292,12 +1168,12 @@ namespace sp {
     }
 
     SP_GENFUNC Pose zeroPose() {
-        return getPose(zeroRot(), Vec3(0.0, 0.0, 0.0));
+        return getPose(Rot(), Vec3(0.0, 0.0, 0.0));
     }
 
     SP_GENFUNC Pose invPose(const Pose &pose) {
         Pose dst;
-        dst.rot = invRot(pose.rot);
+        dst.rot = pose.rot.inverse();
         dst.pos = mulRot(dst.rot, pose.pos) * -1.0;
 
         return dst;
@@ -1309,7 +1185,7 @@ namespace sp {
 
     SP_GENFUNC Pose mulPose(const Pose &pose0, const Pose &pose1) {
         Pose dst;
-        dst.rot = mulRot(pose0.rot, pose1.rot);
+        dst.rot = pose0.rot * pose1.rot;
         dst.pos = mulRot(pose0.rot, pose1.pos) + pose0.pos;
 
         return dst;

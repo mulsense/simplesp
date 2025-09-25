@@ -322,22 +322,6 @@ namespace sp{
         return pmodels;
     }
 
-    SP_CPUFUNC int findPoseModel(const Mem1<PoseModel> &pmodels, const Pose &pose) {
-        int id = -1;
-        SP_REAL minv = SP_INFINITY;
-        for (int i = 0; i < pmodels.size(); i++) {
-            Vec3 vec0 = getEuler(pose.rot);
-            Vec3 vec1 = getEuler(pmodels[i].pose.rot);
-            vec0.z = 0.0;
-            vec1.z = 0.0;
-            const SP_REAL dif = difRot(getRotEuler(vec0), getRotEuler(vec1));
-            if (dif < minv) {
-                minv = dif;
-                id = i;
-            }
-        }
-        return id;
-    }
 
     //--------------------------------------------------------------------------------
     // sample model
@@ -418,8 +402,8 @@ namespace sp{
     SP_CPUFUNC Mem1<Mesh3> loadCone(const Vec3 &drc, const double radius, const int div = 36) {
         Mem1<Mesh3> model;
 
-        const Vec3 nx = invRot(getRotDirection(drc)) * Vec3(1.0, 0.0, 0.0);
-        const Vec3 ny = invRot(getRotDirection(drc)) * Vec3(0.0, 1.0, 0.0);
+        const Vec3 nx = getRotDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
+        const Vec3 ny = getRotDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
 
         const double step = 360.0 / div;
         for (int i = 0; i < div; i++) {
@@ -439,8 +423,8 @@ namespace sp{
     SP_CPUFUNC Mem1<Mesh3> loadCylinder(const Vec3 &drc, const double radius, const int div = 36) {
         Mem1<Mesh3> model;
 
-        const Vec3 nx = invRot(getRotDirection(drc)) * Vec3(1.0, 0.0, 0.0);
-        const Vec3 ny = invRot(getRotDirection(drc)) * Vec3(0.0, 1.0, 0.0);
+        const Vec3 nx = getRotDirection(drc).inverse() * Vec3(1.0, 0.0, 0.0);
+        const Vec3 ny = getRotDirection(drc).inverse() * Vec3(0.0, 1.0, 0.0);
 
         const double step = 360.0 / div;
         for (int i = 0; i < div; i++) {

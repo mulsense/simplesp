@@ -980,9 +980,116 @@ namespace sp{
     // 3d transform
     //--------------------------------------------------------------------------------
 
-    struct Rot{
+    class Rot{
+    public:
         // quaternion
         SP_REAL qx, qy, qz, qw;
+
+        Rot(const SP_REAL qx, const SP_REAL qy, const SP_REAL qz, const SP_REAL qw) {
+            initialize(qx, qy, qz, qw);
+        }
+
+        Rot() {
+            initialize(0.0, 0.0, 0.0, 1.0);
+        }
+
+        Rot(const SP_REAL* mat, const int rows, const int cols) {
+            initialize(mat, rows, cols);
+        }
+        Rot(const Vec3& vec) {
+            const SP_REAL angle = vec.length();
+            if (angle > SP_SMALL) {
+                const Vec3 nrm = vec.unit();
+
+                const SP_REAL s = sin(angle * 0.5);
+                const SP_REAL c = cos(angle * 0.5);
+                initialize(s * nrm.x, s * nrm.y, s * nrm.z, c);
+            }
+            else {
+                initialize(0.0, 0.0, 0.0, 1.0);
+            }
+        }
+
+        Rot inverse() const {
+            return Rot(-this->qx, -this->qy, -this->qz, this->qw);
+        }
+
+        //--------------------------------------------------------------------------------
+        // rotation operator
+        //--------------------------------------------------------------------------------
+
+        friend Rot operator * (const Rot& rot0, const Rot& rot1) {
+            const SP_REAL qx = static_cast<SP_REAL>((rot0.qw * rot1.qx) + (rot0.qx * rot1.qw) + (rot0.qy * rot1.qz) - (rot0.qz * rot1.qy));
+            const SP_REAL qy = static_cast<SP_REAL>((rot0.qw * rot1.qy) + (rot0.qy * rot1.qw) + (rot0.qz * rot1.qx) - (rot0.qx * rot1.qz));
+            const SP_REAL qz = static_cast<SP_REAL>((rot0.qw * rot1.qz) + (rot0.qz * rot1.qw) + (rot0.qx * rot1.qy) - (rot0.qy * rot1.qx));
+            const SP_REAL qw = static_cast<SP_REAL>((rot0.qw * rot1.qw) - (rot0.qx * rot1.qx) - (rot0.qy * rot1.qy) - (rot0.qz * rot1.qz));
+
+            return Rot(qx, qy, qz, qw);
+        }
+        
+
+        static Rot x(const double angle) {
+            return Rot(Vec3(1.0, 0.0, 0.0) * angle);
+        }
+
+        static Rot y(const double angle) {
+            return Rot(Vec3(0.0, 1.0, 0.0) * angle);
+        }
+
+        static Rot z(const double angle) {
+            return Rot(Vec3(0.0, 0.0, 1.0) * angle);
+        }
+
+        static Rot axis(const Vec3& x, const Vec3& y, const Vec3& z) {
+            const Vec3 nx = x.unit();
+            const Vec3 ny = y.unit();
+            const Vec3 nz = z.unit();
+            SP_REAL mat[3 * 3];
+            mat[0 * 3 + 0] = nx.x; mat[0 * 3 + 1] = ny.x; mat[0 * 3 + 2] = nz.x;
+            mat[1 * 3 + 0] = nx.y; mat[1 * 3 + 1] = ny.y; mat[1 * 3 + 2] = nz.y;
+            mat[2 * 3 + 0] = nx.z; mat[2 * 3 + 1] = ny.z; mat[2 * 3 + 2] = nz.z;
+            return Rot(mat, 3, 3);
+        }
+        
+    private:
+
+        void initialize(const SP_REAL qx, const SP_REAL qy, const SP_REAL qz, const SP_REAL qw) {
+            this->qx = qx;
+            this->qy = qy;
+            this->qz = qz;
+            this->qw = qw;
+            normalize();
+        }
+
+        void initialize(const SP_REAL* mat, const int rows, const int cols) {
+            this->qx = sqrt(max(0.0, 1 + mat[0 * cols + 0] - mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
+            this->qy = sqrt(max(0.0, 1 - mat[0 * cols + 0] + mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
+            this->qz = sqrt(max(0.0, 1 - mat[0 * cols + 0] - mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
+            this->qw = sqrt(max(0.0, 1 + mat[0 * cols + 0] + mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
+
+            this->qx *= sign(this->qx * (mat[2 * cols + 1] - mat[1 * cols + 2]));
+            this->qy *= sign(this->qy * (mat[0 * cols + 2] - mat[2 * cols + 0]));
+            this->qz *= sign(this->qz * (mat[1 * cols + 0] - mat[0 * cols + 1]));
+            normalize();
+        }
+
+        void normalize() {
+            const double div = sqrt(this->qx * this->qx + this->qy * this->qy + this->qz * this->qz + this->qw * this->qw);
+            if (div > SP_SMALL) {
+                const double s = (sign(this->qw) >= 0.0) ? +1 : -1;
+
+                this->qx = this->qx / div * s;
+                this->qy = this->qy / div * s;
+                this->qz = this->qz / div * s;
+                this->qw = this->qw / div * s;
+            }
+            else {
+                this->qx = 0.0;
+                this->qy = 0.0;
+                this->qz = 0.0;
+                this->qw = 1.0;
+            }
+        }
     };
 
     struct Pose{
