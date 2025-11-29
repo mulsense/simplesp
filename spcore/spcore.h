@@ -9,6 +9,9 @@
 #include "spcore/spcom.h"
 
 // basic
+//#include "spcore/spdef.h"
+#include "spcore/spvec.h"
+#include "spcore/sppose.h"
 #include "spcore/spbase.h"
 #include "spcore/sptype.h"
 #include "spcore/spmath.h"

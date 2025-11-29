@@ -498,8 +498,8 @@ namespace sp{
         return dst;
     }
 
-    SP_CPUFUNC Vec2 operator * (const Mat &mat, const Vec2 vec) { return mulMat(mat.ptr, mat.rows(), mat.cols(), vec); }
-    SP_CPUFUNC Vec3 operator * (const Mat &mat, const Vec3 vec) { return mulMat(mat.ptr, mat.rows(), mat.cols(), vec); }
+    SP_CPUFUNC Vec2 operator * (const Mat &mat, const Vec2 vec) { return Vec2::mul(mat.ptr, mat.rows(), mat.cols(), vec); }
+    SP_CPUFUNC Vec3 operator * (const Mat &mat, const Vec3 vec) { return Vec3::mul(mat.ptr, mat.rows(), mat.cols(), vec); }
     SP_CPUFUNC VecPD2 operator * (const Mat &mat, const VecPD2 vec) { return mulMat(mat.ptr, mat.rows(), mat.cols(), vec); }
     SP_CPUFUNC VecPD3 operator * (const Mat &mat, const VecPD3 vec) { return mulMat(mat.ptr, mat.rows(), mat.cols(), vec); }
     SP_CPUFUNC Line3 operator * (const Mat &mat, const Line3 line) { return mulMat(mat.ptr, mat.rows(), mat.cols(), line); }
