@@ -6,6 +6,8 @@
 #define __SP_TYPE_H__
 
 #include "spcore/spcom.h"
+//#include "spcore/spvec.h"
+//#include "spcore/sppose.h"
 #include "spcore/spbase.h"
 #include "spcore/spmath.h"
 
@@ -31,67 +33,13 @@ namespace sp {
 
 
     //--------------------------------------------------------------------------------
-    // matrix * vector
-    //--------------------------------------------------------------------------------
-
-    SP_GENFUNC Vec2 mulMat(const SP_REAL* mat, const int rows, const int cols, const Vec2& vec) {
-        Vec2 dst = Vec2(0.0, 0.0);
-        if (rows == 2 && cols == 2) {
-            dst.x = static_cast<SP_REAL>(mat[0 * 2 + 0] * vec.x + mat[0 * 2 + 1] * vec.y);
-            dst.y = static_cast<SP_REAL>(mat[1 * 2 + 0] * vec.x + mat[1 * 2 + 1] * vec.y);
-        }
-        if (rows == 2 && cols == 3) {
-            dst.x = static_cast<SP_REAL>(mat[0 * 3 + 0] * vec.x + mat[0 * 3 + 1] * vec.y + mat[0 * 3 + 2]);
-            dst.y = static_cast<SP_REAL>(mat[1 * 3 + 0] * vec.x + mat[1 * 3 + 1] * vec.y + mat[1 * 3 + 2]);
-        }
-        if (rows == 3 && cols == 3) {
-            const double scale = mat[2 * 3 + 0] * vec.x + mat[2 * 3 + 1] * vec.y + mat[2 * 3 + 2];
-            dst.x = static_cast<SP_REAL>((mat[0 * 3 + 0] * vec.x + mat[0 * 3 + 1] * vec.y + mat[0 * 3 + 2]) / scale);
-            dst.y = static_cast<SP_REAL>((mat[1 * 3 + 0] * vec.x + mat[1 * 3 + 1] * vec.y + mat[1 * 3 + 2]) / scale);
-        }
-        if (rows == 3 && cols == 4) {
-            dst.x = static_cast<SP_REAL>(mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * 0.0 + mat[0 * 4 + 3]);
-            dst.y = static_cast<SP_REAL>(mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * 0.0 + mat[1 * 4 + 3]);
-        }
-        if (rows == 4 && cols == 4) {
-            const double scale = mat[3 * 4 + 0] * vec.x + mat[3 * 4 + 1] * vec.y + mat[3 * 4 + 2] * 0.0 + mat[3 * 4 + 3];
-            dst.x = static_cast<SP_REAL>((mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * 0.0 + mat[0 * 4 + 3]) / scale);
-            dst.y = static_cast<SP_REAL>((mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * 0.0 + mat[1 * 4 + 3]) / scale);
-        }
-        return dst;
-    }
-
-    SP_GENFUNC Vec3 mulMat(const SP_REAL* mat, const int rows, const int cols, const Vec3& vec) {
-        Vec3 dst = Vec3(0.0, 0.0, 0.0);
-        if (rows == 3 && cols == 3) {
-            dst.x = static_cast<SP_REAL>(mat[0 * 3 + 0] * vec.x + mat[0 * 3 + 1] * vec.y + mat[0 * 3 + 2] * vec.z);
-            dst.y = static_cast<SP_REAL>(mat[1 * 3 + 0] * vec.x + mat[1 * 3 + 1] * vec.y + mat[1 * 3 + 2] * vec.z);
-            dst.z = static_cast<SP_REAL>(mat[2 * 3 + 0] * vec.x + mat[2 * 3 + 1] * vec.y + mat[2 * 3 + 2] * vec.z);
-        }
-        if (rows == 3 && cols == 4) {
-            dst.x = static_cast<SP_REAL>(mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * vec.z + mat[0 * 4 + 3]);
-            dst.y = static_cast<SP_REAL>(mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * vec.z + mat[1 * 4 + 3]);
-            dst.z = static_cast<SP_REAL>(mat[2 * 4 + 0] * vec.x + mat[2 * 4 + 1] * vec.y + mat[2 * 4 + 2] * vec.z + mat[2 * 4 + 3]);
-        }
-        if (rows == 4 && cols == 4) {
-            const double scale = mat[3 * 4 + 0] * vec.x + mat[3 * 4 + 1] * vec.y + mat[3 * 4 + 2] * vec.z + mat[3 * 4 + 3];
-            dst.x = static_cast<SP_REAL>((mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * vec.z + mat[0 * 4 + 3]) / scale);
-            dst.y = static_cast<SP_REAL>((mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * vec.z + mat[1 * 4 + 3]) / scale);
-            dst.z = static_cast<SP_REAL>((mat[2 * 4 + 0] * vec.x + mat[2 * 4 + 1] * vec.y + mat[2 * 4 + 2] * vec.z + mat[2 * 4 + 3]) / scale);
-        }
-        return dst;
-    }
-
-
-
-    //--------------------------------------------------------------------------------
     // matrix * vector pn
     //--------------------------------------------------------------------------------
 
     SP_GENFUNC VecPD2 mulMat(const SP_REAL* mat, const int rows, const int cols, const VecPD2& vec) {
         VecPD2 dst;
 
-        dst.pos = mulMat(mat, rows, cols, vec.pos);
+        dst.pos = Vec2::mul(mat, rows, cols, vec.pos);
 
         SP_REAL rot[2 * 2] = { 0 };
         {
@@ -110,7 +58,7 @@ namespace sp {
             }
         }
 
-        dst.drc = mulMat(rot, 2, 2, vec.drc).unit();
+        dst.drc = Vec2::mul(rot, 2, 2, vec.drc).unit();
 
         return dst;
     }
@@ -118,7 +66,7 @@ namespace sp {
     SP_GENFUNC VecPD3 mulMat(const SP_REAL* mat, const int rows, const int cols, const VecPD3& vec) {
         VecPD3 dst;
 
-        dst.pos = mulMat(mat, rows, cols, vec.pos);
+        dst.pos = Vec3::mul(mat, rows, cols, vec.pos);
 
         SP_REAL rot[3 * 3] = { 0 };
         {
@@ -137,7 +85,7 @@ namespace sp {
             }
         }
 
-        dst.drc = mulMat(rot, 3, 3, vec.drc).unit();
+        dst.drc = Vec3::mul(rot, 3, 3, vec.drc).unit();
 
         return dst;
     }
@@ -159,15 +107,15 @@ namespace sp {
 
     SP_GENFUNC Line2 mulMat(const SP_REAL* mat, const int rows, const int cols, const Line2& line) {
         Line2 dst;
-        dst.pos[0] = mulMat(mat, rows, cols, line.pos[0]);
-        dst.pos[1] = mulMat(mat, rows, cols, line.pos[1]);
+        dst.pos[0] = Vec2::mul(mat, rows, cols, line.pos[0]);
+        dst.pos[1] = Vec2::mul(mat, rows, cols, line.pos[1]);
         return dst;
     }
 
     SP_GENFUNC Line3 mulMat(const SP_REAL* mat, const int rows, const int cols, const Line3& line) {
         Line3 dst;
-        dst.pos[0] = mulMat(mat, rows, cols, line.pos[0]);
-        dst.pos[1] = mulMat(mat, rows, cols, line.pos[1]);
+        dst.pos[0] = Vec3::mul(mat, rows, cols, line.pos[0]);
+        dst.pos[1] = Vec3::mul(mat, rows, cols, line.pos[1]);
         return dst;
     }
 
@@ -179,9 +127,9 @@ namespace sp {
 
     SP_GENFUNC Mesh3 mulMat(const SP_REAL* mat, const int rows, const int cols, const Mesh3& mesh) {
         Mesh3 dst;
-        dst.pos[0] = mulMat(mat, rows, cols, mesh.pos[0]);
-        dst.pos[1] = mulMat(mat, rows, cols, mesh.pos[1]);
-        dst.pos[2] = mulMat(mat, rows, cols, mesh.pos[2]);
+        dst.pos[0] = Vec3::mul(mat, rows, cols, mesh.pos[0]);
+        dst.pos[1] = Vec3::mul(mat, rows, cols, mesh.pos[1]);
+        dst.pos[2] = Vec3::mul(mat, rows, cols, mesh.pos[2]);
         return dst;
     }
 
@@ -859,7 +807,7 @@ namespace sp {
 
             if (invMat22(inv, J) == false) break;
 
-            undist += mulMat(inv, 2, 2, err);
+            undist += Vec2::mul(inv, 2, 2, err);
         }
 
         return undist;
@@ -988,15 +936,13 @@ namespace sp {
         SP_REAL rotMat[3 * 3];
         getMat(rotMat, 3, 3, rot);
 
-        return mulMat(rotMat, 3, 3, vec);
+        return Vec3::mul(rotMat, 3, 3, vec);
     }
 
     SP_GENFUNC Vec3 mulRot(const Rot& rot, const Vec2& vec) {
-        return mulRot(rot, Vec3(vec.x, vec.y, 0.0));
+        return Rot::mul(rot, Vec3(vec.x, vec.y, 0.0));
     }
 
-    SP_GENFUNC Vec3 operator * (const Rot& rot, const Vec3& vec) { return mulRot(rot, vec); }
-    SP_GENFUNC Vec3 operator * (const Rot& rot, const Vec2& vec) { return mulRot(rot, vec); }
 
     //--------------------------------------------------------------------------------
     // rotation util
@@ -1193,7 +1139,7 @@ namespace sp {
         SP_REAL poseMat[3 * 4];
         getMat(poseMat, 3, 4, pose);
 
-        return mulMat(poseMat, 3, 4, vec);
+        return Vec3::mul(poseMat, 3, 4, vec);
     }
 
     SP_GENFUNC Vec3 mulPose(const Pose& pose, const Vec2& vec) {
@@ -1270,7 +1216,7 @@ namespace sp {
     SP_GENFUNC void jacobPoseToPos(SP_REAL* jacob, const Pose& pose, const Vec3& pos) {
         SP_REAL rmat[3 * 3];
         getMat(rmat, 3, 3, pose.rot);
-        const Vec3 v = mulMat(rmat, 3, 3, pos);
+        const Vec3 v = Vec3::mul(rmat, 3, 3, pos);
         jacob[0 * 6 + 0] = +0.0; jacob[0 * 6 + 1] = +v.z; jacob[0 * 6 + 2] = -v.y;
         jacob[1 * 6 + 0] = -v.z; jacob[1 * 6 + 1] = +0.0; jacob[1 * 6 + 2] = +v.x;
         jacob[2 * 6 + 0] = +v.y; jacob[2 * 6 + 1] = -v.x; jacob[2 * 6 + 2] = +0.0;
@@ -1289,7 +1235,7 @@ namespace sp {
         jacobPoseToPos(jPoseToPos, pose, pos);
 
         SP_REAL jPosToNpx[2 * 3] = { 0 };
-        jacobPosToNpx(jPosToNpx, mulMat(pmat, 3, 4, pos));
+        jacobPosToNpx(jPosToNpx, Vec3::mul(pmat, 3, 4, pos));
 
         mulMat(jacob, 2, 6, jPosToNpx, 2, 3, jPoseToPos, 3, 6);
     }
@@ -1302,7 +1248,7 @@ namespace sp {
         jacobPoseToPos(jPoseToPos, pose, pos);
 
         SP_REAL jPosToPix[2 * 3];
-        jacobPosToPix(jPosToPix, cam, mulMat(pmat, 3, 4, pos));
+        jacobPosToPix(jPosToPix, cam, Vec3::mul(pmat, 3, 4, pos));
 
         mulMat(jacob, 2, 6, jPosToPix, 2, 3, jPoseToPos, 3, 6);
     }

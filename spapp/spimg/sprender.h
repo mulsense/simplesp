@@ -7,14 +7,14 @@
 
 #include "spcore/spcore.h"
 
-namespace sp{
+namespace sp {
 
     //--------------------------------------------------------------------------------
     // render mesh
     //--------------------------------------------------------------------------------
 
     template<typename TYPE>
-    SP_CPUFUNC void renderMesh(Mem<TYPE> &dst, const CamParam &cam, const Pose &pose, const Mesh3 &mesh, const TYPE &val, const double thick = 1.0){
+    SP_CPUFUNC void renderMesh(Mem<TYPE>& dst, const CamParam& cam, const Pose& pose, const Mesh3& mesh, const TYPE& val, const double thick = 1.0) {
 
         renderLine(dst, cam, pose, mesh.pos[0], mesh.pos[1], val, thick);
         renderLine(dst, cam, pose, mesh.pos[1], mesh.pos[2], val, thick);
@@ -22,9 +22,9 @@ namespace sp{
     }
 
     template<typename TYPE>
-    SP_CPUFUNC void renderMesh(Mem<TYPE> &dst, const CamParam &cam, const Pose &pose, const Mem1<Mesh3> &mesh, const TYPE &val, const double thick = 1.0){
+    SP_CPUFUNC void renderMesh(Mem<TYPE>& dst, const CamParam& cam, const Pose& pose, const Mem1<Mesh3>& mesh, const TYPE& val, const double thick = 1.0) {
 
-        for (int i = 0; i < mesh.size(); i++){
+        for (int i = 0; i < mesh.size(); i++) {
             renderMesh(dst, cam, pose, mesh[i], val, thick);
         }
     }
@@ -33,10 +33,10 @@ namespace sp{
     //--------------------------------------------------------------------------------
     // render geom
     //--------------------------------------------------------------------------------
-    
-    SP_CPUFUNC void renderVecPD(Mem<VecPD3> &dst, const CamParam &cam, const Pose &pose, const Mesh3 &mesh) {
 
-        if (cmp(dst.dsize, cam.dsize, 2) == false) {
+    SP_CPUFUNC void renderVecPD(Mem<VecPD3>& dst, const CamParam& cam, const Pose& pose, const Mesh3& mesh) {
+
+        if ((dst.dsize[0] != cam.dsize[0]) || (dst.dsize[1] != cam.dsize[1])) {
             dst.resize(2, cam.dsize);
             dst.zero();
         }
@@ -108,7 +108,7 @@ namespace sp{
 
     }
 
-    SP_CPUFUNC void renderVecPD(Mem<VecPD3> &dst, const CamParam &cam, const Pose &pose, const Mem<Mesh3> &meshes) {
+    SP_CPUFUNC void renderVecPD(Mem<VecPD3>& dst, const CamParam& cam, const Pose& pose, const Mem<Mesh3>& meshes) {
 
         for (int i = 0; i < meshes.size(); i++) {
             renderVecPD(dst, cam, pose, meshes[i]);
@@ -128,7 +128,7 @@ namespace sp{
     }
 
     template<typename DEPTH>
-    SP_CPUFUNC void renderDepth(Mem<DEPTH> &dst, const CamParam &cam, const Pose &pose, const Mem<Mesh3> &meshes) {
+    SP_CPUFUNC void renderDepth(Mem<DEPTH>& dst, const CamParam& cam, const Pose& pose, const Mem<Mesh3>& meshes) {
 
         Mem<VecPD3> pnmap;
         for (int i = 0; i < meshes.size(); i++) {

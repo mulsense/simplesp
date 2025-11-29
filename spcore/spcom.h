@@ -142,6 +142,7 @@ namespace sp {
     // get clampped value
     SP_GENFUNC const SP_REAL clamp(const double v, const double minv, const double maxv) { return static_cast<SP_REAL>((v > maxv) ? maxv : ((v < minv) ? minv : v)); }
 
+
     //--------------------------------------------------------------------------------
     // memory ptr
     //--------------------------------------------------------------------------------
@@ -170,7 +171,6 @@ namespace sp {
             x = static_cast<SP_REAL>(0.0);
             y = static_cast<SP_REAL>(0.0);
         }
-
         Vec2(const double x, const double y) {
             this->x = static_cast<SP_REAL>(x);
             this->y = static_cast<SP_REAL>(y);
@@ -220,23 +220,23 @@ namespace sp {
         }
 
         friend Vec2 operator / (const Vec2& vec, const double val) {
-            SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
+            SP_ASSERT(val < -SP_SMALL || val > +SP_SMALL);
             return Vec2(vec.x / val, vec.y / val);
         }
 
         void operator /= (const double val) {
-            SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
+            SP_ASSERT(val < -SP_SMALL || val > +SP_SMALL);
             x /= val;
             y /= val;
         }
 
-        //friend bool operator == (const Vec2& v0, const Vec2& v1) {
-        //    return cmp(v0, v1) == true;
-        //}
+        friend bool operator == (const Vec2& v0, const Vec2& v1) {
+            return cmp(v0, v1) == true;
+        }
 
-        //friend bool operator != (const Vec2& v0, const Vec2& v1) {
-        //    return cmp(v0, v1) == false;
-        //}
+        friend bool operator != (const Vec2& v0, const Vec2& v1) {
+            return cmp(v0, v1) == false;
+        }
 
         //--------------------------------------------------------------------------------
         // util
@@ -251,17 +251,14 @@ namespace sp {
             return x * vec.y - y * vec.x;
         }
 
-        // length
         SP_REAL length() const {
             return sqrt(x * x + y * y);
         }
 
         Vec2 unit() const {
-            const double l = length();
-            return (l > SP_SMALL) ? *this / l : Vec2(0.0, 0.0);
+            return (length() > SP_SMALL) ? *this / length() : Vec2(0.0, 0.0);
         }
 
-        // round
         friend Vec2 round(const Vec2 vec) {
             return Vec2(round(vec.x), round(vec.y));
         }
@@ -284,15 +281,6 @@ namespace sp {
                 const double scale = mat[2 * 3 + 0] * vec.x + mat[2 * 3 + 1] * vec.y + mat[2 * 3 + 2];
                 dst.x = static_cast<SP_REAL>((mat[0 * 3 + 0] * vec.x + mat[0 * 3 + 1] * vec.y + mat[0 * 3 + 2]) / scale);
                 dst.y = static_cast<SP_REAL>((mat[1 * 3 + 0] * vec.x + mat[1 * 3 + 1] * vec.y + mat[1 * 3 + 2]) / scale);
-            }
-            if (rows == 3 && cols == 4) {
-                dst.x = static_cast<SP_REAL>(mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * 0.0 + mat[0 * 4 + 3]);
-                dst.y = static_cast<SP_REAL>(mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * 0.0 + mat[1 * 4 + 3]);
-            }
-            if (rows == 4 && cols == 4) {
-                const double scale = mat[3 * 4 + 0] * vec.x + mat[3 * 4 + 1] * vec.y + mat[3 * 4 + 2] * 0.0 + mat[3 * 4 + 3];
-                dst.x = static_cast<SP_REAL>((mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * 0.0 + mat[0 * 4 + 3]) / scale);
-                dst.y = static_cast<SP_REAL>((mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * 0.0 + mat[1 * 4 + 3]) / scale);
             }
             return dst;
         }
@@ -377,13 +365,13 @@ namespace sp {
             z /= val;
         }
 
-        //friend bool operator == (const Vec3& v0, const Vec3& v1) {
-        //    return cmp(v0, v1) == true;
-        //}
+        friend bool operator == (const Vec3& v0, const Vec3& v1) {
+            return cmp(v0, v1) == true;
+        }
 
-        //friend bool operator != (const Vec3& v0, const Vec3& v1) {
-        //    return cmp(v0, v1) == false;
-        //}
+        friend bool operator != (const Vec3& v0, const Vec3& v1) {
+            return cmp(v0, v1) == false;
+        }
 
         //--------------------------------------------------------------------------------
         // util
@@ -458,13 +446,13 @@ namespace sp {
         //--------------------------------------------------------------------------------
         // operator
         //--------------------------------------------------------------------------------
-        //friend bool operator == (const VecPD2& vec0, const VecPD2& vec1) {
-        //    return VecPD2::cmp(vec0, vec1) == true;
-        //}
+        friend bool operator == (const VecPD2& vec0, const VecPD2& vec1) {
+            return VecPD2::cmp(vec0, vec1) == true;
+        }
 
-        //friend bool operator != (const VecPD2& vec0, const VecPD2& vec1) {
-        //    return VecPD2::cmp(vec0, vec1) == false;
-        //}
+        friend bool operator != (const VecPD2& vec0, const VecPD2& vec1) {
+            return VecPD2::cmp(vec0, vec1) == false;
+        }
 
         //--------------------------------------------------------------------------------
         // util
@@ -491,13 +479,13 @@ namespace sp {
         //--------------------------------------------------------------------------------
         // operator
         //--------------------------------------------------------------------------------
-        //friend bool operator == (const VecPD3& vec0, const VecPD3& vec1) {
-        //    return VecPD3::cmp(vec0, vec1) == true;
-        //}
+        friend bool operator == (const VecPD3& vec0, const VecPD3& vec1) {
+            return VecPD3::cmp(vec0, vec1) == true;
+        }
 
-        //friend bool operator != (const VecPD3& vec0, const VecPD3& vec1) {
-        //    return VecPD3::cmp(vec0, vec1) == false;
-        //}
+        friend bool operator != (const VecPD3& vec0, const VecPD3& vec1) {
+            return VecPD3::cmp(vec0, vec1) == false;
+        }
 
         //--------------------------------------------------------------------------------
         // util
@@ -507,6 +495,33 @@ namespace sp {
         static bool cmp(const VecPD3& vec0, const VecPD3& vec1, const double t = 1.0e-6) {
             return Vec3::cmp(vec0.pos, vec1.pos, t) && Vec3::cmp(vec0.drc, vec1.drc, t);
         }
+
+        //static VecPD3 mul(const SP_REAL* mat, const int rows, const int cols, const VecPD3& vec) {
+        //    VecPD3 dst;
+
+        //    dst.pos = Vec3::mul(mat, rows, cols, vec.pos);
+
+        //    SP_REAL rot[3 * 3] = { 0 };
+        //    {
+        //        for (int r = 0; r < 3; r++) {
+        //            for (int c = 0; c < 3; c++) {
+        //                rot[r * 3 + c] = mat[r * cols + c];
+        //            }
+        //        }
+        //    }
+        //    if (rows == 4 && cols == 4) {
+        //        const SP_REAL pos[3] = { dst.pos.x, dst.pos.y, dst.pos.z };
+        //        for (int r = 0; r < 3; r++) {
+        //            for (int c = 0; c < 3; c++) {
+        //                rot[r * 3 + c] -= mat[3 * cols + c] * pos[r];
+        //            }
+        //        }
+        //    }
+
+        //    dst.drc = Vec3::mul(rot, 3, 3, vec.drc).unit();
+
+        //    return dst;
+        //}
     };
 
     //--------------------------------------------------------------------------------
@@ -523,6 +538,10 @@ namespace sp {
             pos[1] = vec1;
         }
 
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
         friend Line2 operator + (const Line2& line, const Vec2& vec) {
             return Line2(line.pos[0] + vec, line.pos[1] + vec);
         }
@@ -537,6 +556,18 @@ namespace sp {
             pos[0] -= vec;
             pos[1] -= vec;
         }
+
+        friend bool operator == (const Line2& line0, const Line2& line1) {
+            return cmp(line0, line1) == true;
+        }
+
+        friend bool operator != (const Line2& line0, const Line2& line1) {
+            return cmp(line0, line1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
 
         // length
         SP_REAL length() const {
@@ -567,6 +598,12 @@ namespace sp {
             }
             return ret;
         }
+
+        static bool cmp(const Line2& line0, const Line2& line1, const double t = 1.0e-6) {
+            return Vec2::cmp(line0.pos[0], line1.pos[0], t)
+                && Vec2::cmp(line0.pos[1], line1.pos[1], t);
+        }
+
     };
 
     class Line3 {
@@ -579,6 +616,10 @@ namespace sp {
             pos[0] = vec0;
             pos[1] = vec1;
         }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
 
         friend Line3 operator + (const Line3& line, const Vec3& vec) {
             return Line3(line.pos[0] + vec, line.pos[1] + vec);
@@ -594,6 +635,18 @@ namespace sp {
             pos[0] -= vec;
             pos[1] -= vec;
         }
+
+        friend bool operator == (const Line3& line0, const Line3& line1) {
+            return cmp(line0, line1) == true;
+        }
+
+        friend bool operator != (const Line3& line0, const Line3& line1) {
+            return cmp(line0, line1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
 
         // length
         SP_REAL length() const {
@@ -623,6 +676,11 @@ namespace sp {
                 }
             }
             return ret;
+        }
+
+        static bool cmp(const Line3& line0, const Line3& line1, const double t = 1.0e-6) {
+            return Vec3::cmp(line0.pos[0], line1.pos[0], t)
+                && Vec3::cmp(line0.pos[1], line1.pos[1], t);
         }
     };
 
@@ -689,6 +747,10 @@ namespace sp {
             pos[2] = vec2;
         }
 
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
         friend Mesh3 operator + (const Mesh3& mesh, const Vec3 vec) {
             return Mesh3(mesh.pos[0] + vec, mesh.pos[1] + vec, mesh.pos[2] + vec);
         }
@@ -717,6 +779,17 @@ namespace sp {
             pos[2] *= val;
         }
 
+        friend bool operator == (const Mesh3& mesh0, const Mesh3& mesh1) {
+            return Mesh3::cmp(mesh0, mesh1) == true;
+        }
+
+        friend bool operator != (const Mesh3& mesh0, const Mesh3& mesh1) {
+            return Mesh3::cmp(mesh0, mesh1) == false;
+        }
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
         // get normal vector
         Vec3 normal() const {
             return ((pos[1] - pos[0]).cross(pos[2] - pos[0])).unit();
@@ -725,6 +798,12 @@ namespace sp {
         // get center vector
         Vec3 center() const {
             return (pos[0] + pos[1] + pos[2]) / 3.0;
+        }
+
+        static bool cmp(const Mesh3& mesh0, const Mesh3& mesh1, const double t = 1.0e-6) {
+            return Vec3::cmp(mesh0.pos[0], mesh1.pos[0], t)
+                && Vec3::cmp(mesh0.pos[1], mesh1.pos[1], t)
+                && Vec3::cmp(mesh0.pos[2], mesh1.pos[2], t);
         }
     };
 
@@ -763,7 +842,52 @@ namespace sp {
 
 
         //--------------------------------------------------------------------------------
-        // check in rect
+        // operator
+        //--------------------------------------------------------------------------------
+
+        friend Rect2 operator + (const Rect2& rect, const int val) { return rect.extend(+val); }
+        friend void operator += (Rect2& rect, const int val) { rect = rect.extend(+val); }
+        friend Rect2 operator - (const Rect2& rect, const int val) { return rect.extend(-val); }
+        friend void operator -= (Rect2& rect, const int val) { rect = rect.extend(-val); }
+
+
+        friend Rect2 operator & (const Rect2& rect0, const Rect2& rect1) {
+            int dbase[2] = { 0 }, dsize[2] = { 0 };
+            for (int i = 0; i < 2; i++) {
+                dbase[i] = max(rect0.dbase[i], rect1.dbase[i]);
+                dsize[i] = max(0, min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
+            }
+            return Rect2(dbase, dsize);
+        }
+
+
+        friend Rect2 operator | (const Rect2& rect0, const Rect2& rect1) {
+            const bool b0 = (rect0.dsize[0] * rect0.dsize[1] > 0);
+            const bool b1 = (rect1.dsize[0] * rect1.dsize[1] > 0);
+            if (b0 && b1) {
+                int dbase[2] = { 0 }, dsize[2] = { 0 };
+                for (int i = 0; i < 2; i++) {
+                    dbase[i] = min(rect0.dbase[i], rect1.dbase[i]);
+                    dsize[i] = max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
+                    dsize[i] = max(0, dsize[i]);
+                }
+                return Rect2(dbase, dsize);
+            }
+            else {
+                return (b0) ? rect0 : rect1;
+            }
+        }
+
+        friend bool operator == (const Rect2& rect0, const Rect2& rect1) {
+            return cmp(rect0, rect1) == true;
+        }
+
+        friend bool operator != (const Rect2& rect0, const Rect2& rect1) {
+            return cmp(rect0, rect1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
         //--------------------------------------------------------------------------------
 
         template<typename TYPE>
@@ -795,44 +919,6 @@ namespace sp {
             return contains(d);
         }
 
-
-        //--------------------------------------------------------------------------------
-        // rect util
-        //--------------------------------------------------------------------------------
-
-        friend Rect2 operator & (const Rect2& rect0, const Rect2& rect1) {
-            int dbase[2] = { 0 }, dsize[2] = { 0 };
-            for (int i = 0; i < 2; i++) {
-                dbase[i] = max(rect0.dbase[i], rect1.dbase[i]);
-                dsize[i] = max(0, min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
-            }
-            return Rect2(dbase, dsize);
-        }
-
-
-        friend Rect2 operator | (const Rect2& rect0, const Rect2& rect1) {
-            const bool b0 = (rect0.dsize[0] * rect0.dsize[1] > 0);
-            const bool b1 = (rect1.dsize[0] * rect1.dsize[1] > 0);
-            if (b0 && b1) {
-                int dbase[2] = { 0 }, dsize[2] = { 0 };
-                for (int i = 0; i < 2; i++) {
-                    dbase[i] = min(rect0.dbase[i], rect1.dbase[i]);
-                    dsize[i] = max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
-                    dsize[i] = max(0, dsize[i]);
-                }
-                return Rect2(dbase, dsize);
-            }
-            else {
-                return (b0) ? rect0 : rect1;
-            }
-        }
-
-
-        friend Rect2 operator + (const Rect2& rect, const int val) { return rect.extend(+val); }
-        friend void operator += (Rect2& rect, const int val) { rect = rect.extend(+val); }
-        friend Rect2 operator - (const Rect2& rect, const int val) { return rect.extend(-val); }
-        friend void operator -= (Rect2& rect, const int val) { rect = rect.extend(-val); }
-
         Rect2 extend(const int val) const {
             int dbase[2] = { 0 }, dsize[2] = { 0 };
             for (int i = 0; i < 2; i++) {
@@ -849,6 +935,12 @@ namespace sp {
             vec.x = this->dbase[0] + (this->dsize[0] - 1) / 2.0;
             vec.y = this->dbase[1] + (this->dsize[1] - 1) / 2.0;
             return vec;
+        }
+
+        // compare rect
+        static bool cmp(const Rect2& rect0, const Rect2& rect1) {
+            return (rect0.dbase[0] == rect1.dbase[0]) && (rect0.dsize[0] == rect1.dsize[0])
+                && (rect0.dbase[1] == rect1.dbase[1]) && (rect0.dsize[1] == rect1.dsize[1]);
         }
     };
 
@@ -879,9 +971,53 @@ namespace sp {
         Rect3(const Vec3& vec) : Rect3(round(vec.x), round(vec.y), round(vec.z), 1, 1, 1) {
         }
 
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
+
+        friend Rect3 operator + (const Rect3& rect, const int val) { return rect.extend(+val); }
+        friend void operator += (Rect3& rect, const int val) { rect = rect.extend(+val); }
+        friend Rect3 operator - (const Rect3& rect, const int val) { return rect.extend(-val); }
+        friend void operator -= (Rect3& rect, const int val) { rect = rect.extend(-val); }
+
+        friend Rect3 operator & (const Rect3& rect0, const Rect3& rect1) {
+            int dbase[3] = { 0 }, dsize[3] = { 0 };
+            for (int i = 0; i < 3; i++) {
+                dbase[i] = max(rect0.dbase[i], rect1.dbase[i]);
+                dsize[i] = max(0, min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
+            }
+            return Rect3(dbase, dsize);
+        }
+
+
+        friend Rect3 operator | (const Rect3& rect0, const Rect3& rect1) {
+            const bool b0 = (rect0.dsize[0] * rect0.dsize[1] * rect0.dsize[2] > 0);
+            const bool b1 = (rect1.dsize[0] * rect1.dsize[1] * rect1.dsize[2] > 0);
+            if (b0 && b1) {
+                int dbase[3] = { 0 }, dsize[3] = { 0 };
+                for (int i = 0; i < 3; i++) {
+                    dbase[i] = min(rect0.dbase[i], rect1.dbase[i]);
+                    dsize[i] = max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
+                    dsize[i] = max(0, dsize[i]);
+                }
+                return Rect3(dbase, dsize);
+            }
+            else {
+                return (b0) ? rect0 : rect1;
+            }
+        }
+
+        friend bool operator == (const Rect3& rect0, const Rect3& rect1) {
+            return cmp(rect0, rect1) == true;
+        }
+
+        friend bool operator != (const Rect3& rect0, const Rect3& rect1) {
+            return cmp(rect0, rect1) == false;
+        }
 
         //--------------------------------------------------------------------------------
-        // check in rect
+        // util
         //--------------------------------------------------------------------------------
 
         template<typename TYPE>
@@ -913,44 +1049,6 @@ namespace sp {
             return contains(d);
         }
 
-
-        //--------------------------------------------------------------------------------
-        // rect util
-        //--------------------------------------------------------------------------------
-
-        friend Rect3 operator & (const Rect3& rect0, const Rect3& rect1) {
-            int dbase[3] = { 0 }, dsize[3] = { 0 };
-            for (int i = 0; i < 3; i++) {
-                dbase[i] = max(rect0.dbase[i], rect1.dbase[i]);
-                dsize[i] = max(0, min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
-            }
-            return Rect3(dbase, dsize);
-        }
-
-
-        friend Rect3 operator | (const Rect3& rect0, const Rect3& rect1) {
-            const bool b0 = (rect0.dsize[0] * rect0.dsize[1] * rect0.dsize[2] > 0);
-            const bool b1 = (rect1.dsize[0] * rect1.dsize[1] * rect1.dsize[2] > 0);
-            if (b0 && b1) {
-                int dbase[3] = { 0 }, dsize[3] = { 0 };
-                for (int i = 0; i < 3; i++) {
-                    dbase[i] = min(rect0.dbase[i], rect1.dbase[i]);
-                    dsize[i] = max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
-                    dsize[i] = max(0, dsize[i]);
-                }
-                return Rect3(dbase, dsize);
-            }
-            else {
-                return (b0) ? rect0 : rect1;
-            }
-        }
-
-
-        friend Rect3 operator + (const Rect3& rect, const int val) { return rect.extend(+val); }
-        friend void operator += (Rect3& rect, const int val) { rect = rect.extend(+val); }
-        friend Rect3 operator - (const Rect3& rect, const int val) { return rect.extend(-val); }
-        friend void operator -= (Rect3& rect, const int val) { rect = rect.extend(-val); }
-
         Rect3 extend(const int val) const {
             int dbase[3] = { 0 }, dsize[3] = { 0 };
             for (int i = 0; i < 3; i++) {
@@ -968,6 +1066,13 @@ namespace sp {
             vec.y = this->dbase[1] + (this->dsize[1] - 1) / 2.0;
             vec.z = this->dbase[2] + (this->dsize[2] - 1) / 2.0;
             return vec;
+        }
+
+        // compare rect
+        static bool cmp(const Rect3& rect0, const Rect3& rect1) {
+            return (rect0.dbase[0] == rect1.dbase[0]) && (rect0.dsize[0] == rect1.dsize[0])
+                && (rect0.dbase[1] == rect1.dbase[1]) && (rect0.dsize[1] == rect1.dsize[1])
+                && (rect0.dbase[2] == rect1.dbase[2]) && (rect0.dsize[2] == rect1.dsize[2]);
         }
     };
 
@@ -1100,6 +1205,7 @@ namespace sp {
     };
 
 
+
     //--------------------------------------------------------------------------------
     // 3d transform
     //--------------------------------------------------------------------------------
@@ -1152,21 +1258,21 @@ namespace sp {
             return Rot(qx, qy, qz, qw);
         }
 
-        //friend bool operator == (const Rot& rot0, const Rot& rot1) {
-        //    return cmp(rot0, rot1) == true;
-        //}
+        friend bool operator == (const Rot& rot0, const Rot& rot1) {
+            return cmp(rot0, rot1) == true;
+        }
 
-        //friend bool operator != (const Rot& rot0, const Rot& rot1) {
-        //    return cmp(rot0, rot1) == false;
-        //}
+        friend bool operator != (const Rot& rot0, const Rot& rot1) {
+            return cmp(rot0, rot1) == false;
+        }
 
-        //friend Vec3 operator * (const Rot& rot, const Vec3& vec) {
-        //    return Rot::mul(rot, vec);
-        //}
+        friend Vec3 operator * (const Rot& rot, const Vec3& vec) {
+            return Rot::mul(rot, vec);
+        }
 
-        //friend Vec3 operator * (const Rot& rot, const Vec2& vec) {
-        //    return Rot::mul(rot, Vec3(vec.x, vec.y, 0.0));
-        //}
+        friend Vec3 operator * (const Rot& rot, const Vec2& vec) {
+            return Rot::mul(rot, Vec3(vec.x, vec.y, 0.0));
+        }
 
         //--------------------------------------------------------------------------------
         // util
@@ -1193,6 +1299,41 @@ namespace sp {
             mat[1 * 3 + 0] = nx.y; mat[1 * 3 + 1] = ny.y; mat[1 * 3 + 2] = nz.y;
             mat[2 * 3 + 0] = nx.z; mat[2 * 3 + 1] = ny.z; mat[2 * 3 + 2] = nz.z;
             return Rot(mat, 3, 3);
+        }
+
+        static Vec3 mul(const Rot& rot, const Vec3& vec) {
+            SP_REAL mat[3 * 3];
+            Rot::mat(mat, 3, 3, rot);
+            return Vec3::mul(mat, 3, 3, vec);
+        }
+
+        static void mat(SP_REAL* dst, const int rows, const int cols, const Rot& rot) {
+            {
+                const double qx2 = rot.qx * rot.qx;
+                const double qy2 = rot.qy * rot.qy;
+                const double qz2 = rot.qz * rot.qz;
+                const double qw2 = rot.qw * rot.qw;
+
+                dst[0 * cols + 0] = static_cast<SP_REAL>(qw2 + qx2 - qy2 - qz2);
+                dst[1 * cols + 1] = static_cast<SP_REAL>(qw2 - qx2 + qy2 - qz2);
+                dst[2 * cols + 2] = static_cast<SP_REAL>(qw2 - qx2 - qy2 + qz2);
+            }
+            {
+                const double qxy = rot.qx * rot.qy;
+                const double qzw = rot.qz * rot.qw;
+                dst[0 * cols + 1] = static_cast<SP_REAL>(2 * (qxy - qzw));
+                dst[1 * cols + 0] = static_cast<SP_REAL>(2 * (qxy + qzw));
+
+                const double qxz = rot.qx * rot.qz;
+                const double qyw = rot.qy * rot.qw;
+                dst[0 * cols + 2] = static_cast<SP_REAL>(2 * (qxz + qyw));
+                dst[2 * cols + 0] = static_cast<SP_REAL>(2 * (qxz - qyw));
+
+                const double qyz = rot.qy * rot.qz;
+                const double qxw = rot.qx * rot.qw;
+                dst[1 * cols + 2] = static_cast<SP_REAL>(2 * (qyz - qxw));
+                dst[2 * cols + 1] = static_cast<SP_REAL>(2 * (qyz + qxw));
+            }
         }
 
         static bool cmp(const Rot& v0, const Rot& v1, const double t = 1.0e-6) {
@@ -1245,40 +1386,6 @@ namespace sp {
             }
         }
 
-        static Vec3 mul(const Rot& rot, const Vec3& vec) {
-            SP_REAL mat[3 * 3];
-            Rot::mat(mat, 3, 3, rot);
-            return Vec3::mul(mat, 3, 3, vec);
-        }
-
-        static void mat(SP_REAL* dst, const int rows, const int cols, const Rot& rot) {
-            {
-                const double qx2 = rot.qx * rot.qx;
-                const double qy2 = rot.qy * rot.qy;
-                const double qz2 = rot.qz * rot.qz;
-                const double qw2 = rot.qw * rot.qw;
-
-                dst[0 * cols + 0] = static_cast<SP_REAL>(qw2 + qx2 - qy2 - qz2);
-                dst[1 * cols + 1] = static_cast<SP_REAL>(qw2 - qx2 + qy2 - qz2);
-                dst[2 * cols + 2] = static_cast<SP_REAL>(qw2 - qx2 - qy2 + qz2);
-            }
-            {
-                const double qxy = rot.qx * rot.qy;
-                const double qzw = rot.qz * rot.qw;
-                dst[0 * cols + 1] = static_cast<SP_REAL>(2 * (qxy - qzw));
-                dst[1 * cols + 0] = static_cast<SP_REAL>(2 * (qxy + qzw));
-
-                const double qxz = rot.qx * rot.qz;
-                const double qyw = rot.qy * rot.qw;
-                dst[0 * cols + 2] = static_cast<SP_REAL>(2 * (qxz + qyw));
-                dst[2 * cols + 0] = static_cast<SP_REAL>(2 * (qxz - qyw));
-
-                const double qyz = rot.qy * rot.qz;
-                const double qxw = rot.qx * rot.qw;
-                dst[1 * cols + 2] = static_cast<SP_REAL>(2 * (qyz - qxw));
-                dst[2 * cols + 1] = static_cast<SP_REAL>(2 * (qyz + qxw));
-            }
-        }
     };
 
     class Pose {
@@ -1318,36 +1425,97 @@ namespace sp {
             initialize(mat, rows, cols);
         }
 
-        //Pose inverse() const {
-        //    Pose dst;
-        //    dst.rot = this->rot.inverse();
-        //    dst.pos = dst.rot * this->pos * -1.0;
+        Pose inverse() const {
+            Pose dst;
+            dst.rot = this->rot.inverse();
+            dst.pos = dst.rot * this->pos * -1.0;
 
-        //    return dst;
-        //}
+            return dst;
+        }
 
         //--------------------------------------------------------------------------------
         // operator
         //--------------------------------------------------------------------------------
 
-        //friend bool operator == (const Pose& v0, const Pose& v1) {
-        //    return cmp(v0, v1) == true;
+        //friend Vec3 operator * (const Pose& pose, const Vec3& vec) {
+        //    return Pose::mul(pose, vec);
         //}
 
-        //friend bool operator != (const Pose& v0, const Pose& v1) {
-        //    return cmp(v0, v1) == false;
-        //}
+        //friend Vec3 operator * (const Pose& pose, const Vec2& vec) { return Pose::mul(pose, vec); }
+
+        ////SP_GENFUNC VecPD3 operator * (const Pose& pose, const VecPD3& vec) { return mulPose(pose, vec); }
+        ////SP_GENFUNC Line3 operator * (const Pose& pose, const Line3& line) { return mulPose(pose, line); }
+        ////SP_GENFUNC Mesh3 operator * (const Pose& pose, const Mesh3& mesh) { return mulPose(pose, mesh); }
+
+        //friend Pose operator * (const Pose& pose0, const Pose& pose1) { return Pose::mul(pose0, pose1); }
+        //friend void operator *= (Pose& pose0, const Pose& pose1) { pose0 = Pose::mul(pose0, pose1); }
+
+        //friend Pose operator * (const Rot& rot, const Pose& pose) { return Pose::mul(Pose(rot), pose); }
+        //friend Pose operator * (const Pose& pose, const Rot& rot) { return Pose::mul(pose, Pose(rot)); }
+        //friend void operator *= (Pose& pose, const Rot& rot) { pose = Pose::mul(pose, Pose(rot)); }
+
+        friend bool operator == (const Pose& v0, const Pose& v1) {
+            return cmp(v0, v1) == true;
+        }
+
+        friend bool operator != (const Pose& v0, const Pose& v1) {
+            return cmp(v0, v1) == false;
+        }
 
         //--------------------------------------------------------------------------------
         // util
         //--------------------------------------------------------------------------------
 
+        static Pose mul(const Pose& pose0, const Pose& pose1) {
+            Pose dst;
+            dst.rot = pose0.rot * pose1.rot;
+            dst.pos = Rot::mul(pose0.rot, pose1.pos) + pose0.pos;
+            return dst;
+        }
+
+        static Vec3 mul(const Pose& pose, const Vec3& vec) {
+            SP_REAL mat[3 * 4];
+            Pose::mat(mat, 3, 4, pose);
+            return Vec3::mul(mat, 3, 4, vec);
+        }
+
+        static Vec3 mul(const Pose& pose, const Vec2& vec) {
+            return mul(pose, Vec3(vec.x, vec.y, 0.0));
+        }
+
+        //static VecPD3 mul(const Pose& pose, const VecPD3& vec) {
+        //    SP_REAL mat[3 * 4];
+        //    Pose::mat(mat, 3, 4, pose);
+
+        //    return Vec3::mul(mat, 3, 4, vec);
+        //}
+
+        //SP_GENFUNC Line3 mulPose(const Pose& pose, const Line3& line) {
+        //    SP_REAL poseMat[3 * 4];
+        //    getMat(poseMat, 3, 4, pose);
+
+        //    return mulMat(poseMat, 3, 4, line);
+        //}
+
+        //SP_GENFUNC Mesh3 mulPose(const Pose& pose, const Mesh3& mesh) {
+        //    SP_REAL poseMat[3 * 4];
+        //    getMat(poseMat, 3, 4, pose);
+
+        //    return mulMat(poseMat, 3, 4, mesh);
+        //}
+
+
         static bool cmp(const Pose& v0, const Pose& v1, const double t = 1.0e-6) {
             return Rot::cmp(v0.rot, v1.rot, t) && Vec3::cmp(v0.pos, v1.pos, t);
         }
 
+        static void mat(SP_REAL* dst, const int rows, const int cols, const Pose& pose) {
+            Rot::mat(dst, rows, cols, pose.rot);
+            dst[0 * cols + 3] = pose.pos.x;
+            dst[1 * cols + 3] = pose.pos.y;
+            dst[2 * cols + 3] = pose.pos.z;
+        }
     private:
-
 
         void initialize(const SP_REAL* mat, const int rows, const int cols) {
             this->rot = Rot(mat, rows, cols);
@@ -1366,13 +1534,35 @@ namespace sp {
         CamParam_Fish = 2
     };
 
-    struct CamParam {
+    class CamParam {
+    public:
         CamParam_Type type;
         int dsize[2];
         SP_REAL fx, fy;
         SP_REAL cx, cy;
         SP_REAL k1, k2, k3, k4;
         SP_REAL p1, p2;
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
+        friend bool operator == (const CamParam& cam0, const CamParam& cam1) {
+            return CamParam::cmp(cam0, cam1) == true;
+        }
+
+        friend bool operator != (const CamParam& cam0, const CamParam& cam1) {
+            return CamParam::cmp(cam0, cam1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        static bool cmp(const CamParam& cam0, const CamParam& cam1) {
+            return (cam0.type == cam1.type) && (cam0.dsize[0] == cam1.dsize[0]) && (cam0.dsize[1] == cam1.dsize[1]) &&
+                (cam0.fx == cam1.fx) && (cam0.fy == cam1.fy) && (cam0.cx == cam1.cx) && (cam0.cy == cam1.cy) && (cam0.k1 == cam1.k1) && (cam0.k2 == cam1.k2) && (cam0.k3 == cam1.k3) && (cam0.p1 == cam1.p1) && (cam0.p2 == cam1.p2);
+        }
     };
 
 
@@ -1380,20 +1570,176 @@ namespace sp {
     // color
     //--------------------------------------------------------------------------------
 
-    struct Col3 {
+    class Col3 {
+    public:
         u08 r, g, b;
+
+        Col3() {
+            this->r = 0;
+            this->g = 0;
+            this->b = 0;
+        }
+
+        Col3(const u08 r, const u08 g, const u08 b) {
+            this->r = r;
+            this->g = g;
+            this->b = b;
+        }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
+        friend bool operator == (const Col3& col0, const Col3& col1) {
+            return Col3::cmp(col0, col1) == true;
+        }
+
+        friend bool operator != (const Col3& col0, const Col3& col1) {
+            return Col3::cmp(col0, col1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        static bool cmp(const Col3& col0, const Col3& col1) {
+            return (col0.r == col1.r) && (col0.g == col1.g) && (col0.b == col1.b);
+        }
     };
 
-    struct Col4 : public Col3 {
+    class Col4 : public Col3 {
+    public:
         u08 a;
+
+        Col4() : Col3() {
+            this->a = 0;
+        }
+
+        Col4(const u08 r, const u08 g, const u08 b, const u08 a) : Col3(a, g, b) {
+            this->a = a;
+        }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
+        friend bool operator == (const Col4& col0, const Col4& col1) {
+            return Col4::cmp(col0, col1) == true;
+        }
+
+        friend bool operator != (const Col4& col0, const Col4& col1) {
+            return Col4::cmp(col0, col1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        static bool cmp(const Col4& col0, const Col4& col1) {
+            return (col0.r == col1.r) && (col0.g == col1.g) && (col0.b == col1.b) && (col0.a == col1.a);
+        }
     };
 
-    struct Col3f {
+    class Col3f {
+    public:
         float r, g, b;
+
+        Col3f() {
+            this->r = 0.0f;
+            this->g = 0.0f;
+            this->b = 0.0f;
+        }
+
+        Col3f(const float r, const float g, const float b) {
+            this->r = r;
+            this->g = g;
+            this->b = b;
+        }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
+        friend bool operator == (const Col3f& col0, const Col3f& col1) {
+            return Col3f::cmp(col0, col1) == true;
+        }
+
+        friend bool operator != (const Col3f& col0, const Col3f& col1) {
+            return Col3f::cmp(col0, col1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        static bool cmp(const Col3f& col0, const Col3f& col1, const double t = 1.0e-6) {
+            return ::fabs(col0.r - col1.r) < t
+                && ::fabs(col0.g - col1.g) < t
+                && ::fabs(col0.b - col1.b) < t;
+        }
     };
 
-    struct Col4f : public Col3f {
+    class Col4f : public Col3f {
+    public:
         float a;
+
+        Col4f() : Col3f() {
+            this->a = 0.0f;
+        }
+
+        Col4f(const float r, const float g, const float b, const float a) : Col3f(r, g, b) {
+            this->a = a;
+        }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
+        friend bool operator == (const Col4f& col0, const Col4f& col1) {
+            return Col4f::cmp(col0, col1) == true;
+        }
+
+        friend bool operator != (const Col4f& col0, const Col4f& col1) {
+            return Col4f::cmp(col0, col1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        static bool cmp(const Col4f& col0, const Col4f& col1, const double t = 1.0e-6) {
+            return ::fabs(col0.r - col1.r) < t
+                && ::fabs(col0.g - col1.g) < t
+                && ::fabs(col0.b - col1.b) < t
+                && ::fabs(col0.a - col1.a) < t;
+        }
+
+        static Col4f cast(const Col3& src) {
+            Col4f dst;
+            dst.r = static_cast<float>(src.r) / SP_BYTEMAX;
+            dst.g = static_cast<float>(src.g) / SP_BYTEMAX;
+            dst.b = static_cast<float>(src.b) / SP_BYTEMAX;
+            dst.a = 1.0;
+            return dst;
+        }
+
+        static Col4f cast(const Col4& src) {
+            Col4f dst;
+            dst.r = static_cast<float>(src.r) / SP_BYTEMAX;
+            dst.g = static_cast<float>(src.g) / SP_BYTEMAX;
+            dst.b = static_cast<float>(src.b) / SP_BYTEMAX;
+            dst.a = static_cast<float>(src.a) / SP_BYTEMAX;
+            return dst;
+        }
+
+        static Col4f cast(const Col3f& src) {
+            Col4f dst;
+            dst.r = src.r;
+            dst.g = src.g;
+            dst.b = src.b;
+            dst.a = 1.0f;
+            return dst;
+        }
     };
 
 
@@ -1401,7 +1747,8 @@ namespace sp {
     // material
     //--------------------------------------------------------------------------------
 
-    struct Material {
+    class Material {
+    public:
         Col4f col;
 
         // transmittance : ray = tr * max(tr, rf) / (tr + rf)
@@ -1418,6 +1765,32 @@ namespace sp {
 
         // extinction
         float ex;
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
+        friend bool operator == (const Material& material0, const Material& material1) {
+            return Material::cmp(material0, material1) == true;
+        }
+
+        friend bool operator != (const Material& material0, const Material& material1) {
+            return Material::cmp(material0, material1) == false;
+        }
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        static bool cmp(const Material& v0, const Material& v1, const double t = 1.0e-6) {
+            return Col4f::cmp(v0.col, v1.col)
+                && ::fabs(v0.rf - v1.rf) < t
+                && ::fabs(v0.ri - v1.ri) < t
+                && ::fabs(v0.tr - v1.tr) < t
+                && ::fabs(v0.ex - v1.ex) < t
+                && ::fabs(v0.em - v1.em) < t;
+        }
+
     };
 
 
@@ -1426,7 +1799,6 @@ namespace sp {
     //--------------------------------------------------------------------------------
 
     enum ByteOrder { BigEndian, LittleEndian };
-
 }
 
 
@@ -1615,134 +1987,5 @@ namespace sp {
     }
 }
 
-
-//--------------------------------------------------------------------------------
-// compare
-//--------------------------------------------------------------------------------
-
-namespace sp {
-
-    // compare double
-    SP_GENFUNC bool cmp(const double v0, const double v1, const double t = 1.0e-6) {
-        return ((v0 - v1) < +t && (v0 - v1) > -t) ? true : false;
-    }
-
-    // compare rect
-    SP_GENFUNC bool cmp(const Rect2& v0, const Rect2& v1) {
-        return (v0.dbase[0] == v1.dbase[0]) && (v0.dsize[0] == v1.dsize[0]) && (v0.dbase[1] == v1.dbase[1]) && (v0.dsize[1] == v1.dsize[1]);
-    }
-    // compare rect
-    SP_GENFUNC bool cmp(const Rect3& v0, const Rect3& v1) {
-        return (v0.dbase[0] == v1.dbase[0]) && (v0.dsize[0] == v1.dsize[0]) && (v0.dbase[1] == v1.dbase[1]) && (v0.dsize[1] == v1.dsize[1]) && (v0.dbase[2] == v1.dbase[2]) && (v0.dsize[2] == v1.dsize[2]);
-    }
-
-    // compare vec
-    SP_GENFUNC bool cmp(const Vec2& v0, const Vec2& v1, const double t = 1.0e-6) {
-        return cmp(v0.x, v1.x, t) && cmp(v0.y, v1.y, t);
-    }
-    // compare vec
-    SP_GENFUNC bool cmp(const Vec3& v0, const Vec3& v1, const double t = 1.0e-6) {
-        return cmp(v0.x, v1.x, t) && cmp(v0.y, v1.y, t) & cmp(v0.z, v1.z, t);
-    }
-
-    // compare vec (position and normal)
-    SP_GENFUNC bool cmp(const VecPD2& v0, const VecPD2& v1, const double t = 1.0e-6) {
-        return cmp(v0.pos, v1.pos, t) && cmp(v0.drc, v1.drc, t);
-    }
-    // compare vec (position and normal)
-    SP_GENFUNC bool cmp(const VecPD3& v0, const VecPD3& v1, const double t = 1.0e-6) {
-        return cmp(v0.pos, v1.pos, t) && cmp(v0.drc, v1.drc, t);
-    }
-
-    // compare line
-    SP_GENFUNC bool cmp(const Line2& v0, const Line2& v1, const double t = 1.0e-6) {
-        return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t);
-    }
-    // compare line
-    SP_GENFUNC bool cmp(const Line3& v0, const Line3& v1, const double t = 1.0e-6) {
-        return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t);
-    }
-
-    // compare mesh
-    SP_GENFUNC bool cmp(const Mesh3& v0, const Mesh3& v1, const double t = 1.0e-6) {
-        return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t) && cmp(v0.pos[2], v1.pos[2], t);
-    }
-
-    // compare rotation
-    SP_GENFUNC bool cmp(const Rot& v0, const Rot& v1, const double t = 1.0e-6) {
-        const double s0 = (v0.qw > 0.0) ? +1.0 : -1.0;
-        const double s1 = (v1.qw > 0.0) ? +1.0 : -1.0;
-        return cmp(v0.qx * s0, v1.qx * s1, t) && cmp(v0.qy * s0, v1.qy * s1, t) && cmp(v0.qz * s0, v1.qz * s1, t) && cmp(v0.qw * s0, v1.qw * s1, t);
-    }
-
-    // compare pose
-    SP_GENFUNC bool cmp(const Pose& v0, const Pose& v1, const double t = 1.0e-6) {
-        return cmp(v0.rot, v1.rot, t) && cmp(v0.pos, v1.pos, t);
-    }
-
-    // compare color
-    SP_GENFUNC bool cmp(const Col3& v0, const Col3& v1) {
-        return (v0.r == v1.r) && (v0.g == v1.g) && (v0.b == v1.b);
-    }
-    // compare color
-    SP_GENFUNC bool cmp(const Col4& v0, const Col4& v1) {
-        return (v0.r == v1.r) && (v0.g == v1.g) && (v0.b == v1.b) && (v0.a == v1.a);
-    }
-    // compare color
-    SP_GENFUNC bool cmp(const Col3f& v0, const Col3f& v1, const double t = 1.0e-6) {
-        return cmp(v0.r, v1.r, t) && cmp(v0.g, v1.g, t) && cmp(v0.b, v1.b, t);
-    }
-    // compare color
-    SP_GENFUNC bool cmp(const Col4f& v0, const Col4f& v1, const double t = 1.0e-6) {
-        return cmp(v0.r, v1.r, t) && cmp(v0.g, v1.g, t) && cmp(v0.b, v1.b, t) && cmp(v0.a, v1.a, t);
-    }
-
-    // compare material
-    SP_GENFUNC bool cmp(const Material& v0, const Material& v1, const double t = 1.0e-6) {
-        return cmp(v0.col, v1.col) && cmp(v0.rf, v1.rf, t) && cmp(v0.ri, v1.ri, t) && cmp(v0.tr, v1.tr, t) && cmp(v0.ex, v1.ex, t) && cmp(v0.em, v1.em, t);
-    }
-
-    // compare camera
-    SP_GENFUNC bool cmp(const CamParam& v0, const CamParam& v1) {
-        return (v0.type == v1.type) && (v0.dsize[0] == v1.dsize[0]) && (v0.dsize[1] == v1.dsize[1]) &&
-            (v0.fx == v1.fx) && (v0.fy == v1.fy) && (v0.cx == v1.cx) && (v0.cy == v1.cy) && (v0.k1 == v1.k1) && (v0.k2 == v1.k2) && (v0.k3 == v1.k3) && (v0.p1 == v1.p1) && (v0.p2 == v1.p2);
-    }
-
-    // compare memory
-    template<typename TYPE>
-    SP_CPUFUNC bool cmp(const TYPE* mem0, const TYPE* mem1, const int size) {
-        const int s = sizeof(TYPE) * size;
-        const char* p0 = (char*)mem0;
-        const char* p1 = (char*)mem1;
-
-        for (int i = 0; i < s; i++) {
-            if (p0[i] != p1[i]) return false;
-        }
-        return true;
-    }
-
-#define SP_CMP_OPERATOR(TYPE)\
-    SP_GENFUNC bool operator == (const TYPE &v0, const TYPE &v1) { return  cmp(v0, v1); } \
-    SP_GENFUNC bool operator != (const TYPE &v0, const TYPE &v1) { return !cmp(v0, v1); }
-
-    SP_CMP_OPERATOR(Rect2);
-    SP_CMP_OPERATOR(Rect3);
-    SP_CMP_OPERATOR(Vec2);
-    SP_CMP_OPERATOR(Vec3);
-    SP_CMP_OPERATOR(VecPD2);
-    SP_CMP_OPERATOR(VecPD3);
-    SP_CMP_OPERATOR(Line2);
-    SP_CMP_OPERATOR(Line3);
-    SP_CMP_OPERATOR(Mesh3);
-    SP_CMP_OPERATOR(Rot);
-    SP_CMP_OPERATOR(Pose);
-    SP_CMP_OPERATOR(Col3);
-    SP_CMP_OPERATOR(Col4);
-    SP_CMP_OPERATOR(Col3f);
-    SP_CMP_OPERATOR(Col4f);
-    SP_CMP_OPERATOR(Material);
-    SP_CMP_OPERATOR(CamParam);
-
-}
 
 #endif
