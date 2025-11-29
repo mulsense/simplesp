@@ -61,12 +61,6 @@ private:
             Mem2<VecPD3> map;
             renderVecPD(map, m_cam, m_pose, m_model);
 
-            if (m_key[GLFW_KEY_D] == 1) {
-                cnvDepthToImg(m_img, map, distance - 2 * radius, distance + 2 * radius);
-            }
-            if (m_key[GLFW_KEY_N] == 1) {
-                cnvNormalToImg(m_img, map, distance - 2 * radius, distance + 2 * radius);
-            }
         }
 
         if (m_key[GLFW_KEY_M] == 1) {

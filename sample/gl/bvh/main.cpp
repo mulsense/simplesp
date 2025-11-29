@@ -77,61 +77,33 @@ private:
         glClearColor(0.10f, 0.12f, 0.12f, 0.00f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        if(0){
-            Mem2<SP_REAL> depth;
-            depth.resize(m_cam.dsize);
-            depth.zero();
+        glLoadView3D(m_cam);
+        glLoadMatrix(m_pose);
 
-            Mat pmat = getMat(m_pose);
-            Pose ipose = invPose(m_pose);
-            Mat irmat = getMat(ipose.rot);
+        glRenderSurface(m_model);
 
-            for (int v = 0; v < depth.dsize[1]; v++) {
-                for (int u = 0; u < depth.dsize[0]; u++) {
-                    const Vec2 prj = invCam(m_cam, Vec2(u, v));
-                    const Vec3 vec = unitVec(Vec3(prj.x, prj.y, 1.0));
-                    VecPD3 ray;
-                    ray.pos = ipose.pos;
-                    ray.drc = irmat * (vec);
+        const Mem1<const BVH::Node*> nodes = m_bvh.getNodes(0, m_level);
 
-                    BVH::Hit hit;
-                    if (m_bvh.trace(hit, ray, 0, 1500.0)) {
-                        depth(u, v) = (pmat * hit.vec.pos).z;
-                    }
-                }
-            }
-            glLoadView2D(m_cam);
-            glTexDepth(depth, max(m_pose.pos.z - 500.0, 10.0), m_pose.pos.z + 500.0);
-        }
-        else{
-            glLoadView3D(m_cam);
-            glLoadMatrix(m_pose);
+        glLineWidth(2.0);
+        for (int i = 0; i < nodes.size(); i++) {
+            //glColor(getCol3(i + nodes.size()));
+            const Vec3 A = nodes[i]->box.pos[0];
+            const Vec3 B = nodes[i]->box.pos[1];
 
-            glRenderSurface(m_model);
+            glBegin(GL_LINE_LOOP);
+            glVertex(Vec3(A.x, A.y, A.z)); glVertex(Vec3(B.x, A.y, A.z)); glVertex(Vec3(B.x, B.y, A.z)); glVertex(Vec3(A.x, B.y, A.z));
+            glEnd();
 
-            const Mem1<const BVH::Node*> nodes = m_bvh.getNodes(0, m_level);
+            glBegin(GL_LINE_LOOP);
+            glVertex(Vec3(A.x, A.y, B.z)); glVertex(Vec3(B.x, A.y, B.z)); glVertex(Vec3(B.x, B.y, B.z)); glVertex(Vec3(A.x, B.y, B.z));
+            glEnd();
 
-            glLineWidth(2.0);
-            for (int i = 0; i < nodes.size(); i++) {
-                glColor(getCol3(i + nodes.size()));
-                const Vec3 A = nodes[i]->box.pos[0];
-                const Vec3 B = nodes[i]->box.pos[1];
-
-                glBegin(GL_LINE_LOOP);
-                glVertex(Vec3(A.x, A.y, A.z)); glVertex(Vec3(B.x, A.y, A.z)); glVertex(Vec3(B.x, B.y, A.z)); glVertex(Vec3(A.x, B.y, A.z));
-                glEnd();
-
-                glBegin(GL_LINE_LOOP);
-                glVertex(Vec3(A.x, A.y, B.z)); glVertex(Vec3(B.x, A.y, B.z)); glVertex(Vec3(B.x, B.y, B.z)); glVertex(Vec3(A.x, B.y, B.z));
-                glEnd();
-
-                glBegin(GL_LINES);
-                glVertex(Vec3(A.x, A.y, A.z)); glVertex(Vec3(A.x, A.y, B.z));
-                glVertex(Vec3(B.x, A.y, A.z)); glVertex(Vec3(B.x, A.y, B.z));
-                glVertex(Vec3(A.x, B.y, A.z)); glVertex(Vec3(A.x, B.y, B.z));
-                glVertex(Vec3(B.x, B.y, A.z)); glVertex(Vec3(B.x, B.y, B.z));
-                glEnd();
-            }
+            glBegin(GL_LINES);
+            glVertex(Vec3(A.x, A.y, A.z)); glVertex(Vec3(A.x, A.y, B.z));
+            glVertex(Vec3(B.x, A.y, A.z)); glVertex(Vec3(B.x, A.y, B.z));
+            glVertex(Vec3(A.x, B.y, A.z)); glVertex(Vec3(A.x, B.y, B.z));
+            glVertex(Vec3(B.x, B.y, A.z)); glVertex(Vec3(B.x, B.y, B.z));
+            glEnd();
         }
     }
 

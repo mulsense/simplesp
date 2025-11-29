@@ -1,7 +1,15 @@
 ﻿#include "simplesp.h"
 
 using namespace sp;
+double funcTukey(const double x, const double t) {
+    double ret = 0.0;
 
+    if (fabs(x) < t) {
+        const double v = 1.0 - (x * x) / (t * t);
+        ret = static_cast<double>(v * v);
+    }
+    return ret;
+}
 int main(){
 
     //--------------------------------------------------------------------------------

@@ -53,7 +53,9 @@ private:
             m_model = loadGeodesicDorm(100.0, 1);
         }
         for (int i = 0; i < m_model.size(); i++) {
-            const Vec3 nrm = getMeshNrm(m_model[i]);
+            const Mesh3 mesh = m_model[i];
+            
+            const Vec3 nrm = mesh.normal();
             m_nrms.push(nrm);
             m_nrms.push(nrm);
             m_nrms.push(nrm);
@@ -106,14 +108,14 @@ private:
 
             fbo.unbind();
 
-            {
-                if (m_key[GLFW_KEY_S] > 0) {
-                    Mem2<Col3> img(m_wcam.dsize);
-                    fbo.readi((unsigned char *)img.ptr, 3);
+            //{
+            //    if (m_key[GLFW_KEY_S] > 0) {
+            //        Mem2<Col3> img(m_wcam.dsize);
+            //        fbo.readi((unsigned char *)img.ptr, 3);
 
-                    saveBMP("test.bmp", img);
-                }
-            }
+            //        saveBMP("test.bmp", img);
+            //    }
+            //}
         }
 
         {
