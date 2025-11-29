@@ -79,7 +79,9 @@ namespace sp {
 
  
         void zero() {
-            setElm(vmap, -SP_VOXEL_VMAX);
+            for (int i = 0; i < vmap.size(); i++) {
+                vmap[i] = -SP_VOXEL_VMAX;
+            }
             cmap.zero();
             wmap.zero();
         }
@@ -137,7 +139,9 @@ namespace sp {
         SP_PRINTD("voxel size %d\n", size);
 
         voxel.init(size, unit);
-        setElm(voxel.vmap, +1);
+        for (int i = 0; i < voxel.vmap.size(); i++) {
+            voxel.vmap[i] = +1;
+        }
 
         const SP_REAL step = sqrt(3.0) * unit;
 
@@ -740,181 +744,6 @@ namespace sp {
         return true;
     }
 
-
-    //--------------------------------------------------------------------------------
-    // visual hull
-    //--------------------------------------------------------------------------------
-
-    SP_CPUFUNC bool visualHull(Voxel<> &voxel, const Mem1<Mem2<u08> > &imgs, const Mem1<CamParam> &cams, const Mem1<Pose> &poses, const SP_REAL unit = 1.0) {
-
-        SP_REAL meanDist = 0.0;
-        {
-            for (int i = 0; i < poses.size(); i++) {
-                meanDist += poses[i].pos.z;
-            }
-            meanDist /= poses.size();
-        }
-
-        const int size = static_cast<int>(meanDist / 2.0 / unit);
-        voxel.init(size, unit);
-        setElm(voxel.vmap, +1);
-
-        const Vec3 cent = voxel.center();
-
-        for (int i = 0; i < imgs.size(); i++) {
-            const Mem2<u08> &img = imgs[i];
-            const CamParam &cam = cams[i];
-            const Pose &pose = poses[i];
-
-
-#if SP_USE_OMP
-#pragma omp parallel for
-#endif
-            for (int z = 0; z < voxel.dsize[2]; z++) {
-                for (int y = 0; y < voxel.dsize[1]; y++) {
-                    for (int x = 0; x < voxel.dsize[0]; x++) {
-                        const Vec3 mpos = Vec3(x, y, z);
-                        const Vec3 cpos = pose * ((mpos - cent) * unit);
-
-                        const Vec2 pix = mulCam(cam, prjVec(cpos));
-                        if (Rect2(img.dsize).contains(pix.x, pix.y) == false) continue;
-
-                        const u08 &val = img(round(pix.x), round(pix.y));
-
-                        if (val == 0) {
-                            voxel.update(x, y, z, -1.0);
-                        }
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < voxel.vmap.size(); i++) {
-            voxel.vmap[i] = (voxel.vmap[i] > 0) ? +1 : -1;
-        }
-        return true;
-    }
-
-    //--------------------------------------------------------------------------------
-    // truncated signed distance function
-    //--------------------------------------------------------------------------------
-
-    SP_CPUFUNC void updateTSDF(Voxel<> &voxel, const CamParam &cam, const Pose &pose, const Mem2<SP_REAL> &depth, const SP_REAL mu = 5.0) {
-
-        const Vec3 cent = voxel.center();
-        const SP_REAL step = mu * voxel.unit;
-
-#if SP_USE_OMP
-#pragma omp parallel for
-#endif
-        for (int z = 0; z < voxel.dsize[2]; z++) {
-            for (int y = 0; y < voxel.dsize[1]; y++) {
-                for (int x = 0; x < voxel.dsize[0]; x++) {
-                    const Vec3 mpos = Vec3(x, y, z);
-                    const Vec3 cpos = pose * ((mpos - cent) * voxel.unit);
-
-                    const Vec2 pix = mulCam(cam, prjVec(cpos));
-                    if (Rect2(depth.dsize).contains(pix.x, pix.y) == false) continue;
-
-                    const SP_REAL d = depth(round(pix.x), round(pix.y));
-                    if (d == 0.0) continue;
-
-                    const SP_REAL dist = max(cpos.z - d, -step) / step;
-                    voxel.update(x, y, z, dist);
-                }
-            }
-        }
-    }
-
-    SP_CPUFUNC void rayCasting(Mem2<VecPD3> &map, const CamParam &cam, const Pose &pose, const Voxel<> &voxel, const SP_REAL mu = 5.0) {
-
-        map.resize(cam.dsize);
-        map.zero();
-
-        const Vec3 cent = voxel.center();
-        const Pose ipose = invPose(pose);
-
-
-#if SP_USE_OMP
-#pragma omp parallel for
-#endif
-        for (int v = 0; v < map.dsize[1]; v++) {
-            for (int u = 0; u < map.dsize[0]; u++) {
-                const Vec3 cvec = Vec3(invCam(cam, Vec2(u, v)), 1.0);
-                const Vec3 mvec = ipose.rot * cvec;
-
-                double maxv = -SP_INFINITY;
-                double minv = +SP_INFINITY;
-
-                // voxel range
-                for (int i = 0; i < 3; i++) {
-                    if (fabs(acsv(mvec, i)) > SP_SMALL) {
-                        for(int j = 0; j < 2; j++){
-                            const int p = (j == 0) ? -1 : +1;
-                            const double s = (p * acsv(cent, i) - acsv(ipose.pos, i)) / acsv(mvec, i);
-                            const double a = acsv(mvec, (i + 1) % 3) * s + acsv(ipose.pos, (i + 1) % 3);
-                            const double b = acsv(mvec, (i + 2) % 3) * s + acsv(ipose.pos, (i + 2) % 3);
-                            if (fabs(a) < acsv(cent, (i + 1) % 3) && fabs(b) < acsv(cent, (i + 2) % 3)) {
-                                maxv = max(maxv, s);
-                                minv = min(minv, s);
-                            }
-                        }
-                    }
-                }
-
-                if (minv <= SP_SMALL) continue;
-
- 
-                SP_REAL detect = minv;
-
-                char pre = 0;
-                SP_REAL step = mu;
-
-                for (SP_REAL d = minv; d < maxv; d += step * voxel.unit) {
-                    const Vec3 mpos = (ipose.pos + mvec * d) / voxel.unit + cent;
-                    const int x = round(mpos.x);
-                    const int y = round(mpos.y);
-                    const int z = round(mpos.z);
-
-                    if (Rect3(voxel.dsize).contains(x, y, z) == false) continue;
-
-                    const char val = voxel.vmap(x, y, z);
-                    const char wei = voxel.wmap(x, y, z);
-
-                    if (wei == 0) {
-                        pre = 0;
-                        step = mu * voxel.unit;
-                        continue;
-                    }
-
-                    if (val >= 0 && pre < 0) {
-                        if (step == 1.0){
-                            detect = d - step * val / (val - pre);
-                            break;
-                        }
-                        else {
-                            d -= step;
-                        }
-                    }
-                    else {
-                        pre = val;
-                    }
-
-                    step = (val > -0.9 * SP_VOXEL_VMAX) ? 1.0 : mu;
-                }
-
-                if (detect > minv) {
-                    const Vec3 mpos = (ipose.pos + mvec * detect) / voxel.unit + cent;
-                    const Vec3 mnrm = voxel.getn(round(mpos.x), round(mpos.y), round(mpos.z));
-
-                    const Vec3 cpos = cvec * detect;
-                    const Vec3 cnrm = pose.rot * mnrm;
-
-                    map(u, v) = VecPD3(cpos, cnrm);
-                }
-            }
-        }
-    }
 
     template<typename TYPE>
     SP_CPUFUNC int labeling(Mem3<int> &map, const Voxel<TYPE> &voxel, const TYPE *cid = NULL) {

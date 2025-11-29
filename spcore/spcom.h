@@ -95,12 +95,12 @@
 // struct
 //--------------------------------------------------------------------------------
 
-namespace sp{
+namespace sp {
 
     //--------------------------------------------------------------------------------
     // type
     //--------------------------------------------------------------------------------
-    
+
     typedef char           s08;
     typedef unsigned char  u08;
     typedef short          s16;
@@ -113,7 +113,7 @@ namespace sp{
     //--------------------------------------------------------------------------------
     // basic
     //--------------------------------------------------------------------------------
-    
+
     // get round (ex. 1.5 -> 2)
     SP_GENFUNC int round(const double x) { return static_cast<int>((x > 0) ? (x + 0.5) : (x - 0.5)); }
 
@@ -129,14 +129,6 @@ namespace sp{
     // swap
     template<typename TYPE> SP_GENFUNC void swap(TYPE& a, TYPE& b) { const TYPE tmp = a; a = b; b = tmp; }
 
-    // get clone
-    template<typename TYPE> SP_GENFUNC TYPE clone(const TYPE& src) { TYPE dst = src; return dst; }
-
-    // get max value
-    SP_GENFUNC const int max(const int a, const int b) { return (a > b) ? a : b; }
-
-    // get min value
-    SP_GENFUNC const int min(const int a, const int b) { return (a < b) ? a : b; }
 
     // get max value
     SP_GENFUNC const SP_REAL max(const double a, const double b) { return static_cast<SP_REAL>((a > b) ? a : b); }
@@ -154,9 +146,9 @@ namespace sp{
     // memory ptr
     //--------------------------------------------------------------------------------
 
-    template<typename TYPE> struct ExPtr{
+    template<typename TYPE> struct ExPtr {
         // pointer
-        TYPE *ptr;
+        TYPE* ptr;
 
         // dimension
         int dim;
@@ -183,6 +175,10 @@ namespace sp{
             this->x = static_cast<SP_REAL>(x);
             this->y = static_cast<SP_REAL>(y);
         }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
 
         friend Vec2 operator + (const Vec2& vec0, const Vec2& vec1) {
             return Vec2(vec0.x + vec1.x, vec0.y + vec1.y);
@@ -227,11 +223,24 @@ namespace sp{
             SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
             return Vec2(vec.x / val, vec.y / val);
         }
+
         void operator /= (const double val) {
             SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
             x /= val;
             y /= val;
         }
+
+        //friend bool operator == (const Vec2& v0, const Vec2& v1) {
+        //    return cmp(v0, v1) == true;
+        //}
+
+        //friend bool operator != (const Vec2& v0, const Vec2& v1) {
+        //    return cmp(v0, v1) == false;
+        //}
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
 
         // dot production
         SP_REAL dot(const Vec2& vec) const {
@@ -256,6 +265,37 @@ namespace sp{
         friend Vec2 round(const Vec2 vec) {
             return Vec2(round(vec.x), round(vec.y));
         }
+
+        static bool cmp(const Vec2& v0, const Vec2& v1, const double t = 1.0e-6) {
+            return ::fabs(v0.x - v1.x) < t && ::fabs(v0.y - v1.y) < t;
+        }
+
+        static Vec2 mul(const SP_REAL* mat, const int rows, const int cols, const Vec2& vec) {
+            Vec2 dst = Vec2(0.0, 0.0);
+            if (rows == 2 && cols == 2) {
+                dst.x = static_cast<SP_REAL>(mat[0 * 2 + 0] * vec.x + mat[0 * 2 + 1] * vec.y);
+                dst.y = static_cast<SP_REAL>(mat[1 * 2 + 0] * vec.x + mat[1 * 2 + 1] * vec.y);
+            }
+            if (rows == 2 && cols == 3) {
+                dst.x = static_cast<SP_REAL>(mat[0 * 3 + 0] * vec.x + mat[0 * 3 + 1] * vec.y + mat[0 * 3 + 2]);
+                dst.y = static_cast<SP_REAL>(mat[1 * 3 + 0] * vec.x + mat[1 * 3 + 1] * vec.y + mat[1 * 3 + 2]);
+            }
+            if (rows == 3 && cols == 3) {
+                const double scale = mat[2 * 3 + 0] * vec.x + mat[2 * 3 + 1] * vec.y + mat[2 * 3 + 2];
+                dst.x = static_cast<SP_REAL>((mat[0 * 3 + 0] * vec.x + mat[0 * 3 + 1] * vec.y + mat[0 * 3 + 2]) / scale);
+                dst.y = static_cast<SP_REAL>((mat[1 * 3 + 0] * vec.x + mat[1 * 3 + 1] * vec.y + mat[1 * 3 + 2]) / scale);
+            }
+            if (rows == 3 && cols == 4) {
+                dst.x = static_cast<SP_REAL>(mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * 0.0 + mat[0 * 4 + 3]);
+                dst.y = static_cast<SP_REAL>(mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * 0.0 + mat[1 * 4 + 3]);
+            }
+            if (rows == 4 && cols == 4) {
+                const double scale = mat[3 * 4 + 0] * vec.x + mat[3 * 4 + 1] * vec.y + mat[3 * 4 + 2] * 0.0 + mat[3 * 4 + 3];
+                dst.x = static_cast<SP_REAL>((mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * 0.0 + mat[0 * 4 + 3]) / scale);
+                dst.y = static_cast<SP_REAL>((mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * 0.0 + mat[1 * 4 + 3]) / scale);
+            }
+            return dst;
+        }
     };
 
     class Vec3 {
@@ -278,6 +318,10 @@ namespace sp{
             this->y = static_cast<SP_REAL>(vec.y);
             this->z = static_cast<SP_REAL>(z);
         }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
 
         friend Vec3 operator + (const Vec3& vec0, const Vec3& vec1) {
             return Vec3(vec0.x + vec1.x, vec0.y + vec1.y, vec0.z + vec1.z);
@@ -310,9 +354,11 @@ namespace sp{
         friend Vec3 operator * (const Vec3& vec, const double val) {
             return Vec3(vec.x * val, vec.y * val, vec.z * val);
         }
+
         friend Vec3 operator * (const double val, const Vec3& vec) {
             return Vec3(vec.x * val, vec.y * val, vec.z * val);
         }
+
         void operator *= (const double val) {
             x *= val;
             y *= val;
@@ -323,12 +369,25 @@ namespace sp{
             SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
             return Vec3(vec.x / val, vec.y / val, vec.z / val);
         }
+
         void operator /= (const double val) {
             SP_ASSERT(val < -SP_SMALL || val >+SP_SMALL);
             x /= val;
             y /= val;
             z /= val;
         }
+
+        //friend bool operator == (const Vec3& v0, const Vec3& v1) {
+        //    return cmp(v0, v1) == true;
+        //}
+
+        //friend bool operator != (const Vec3& v0, const Vec3& v1) {
+        //    return cmp(v0, v1) == false;
+        //}
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
 
         // dot production
         SP_REAL dot(const Vec3& vec) const {
@@ -353,13 +412,38 @@ namespace sp{
         friend Vec3 round(const Vec3 vec) {
             return Vec3(round(vec.x), round(vec.y), round(vec.z));
         }
+
+        static bool cmp(const Vec3& v0, const Vec3& v1, const double t = 1.0e-6) {
+            return ::fabs(v0.x - v1.x) < t && ::fabs(v0.y - v1.y) < t && ::fabs(v0.z - v1.z) < t;
+        }
+
+        static Vec3 mul(const SP_REAL* mat, const int rows, const int cols, const Vec3& vec) {
+            Vec3 dst = Vec3(0.0, 0.0, 0.0);
+            if (rows == 3 && cols == 3) {
+                dst.x = static_cast<SP_REAL>(mat[0 * 3 + 0] * vec.x + mat[0 * 3 + 1] * vec.y + mat[0 * 3 + 2] * vec.z);
+                dst.y = static_cast<SP_REAL>(mat[1 * 3 + 0] * vec.x + mat[1 * 3 + 1] * vec.y + mat[1 * 3 + 2] * vec.z);
+                dst.z = static_cast<SP_REAL>(mat[2 * 3 + 0] * vec.x + mat[2 * 3 + 1] * vec.y + mat[2 * 3 + 2] * vec.z);
+            }
+            if (rows == 3 && cols == 4) {
+                dst.x = static_cast<SP_REAL>(mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * vec.z + mat[0 * 4 + 3]);
+                dst.y = static_cast<SP_REAL>(mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * vec.z + mat[1 * 4 + 3]);
+                dst.z = static_cast<SP_REAL>(mat[2 * 4 + 0] * vec.x + mat[2 * 4 + 1] * vec.y + mat[2 * 4 + 2] * vec.z + mat[2 * 4 + 3]);
+            }
+            if (rows == 4 && cols == 4) {
+                const double scale = mat[3 * 4 + 0] * vec.x + mat[3 * 4 + 1] * vec.y + mat[3 * 4 + 2] * vec.z + mat[3 * 4 + 3];
+                dst.x = static_cast<SP_REAL>((mat[0 * 4 + 0] * vec.x + mat[0 * 4 + 1] * vec.y + mat[0 * 4 + 2] * vec.z + mat[0 * 4 + 3]) / scale);
+                dst.y = static_cast<SP_REAL>((mat[1 * 4 + 0] * vec.x + mat[1 * 4 + 1] * vec.y + mat[1 * 4 + 2] * vec.z + mat[1 * 4 + 3]) / scale);
+                dst.z = static_cast<SP_REAL>((mat[2 * 4 + 0] * vec.x + mat[2 * 4 + 1] * vec.y + mat[2 * 4 + 2] * vec.z + mat[2 * 4 + 3]) / scale);
+            }
+            return dst;
+        }
     };
 
     //--------------------------------------------------------------------------------
     // position and direction
     //--------------------------------------------------------------------------------
-    
-    class VecPD2{
+
+    class VecPD2 {
     public:
         Vec2 pos, drc;
 
@@ -370,9 +454,29 @@ namespace sp{
             this->pos = pos;
             this->drc = drc;
         }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+        //friend bool operator == (const VecPD2& vec0, const VecPD2& vec1) {
+        //    return VecPD2::cmp(vec0, vec1) == true;
+        //}
+
+        //friend bool operator != (const VecPD2& vec0, const VecPD2& vec1) {
+        //    return VecPD2::cmp(vec0, vec1) == false;
+        //}
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        // compare vec (position and normal)
+        static bool cmp(const VecPD2& vec0, const VecPD2& vec1, const double t = 1.0e-6) {
+            return Vec2::cmp(vec0.pos, vec1.pos, t) && Vec2::cmp(vec0.drc, vec1.drc, t);
+        }
     };
 
-    class VecPD3{
+    class VecPD3 {
     public:
         Vec3 pos, drc;
 
@@ -382,6 +486,26 @@ namespace sp{
         VecPD3(const Vec3& pos, const Vec3& drc) {
             this->pos = pos;
             this->drc = drc;
+        }
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+        //friend bool operator == (const VecPD3& vec0, const VecPD3& vec1) {
+        //    return VecPD3::cmp(vec0, vec1) == true;
+        //}
+
+        //friend bool operator != (const VecPD3& vec0, const VecPD3& vec1) {
+        //    return VecPD3::cmp(vec0, vec1) == false;
+        //}
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        // compare vec (position and normal)
+        static bool cmp(const VecPD3& vec0, const VecPD3& vec1, const double t = 1.0e-6) {
+            return Vec3::cmp(vec0.pos, vec1.pos, t) && Vec3::cmp(vec0.drc, vec1.drc, t);
         }
     };
 
@@ -592,7 +716,7 @@ namespace sp{
             pos[1] *= val;
             pos[2] *= val;
         }
-   
+
         // get normal vector
         Vec3 normal() const {
             return ((pos[1] - pos[0]).cross(pos[2] - pos[0])).unit();
@@ -625,11 +749,11 @@ namespace sp{
             this->dsize[1] = dsize1;
         }
 
-		Rect2() : Rect2(0, 0, 0, 0) {
-		}
+        Rect2() : Rect2(0, 0, 0, 0) {
+        }
 
-		Rect2(const int* dbase, const int* dsize) : Rect2(dbase[0], dbase[1], dsize[0], dsize[1]) {
-		}
+        Rect2(const int* dbase, const int* dsize) : Rect2(dbase[0], dbase[1], dsize[0], dsize[1]) {
+        }
 
         Rect2(const int* dsize) : Rect2(0, 0, dsize[0], dsize[1]) {
         }
@@ -980,7 +1104,7 @@ namespace sp{
     // 3d transform
     //--------------------------------------------------------------------------------
 
-    class Rot{
+    class Rot {
     public:
         // quaternion
         SP_REAL qx, qy, qz, qw;
@@ -996,6 +1120,7 @@ namespace sp{
         Rot(const SP_REAL* mat, const int rows, const int cols) {
             initialize(mat, rows, cols);
         }
+
         Rot(const Vec3& vec) {
             const SP_REAL angle = vec.length();
             if (angle > SP_SMALL) {
@@ -1015,7 +1140,7 @@ namespace sp{
         }
 
         //--------------------------------------------------------------------------------
-        // rotation operator
+        // operator
         //--------------------------------------------------------------------------------
 
         friend Rot operator * (const Rot& rot0, const Rot& rot1) {
@@ -1026,7 +1151,26 @@ namespace sp{
 
             return Rot(qx, qy, qz, qw);
         }
-        
+
+        //friend bool operator == (const Rot& rot0, const Rot& rot1) {
+        //    return cmp(rot0, rot1) == true;
+        //}
+
+        //friend bool operator != (const Rot& rot0, const Rot& rot1) {
+        //    return cmp(rot0, rot1) == false;
+        //}
+
+        //friend Vec3 operator * (const Rot& rot, const Vec3& vec) {
+        //    return Rot::mul(rot, vec);
+        //}
+
+        //friend Vec3 operator * (const Rot& rot, const Vec2& vec) {
+        //    return Rot::mul(rot, Vec3(vec.x, vec.y, 0.0));
+        //}
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
 
         static Rot x(const double angle) {
             return Rot(Vec3(1.0, 0.0, 0.0) * angle);
@@ -1050,7 +1194,17 @@ namespace sp{
             mat[2 * 3 + 0] = nx.z; mat[2 * 3 + 1] = ny.z; mat[2 * 3 + 2] = nz.z;
             return Rot(mat, 3, 3);
         }
-        
+
+        static bool cmp(const Rot& v0, const Rot& v1, const double t = 1.0e-6) {
+            const double s0 = (v0.qw > 0.0) ? +1.0 : -1.0;
+            const double s1 = (v1.qw > 0.0) ? +1.0 : -1.0;
+            return ::fabs(v0.qx * s0 - v1.qx * s1) < t
+                && ::fabs(v0.qy * s0 - v1.qy * s1) < t
+                && ::fabs(v0.qz * s0 - v1.qz * s1) < t
+                && ::fabs(v0.qw * s0 - v1.qw * s1) < t;
+        }
+
+
     private:
 
         void initialize(const SP_REAL qx, const SP_REAL qy, const SP_REAL qz, const SP_REAL qw) {
@@ -1090,14 +1244,115 @@ namespace sp{
                 this->qw = 1.0;
             }
         }
+
+        static Vec3 mul(const Rot& rot, const Vec3& vec) {
+            SP_REAL mat[3 * 3];
+            Rot::mat(mat, 3, 3, rot);
+            return Vec3::mul(mat, 3, 3, vec);
+        }
+
+        static void mat(SP_REAL* dst, const int rows, const int cols, const Rot& rot) {
+            {
+                const double qx2 = rot.qx * rot.qx;
+                const double qy2 = rot.qy * rot.qy;
+                const double qz2 = rot.qz * rot.qz;
+                const double qw2 = rot.qw * rot.qw;
+
+                dst[0 * cols + 0] = static_cast<SP_REAL>(qw2 + qx2 - qy2 - qz2);
+                dst[1 * cols + 1] = static_cast<SP_REAL>(qw2 - qx2 + qy2 - qz2);
+                dst[2 * cols + 2] = static_cast<SP_REAL>(qw2 - qx2 - qy2 + qz2);
+            }
+            {
+                const double qxy = rot.qx * rot.qy;
+                const double qzw = rot.qz * rot.qw;
+                dst[0 * cols + 1] = static_cast<SP_REAL>(2 * (qxy - qzw));
+                dst[1 * cols + 0] = static_cast<SP_REAL>(2 * (qxy + qzw));
+
+                const double qxz = rot.qx * rot.qz;
+                const double qyw = rot.qy * rot.qw;
+                dst[0 * cols + 2] = static_cast<SP_REAL>(2 * (qxz + qyw));
+                dst[2 * cols + 0] = static_cast<SP_REAL>(2 * (qxz - qyw));
+
+                const double qyz = rot.qy * rot.qz;
+                const double qxw = rot.qx * rot.qw;
+                dst[1 * cols + 2] = static_cast<SP_REAL>(2 * (qyz - qxw));
+                dst[2 * cols + 1] = static_cast<SP_REAL>(2 * (qyz + qxw));
+            }
+        }
     };
 
-    struct Pose{
+    class Pose {
+    public:
         // rotation
         Rot rot;
 
         // position
         Vec3 pos;
+
+        Pose(const Rot& rot, const Vec3& pos) {
+            this->rot = rot;
+            this->pos = pos;
+        }
+
+        Pose(const Pose& pose) {
+            this->rot = pose.rot;
+            this->pos = pose.pos;
+        }
+
+        Pose() {
+            this->rot = Rot();
+            this->pos = Vec3(0.0, 0.0, 0.0);
+        }
+
+        Pose(const Rot& rot) {
+            this->rot = rot;
+            this->pos = Vec3(0.0, 0.0, 0.0);
+        }
+
+        Pose(const Vec3& pos) {
+            this->rot = Rot();
+            this->pos = pos;
+        }
+
+        Pose(const SP_REAL* mat, const int rows, const int cols) {
+            initialize(mat, rows, cols);
+        }
+
+        //Pose inverse() const {
+        //    Pose dst;
+        //    dst.rot = this->rot.inverse();
+        //    dst.pos = dst.rot * this->pos * -1.0;
+
+        //    return dst;
+        //}
+
+        //--------------------------------------------------------------------------------
+        // operator
+        //--------------------------------------------------------------------------------
+
+        //friend bool operator == (const Pose& v0, const Pose& v1) {
+        //    return cmp(v0, v1) == true;
+        //}
+
+        //friend bool operator != (const Pose& v0, const Pose& v1) {
+        //    return cmp(v0, v1) == false;
+        //}
+
+        //--------------------------------------------------------------------------------
+        // util
+        //--------------------------------------------------------------------------------
+
+        static bool cmp(const Pose& v0, const Pose& v1, const double t = 1.0e-6) {
+            return Rot::cmp(v0.rot, v1.rot, t) && Vec3::cmp(v0.pos, v1.pos, t);
+        }
+
+    private:
+
+
+        void initialize(const SP_REAL* mat, const int rows, const int cols) {
+            this->rot = Rot(mat, rows, cols);
+            this->pos = Vec3(mat[0 * cols + 3], mat[1 * cols + 3], mat[2 * cols + 3]);
+        }
     };
 
 
@@ -1111,7 +1366,7 @@ namespace sp{
         CamParam_Fish = 2
     };
 
-    struct CamParam{
+    struct CamParam {
         CamParam_Type type;
         int dsize[2];
         SP_REAL fx, fy;
@@ -1125,11 +1380,11 @@ namespace sp{
     // color
     //--------------------------------------------------------------------------------
 
-    struct Col3{
+    struct Col3 {
         u08 r, g, b;
     };
 
-    struct Col4 : public Col3{
+    struct Col4 : public Col3 {
         u08 a;
     };
 
@@ -1148,7 +1403,7 @@ namespace sp{
 
     struct Material {
         Col4f col;
-        
+
         // transmittance : ray = tr * max(tr, rf) / (tr + rf)
         float tr;
 
@@ -1169,7 +1424,7 @@ namespace sp{
     //--------------------------------------------------------------------------------
     // byte order
     //--------------------------------------------------------------------------------
-    
+
     enum ByteOrder { BigEndian, LittleEndian };
 
 }
@@ -1184,24 +1439,24 @@ namespace sp {
     //--------------------------------------------------------------------------------
     // basic type
     //--------------------------------------------------------------------------------
-  
-    template<typename TYPE> SP_GENFUNC void _cast(char &dst, const TYPE &src) {
+
+    template<typename TYPE> SP_GENFUNC void _cast(char& dst, const TYPE& src) {
         dst = static_cast<char>(src + 0.5 - (src < 0));
     }
 
-    template<typename TYPE> SP_GENFUNC void _cast(short &dst, const TYPE &src) {
+    template<typename TYPE> SP_GENFUNC void _cast(short& dst, const TYPE& src) {
         dst = static_cast<short>(src + 0.5 - (src < 0));
     }
 
-    template<typename TYPE> SP_GENFUNC void _cast(int &dst, const TYPE &src) {
+    template<typename TYPE> SP_GENFUNC void _cast(int& dst, const TYPE& src) {
         dst = static_cast<int>(src + 0.5 - (src < 0));
     }
 
-    template<typename TYPE> SP_GENFUNC void _cast(float &dst, const TYPE &src) {
+    template<typename TYPE> SP_GENFUNC void _cast(float& dst, const TYPE& src) {
         dst = static_cast<float>(src);
     }
 
-    template<typename TYPE> SP_GENFUNC void _cast(double &dst, const TYPE &src) {
+    template<typename TYPE> SP_GENFUNC void _cast(double& dst, const TYPE& src) {
         dst = static_cast<double>(src);
     }
 
@@ -1209,23 +1464,23 @@ namespace sp {
     // byte
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC void _cast(u08 &dst, const int &src) {
+    SP_GENFUNC void _cast(u08& dst, const int& src) {
         dst = static_cast<u08>((src < 0) ? 0 : (src > SP_BYTEMAX) ? SP_BYTEMAX : src);
     }
 
-    SP_GENFUNC void _cast(u08 &dst, const double &src) {
+    SP_GENFUNC void _cast(u08& dst, const double& src) {
         dst = static_cast<u08>((src < 0) ? 0 : (src > SP_BYTEMAX) ? SP_BYTEMAX : src + 0.5);
     }
 
-    SP_GENFUNC void _cast(u08 &dst, const u08 &src) {
+    SP_GENFUNC void _cast(u08& dst, const u08& src) {
         dst = src;
     }
 
-    SP_GENFUNC void _cast(u08 &dst, const Col3 &src) {
+    SP_GENFUNC void _cast(u08& dst, const Col3& src) {
         dst = static_cast<u08>(0.299 * src.r + 0.587 * src.g + 0.114 * src.b + 0.5);
     }
- 
-    SP_GENFUNC void _cast(u08 &dst, const Col4 &src) {
+
+    SP_GENFUNC void _cast(u08& dst, const Col4& src) {
         dst = static_cast<u08>(0.299 * src.r + 0.587 * src.g + 0.114 * src.b + 0.5);
     }
 
@@ -1233,37 +1488,37 @@ namespace sp {
     // color 3
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC void _cast(Col3 &dst, const u08 &src) {
+    SP_GENFUNC void _cast(Col3& dst, const u08& src) {
         dst.r = src;
         dst.g = src;
         dst.b = src;
     }
 
-    SP_GENFUNC void _cast(Col3 &dst, const Col3 &src) {
+    SP_GENFUNC void _cast(Col3& dst, const Col3& src) {
         dst.r = src.r;
         dst.g = src.g;
         dst.b = src.b;
     }
 
-    SP_GENFUNC void _cast(Col3 &dst, const Col4 &src) {
+    SP_GENFUNC void _cast(Col3& dst, const Col4& src) {
         dst.r = src.r;
         dst.g = src.g;
         dst.b = src.b;
     }
 
-    SP_GENFUNC void _cast(Col3 &dst, const Vec3 &src) {
+    SP_GENFUNC void _cast(Col3& dst, const Vec3& src) {
         dst.r = static_cast<u08>(((src.x < 0.0) ? 0.0 : ((src.x > 1.0) ? 1.0 : src.x)) * SP_BYTEMAX + 0.5);
         dst.g = static_cast<u08>(((src.y < 0.0) ? 0.0 : ((src.y > 1.0) ? 1.0 : src.y)) * SP_BYTEMAX + 0.5);
         dst.b = static_cast<u08>(((src.z < 0.0) ? 0.0 : ((src.z > 1.0) ? 1.0 : src.z)) * SP_BYTEMAX + 0.5);
     }
 
-    SP_GENFUNC void _cast(Col3 &dst, const Col3f &src) {
+    SP_GENFUNC void _cast(Col3& dst, const Col3f& src) {
         dst.r = static_cast<u08>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
         dst.g = static_cast<u08>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
         dst.b = static_cast<u08>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
     }
 
-    SP_GENFUNC void _cast(Col3 &dst, const Col4f &src) {
+    SP_GENFUNC void _cast(Col3& dst, const Col4f& src) {
         dst.r = static_cast<u08>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
         dst.g = static_cast<u08>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
         dst.b = static_cast<u08>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
@@ -1272,36 +1527,36 @@ namespace sp {
     //--------------------------------------------------------------------------------
     // color 4
     //--------------------------------------------------------------------------------
-  
-    SP_GENFUNC void _cast(Col4 &dst, const u08 &src) {
+
+    SP_GENFUNC void _cast(Col4& dst, const u08& src) {
         dst.r = src;
         dst.g = src;
         dst.b = src;
         dst.a = SP_BYTEMAX;
     }
 
-    SP_GENFUNC void _cast(Col4 &dst, const Col3 &src) {
+    SP_GENFUNC void _cast(Col4& dst, const Col3& src) {
         dst.r = src.r;
         dst.g = src.g;
         dst.b = src.b;
         dst.a = SP_BYTEMAX;
     }
 
-    SP_GENFUNC void _cast(Col4 &dst, const Col4 &src) {
+    SP_GENFUNC void _cast(Col4& dst, const Col4& src) {
         dst.r = src.r;
         dst.g = src.g;
         dst.b = src.b;
         dst.a = src.a;
     }
 
-    SP_GENFUNC void _cast(Col4 &dst, const Col3f &src) {
+    SP_GENFUNC void _cast(Col4& dst, const Col3f& src) {
         dst.r = static_cast<u08>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
         dst.g = static_cast<u08>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
         dst.b = static_cast<u08>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
         dst.a = SP_BYTEMAX;
     }
 
-    SP_GENFUNC void _cast(Col4 &dst, const Col4f &src) {
+    SP_GENFUNC void _cast(Col4& dst, const Col4f& src) {
         dst.r = static_cast<u08>(((src.r < 0.0) ? 0.0 : ((src.r > 1.0) ? 1.0 : src.r)) * SP_BYTEMAX + 0.5);
         dst.g = static_cast<u08>(((src.g < 0.0) ? 0.0 : ((src.g > 1.0) ? 1.0 : src.g)) * SP_BYTEMAX + 0.5);
         dst.b = static_cast<u08>(((src.b < 0.0) ? 0.0 : ((src.b > 1.0) ? 1.0 : src.b)) * SP_BYTEMAX + 0.5);
@@ -1312,13 +1567,13 @@ namespace sp {
     // color 3f
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC void _cast(Col3f &dst, const Col3 &src) {
+    SP_GENFUNC void _cast(Col3f& dst, const Col3& src) {
         dst.r = static_cast<float>(src.r) / SP_BYTEMAX;
         dst.g = static_cast<float>(src.g) / SP_BYTEMAX;
         dst.b = static_cast<float>(src.b) / SP_BYTEMAX;
     }
 
-    SP_GENFUNC void _cast(Col3f &dst, const Col4 &src) {
+    SP_GENFUNC void _cast(Col3f& dst, const Col4& src) {
         dst.r = static_cast<float>(src.r) / SP_BYTEMAX;
         dst.g = static_cast<float>(src.g) / SP_BYTEMAX;
         dst.b = static_cast<float>(src.b) / SP_BYTEMAX;
@@ -1328,21 +1583,21 @@ namespace sp {
     // color 4f
     //--------------------------------------------------------------------------------
 
-    SP_GENFUNC void _cast(Col4f &dst, const Col3 &src) {
+    SP_GENFUNC void _cast(Col4f& dst, const Col3& src) {
         dst.r = static_cast<float>(src.r) / SP_BYTEMAX;
         dst.g = static_cast<float>(src.g) / SP_BYTEMAX;
         dst.b = static_cast<float>(src.b) / SP_BYTEMAX;
         dst.a = 1.0;
     }
 
-    SP_GENFUNC void _cast(Col4f &dst, const Col4 &src) {
+    SP_GENFUNC void _cast(Col4f& dst, const Col4& src) {
         dst.r = static_cast<float>(src.r) / SP_BYTEMAX;
         dst.g = static_cast<float>(src.g) / SP_BYTEMAX;
         dst.b = static_cast<float>(src.b) / SP_BYTEMAX;
         dst.a = static_cast<float>(src.a) / SP_BYTEMAX;
     }
 
-    SP_GENFUNC void _cast(Col4f &dst, const Col3f &src) {
+    SP_GENFUNC void _cast(Col4f& dst, const Col3f& src) {
         dst.r = src.r;
         dst.g = src.g;
         dst.b = src.b;
@@ -1353,7 +1608,7 @@ namespace sp {
     // template cast
     //--------------------------------------------------------------------------------
 
-    template<typename DST, typename SRC> SP_GENFUNC DST cast(const SRC &src) {
+    template<typename DST, typename SRC> SP_GENFUNC DST cast(const SRC& src) {
         DST dst;
         _cast(dst, src);
         return dst;
@@ -1373,92 +1628,92 @@ namespace sp {
     }
 
     // compare rect
-    SP_GENFUNC bool cmp(const Rect2 &v0, const Rect2 &v1) {
+    SP_GENFUNC bool cmp(const Rect2& v0, const Rect2& v1) {
         return (v0.dbase[0] == v1.dbase[0]) && (v0.dsize[0] == v1.dsize[0]) && (v0.dbase[1] == v1.dbase[1]) && (v0.dsize[1] == v1.dsize[1]);
     }
     // compare rect
-    SP_GENFUNC bool cmp(const Rect3 &v0, const Rect3 &v1) {
+    SP_GENFUNC bool cmp(const Rect3& v0, const Rect3& v1) {
         return (v0.dbase[0] == v1.dbase[0]) && (v0.dsize[0] == v1.dsize[0]) && (v0.dbase[1] == v1.dbase[1]) && (v0.dsize[1] == v1.dsize[1]) && (v0.dbase[2] == v1.dbase[2]) && (v0.dsize[2] == v1.dsize[2]);
     }
 
     // compare vec
-    SP_GENFUNC bool cmp(const Vec2 &v0, const Vec2 &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Vec2& v0, const Vec2& v1, const double t = 1.0e-6) {
         return cmp(v0.x, v1.x, t) && cmp(v0.y, v1.y, t);
     }
     // compare vec
-    SP_GENFUNC bool cmp(const Vec3 &v0, const Vec3 &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Vec3& v0, const Vec3& v1, const double t = 1.0e-6) {
         return cmp(v0.x, v1.x, t) && cmp(v0.y, v1.y, t) & cmp(v0.z, v1.z, t);
     }
 
     // compare vec (position and normal)
-    SP_GENFUNC bool cmp(const VecPD2 &v0, const VecPD2 &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const VecPD2& v0, const VecPD2& v1, const double t = 1.0e-6) {
         return cmp(v0.pos, v1.pos, t) && cmp(v0.drc, v1.drc, t);
     }
     // compare vec (position and normal)
-    SP_GENFUNC bool cmp(const VecPD3 &v0, const VecPD3 &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const VecPD3& v0, const VecPD3& v1, const double t = 1.0e-6) {
         return cmp(v0.pos, v1.pos, t) && cmp(v0.drc, v1.drc, t);
     }
-    
+
     // compare line
-    SP_GENFUNC bool cmp(const Line2 &v0, const Line2 &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Line2& v0, const Line2& v1, const double t = 1.0e-6) {
         return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t);
     }
     // compare line
-    SP_GENFUNC bool cmp(const Line3 &v0, const Line3 &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Line3& v0, const Line3& v1, const double t = 1.0e-6) {
         return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t);
     }
 
     // compare mesh
-    SP_GENFUNC bool cmp(const Mesh3 &v0, const Mesh3 &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Mesh3& v0, const Mesh3& v1, const double t = 1.0e-6) {
         return cmp(v0.pos[0], v1.pos[0], t) && cmp(v0.pos[1], v1.pos[1], t) && cmp(v0.pos[2], v1.pos[2], t);
     }
 
     // compare rotation
-    SP_GENFUNC bool cmp(const Rot &v0, const Rot &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Rot& v0, const Rot& v1, const double t = 1.0e-6) {
         const double s0 = (v0.qw > 0.0) ? +1.0 : -1.0;
         const double s1 = (v1.qw > 0.0) ? +1.0 : -1.0;
         return cmp(v0.qx * s0, v1.qx * s1, t) && cmp(v0.qy * s0, v1.qy * s1, t) && cmp(v0.qz * s0, v1.qz * s1, t) && cmp(v0.qw * s0, v1.qw * s1, t);
     }
 
     // compare pose
-    SP_GENFUNC bool cmp(const Pose &v0, const Pose &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Pose& v0, const Pose& v1, const double t = 1.0e-6) {
         return cmp(v0.rot, v1.rot, t) && cmp(v0.pos, v1.pos, t);
     }
 
     // compare color
-    SP_GENFUNC bool cmp(const Col3 &v0, const Col3 &v1) {
+    SP_GENFUNC bool cmp(const Col3& v0, const Col3& v1) {
         return (v0.r == v1.r) && (v0.g == v1.g) && (v0.b == v1.b);
     }
     // compare color
-    SP_GENFUNC bool cmp(const Col4 &v0, const Col4 &v1) {
+    SP_GENFUNC bool cmp(const Col4& v0, const Col4& v1) {
         return (v0.r == v1.r) && (v0.g == v1.g) && (v0.b == v1.b) && (v0.a == v1.a);
     }
     // compare color
-    SP_GENFUNC bool cmp(const Col3f &v0, const Col3f &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Col3f& v0, const Col3f& v1, const double t = 1.0e-6) {
         return cmp(v0.r, v1.r, t) && cmp(v0.g, v1.g, t) && cmp(v0.b, v1.b, t);
     }
     // compare color
-    SP_GENFUNC bool cmp(const Col4f &v0, const Col4f &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Col4f& v0, const Col4f& v1, const double t = 1.0e-6) {
         return cmp(v0.r, v1.r, t) && cmp(v0.g, v1.g, t) && cmp(v0.b, v1.b, t) && cmp(v0.a, v1.a, t);
     }
 
     // compare material
-    SP_GENFUNC bool cmp(const Material &v0, const Material &v1, const double t = 1.0e-6) {
+    SP_GENFUNC bool cmp(const Material& v0, const Material& v1, const double t = 1.0e-6) {
         return cmp(v0.col, v1.col) && cmp(v0.rf, v1.rf, t) && cmp(v0.ri, v1.ri, t) && cmp(v0.tr, v1.tr, t) && cmp(v0.ex, v1.ex, t) && cmp(v0.em, v1.em, t);
     }
 
     // compare camera
-    SP_GENFUNC bool cmp(const CamParam &v0, const CamParam &v1) {
+    SP_GENFUNC bool cmp(const CamParam& v0, const CamParam& v1) {
         return (v0.type == v1.type) && (v0.dsize[0] == v1.dsize[0]) && (v0.dsize[1] == v1.dsize[1]) &&
             (v0.fx == v1.fx) && (v0.fy == v1.fy) && (v0.cx == v1.cx) && (v0.cy == v1.cy) && (v0.k1 == v1.k1) && (v0.k2 == v1.k2) && (v0.k3 == v1.k3) && (v0.p1 == v1.p1) && (v0.p2 == v1.p2);
     }
 
     // compare memory
     template<typename TYPE>
-    SP_CPUFUNC bool cmp(const TYPE *mem0, const TYPE *mem1, const int size) {
+    SP_CPUFUNC bool cmp(const TYPE* mem0, const TYPE* mem1, const int size) {
         const int s = sizeof(TYPE) * size;
-        const char *p0 = (char*)mem0;
-        const char *p1 = (char*)mem1;
+        const char* p0 = (char*)mem0;
+        const char* p1 = (char*)mem1;
 
         for (int i = 0; i < s; i++) {
             if (p0[i] != p1[i]) return false;

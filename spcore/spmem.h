@@ -13,13 +13,6 @@
 
 namespace sp{
 
-    //--------------------------------------------------------------------------------
-    // base
-    //--------------------------------------------------------------------------------
-
-    SP_CPUFUNC void memset(void *dst, const int val, const int size) { ::memset(dst, val, size); }
-    SP_CPUFUNC void memcpy(void *dst, const void *src, const int size) { ::memcpy(dst, src, size); }
-
 
     //--------------------------------------------------------------------------------
     // mem base class 

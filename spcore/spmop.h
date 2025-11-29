@@ -16,28 +16,6 @@
 namespace sp{
 
     //--------------------------------------------------------------------------------
-    // mem
-    //--------------------------------------------------------------------------------
-
-    template<typename TYPE>
-    SP_CPUFUNC void setMem(Mem<TYPE> &dst, const Mem<TYPE> &mem0){
-        dst.resize(mem0.dim, mem0.dsize);
-        setMem(dst.ptr, dst.size(), mem0.ptr);
-    }
-
-    // convert mem type [dst = (src - base) * scale)
-    template<typename TYPE, typename TYPE0>
-    SP_CPUFUNC void cnvMem(Mem<TYPE> &dst, const Mem<TYPE0> &mem0, const double scale = 1.0, const double base = 0.0){
-        dst.resize(mem0.dim, mem0.dsize);
-        cnvMem(dst.ptr, dst.size(), mem0.ptr, scale, base);
-    }
-
-    template<typename TYPE, typename ELEM>
-    SP_CPUFUNC void setElm(Mem<TYPE> &dst, const ELEM &elm) {
-        setElm(dst.ptr, dst.size(), elm);
-    }
-
-    //--------------------------------------------------------------------------------
     // mem operator
     //--------------------------------------------------------------------------------
 

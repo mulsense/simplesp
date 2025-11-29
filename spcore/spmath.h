@@ -8,64 +8,12 @@
 #include "spcore/spcom.h"
 #include "spcore/spbase.h"
 
-namespace sp {
-
-    //--------------------------------------------------------------------------------
-    // function
-    //--------------------------------------------------------------------------------
-
-    // gauss function
-    SP_GENFUNC SP_REAL funcGauss(const double x, const double mean, const double sigma) {
-        SP_REAL ret = 0.0;
-
-        if (fabs(sigma) > 0) {
-            ret = static_cast<SP_REAL>(exp(-(x - mean) * (x - mean) / (2 * sigma * sigma)) / (sqrt(2 * SP_PI) * sigma));
-        }
-        return ret;
-    }
-
-    // tukey function
-    SP_GENFUNC SP_REAL funcTukey(const double x, const double t) {
-        SP_REAL ret = 0.0;
-
-        if (fabs(x) < t) {
-            const double v = 1.0 - (x * x) / (t * t);
-            ret = static_cast<SP_REAL>(v * v);
-        }
-        return ret;
-    }
-
-}
-
 //--------------------------------------------------------------------------------
 // mem
 //--------------------------------------------------------------------------------
 
 namespace sp {
 
-    // set
-    template <typename DST, typename SRC>
-    SP_GENFUNC void setMem(DST *dst, const int size, const SRC *mem0) {
-        for (int i = 0; i < size; i++) {
-            dst[i] = mem0[i];
-        }
-    }
-
-    // convert
-    template <typename DST, typename SRC>
-    SP_GENFUNC void cnvMem(DST *dst, const int size, const SRC *mem0, const SP_REAL scale = 1.0, const SP_REAL base = 0.0) {
-        for (int i = 0; i < size; i++) {
-            dst[i] = cast<DST>((mem0[i] - base) * scale);
-        }
-    }
-
-    // set
-    template <typename DST, typename ELEM>
-    SP_GENFUNC void setElm(DST *dst, const int size, const ELEM &elm) {
-        for (int i = 0; i < size; i++) {
-            dst[i] = elm;
-        }
-    }
 
     //--------------------------------------------------------------------------------
     // mem operator

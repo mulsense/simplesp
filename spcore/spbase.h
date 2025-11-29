@@ -10,35 +10,6 @@
 namespace sp{
 
     //--------------------------------------------------------------------------------
-    // wrapper
-    //--------------------------------------------------------------------------------
-
-    SP_GENFUNC int abs(const int x) { return ::abs(x); }
-
-    SP_GENFUNC SP_REAL fabs(const double x) { return static_cast<SP_REAL>(::fabs(x)); }
-
-    SP_GENFUNC SP_REAL pow(const double x, const double y) { return static_cast<SP_REAL>(::pow(x, y)); }
-
-    SP_GENFUNC SP_REAL sin(const double x) { return static_cast<SP_REAL>(::sin(x)); }
-    SP_GENFUNC SP_REAL cos(const double x) { return static_cast<SP_REAL>(::cos(x)); }
-    SP_GENFUNC SP_REAL tan(const double x) { return static_cast<SP_REAL>(::tan(x)); }
-
-    SP_GENFUNC SP_REAL asin(const double x) { const double t = (x > +1.0) ? +1.0 : (x < -1.0) ? -1.0 : x; return static_cast<SP_REAL>(::asin(t)); }
-    SP_GENFUNC SP_REAL acos(const double x) { const double t = (x > +1.0) ? +1.0 : (x < -1.0) ? -1.0 : x; return static_cast<SP_REAL>(::acos(t)); }
-    
-    SP_GENFUNC SP_REAL atan (const double x) { return static_cast<SP_REAL>(::atan(x)); }
-    SP_GENFUNC SP_REAL atan2(const double y, const double x) { return static_cast<SP_REAL>(::atan2(y, x)); }
-
-    SP_GENFUNC SP_REAL sqrt(const double x) { return static_cast<SP_REAL>(::sqrt(x)); }
-
-    SP_GENFUNC SP_REAL exp(const double x) { return static_cast<SP_REAL>(::exp(x)); }
-
-    SP_GENFUNC SP_REAL log  (const double x) { return static_cast<SP_REAL>(::log(x)); }
-    SP_GENFUNC SP_REAL log2 (const double x) { return static_cast<SP_REAL>(::log(x) / ::log(2.0)); }
-    SP_GENFUNC SP_REAL log10(const double x) { return static_cast<SP_REAL>(::log(x) / ::log(10.0)); }
-
-
-    //--------------------------------------------------------------------------------
     // util
     //--------------------------------------------------------------------------------
 
