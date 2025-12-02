@@ -596,8 +596,8 @@ namespace sp {
         Cnt m_cnt;
         Cnt m_lim;
 
-        Mem2<MemA<BVH::Hit, SAMPLE_UNIT * SAMPLE_UNIT> > m_hitmap;
-        Mem2<MemA<VecPD3, SAMPLE_UNIT * SAMPLE_UNIT> > m_raymap;
+        Mem2<std::array<BVH::Hit, SAMPLE_UNIT * SAMPLE_UNIT> > m_hitmap;
+        Mem2<std::array<VecPD3, SAMPLE_UNIT * SAMPLE_UNIT> > m_raymap;
 
         // objects
         Light m_ambient;
@@ -828,7 +828,7 @@ namespace sp {
             return ret;
         }
 
-        void calc(Img &img, MemA<BVH::Hit, SAMPLE_UNIT * SAMPLE_UNIT> &hits, const MemA<VecPD3, SAMPLE_UNIT * SAMPLE_UNIT> &rays) {
+        void calc(Img &img, std::array<BVH::Hit, SAMPLE_UNIT * SAMPLE_UNIT> &hits, const std::array<VecPD3, SAMPLE_UNIT * SAMPLE_UNIT> &rays) {
 
             auto precalc = [&](BVH::Hit &hit, VecPD3 &ray, const int i){
                 ray = rays[i % (SAMPLE_UNIT * SAMPLE_UNIT)];

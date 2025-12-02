@@ -303,18 +303,6 @@ namespace sp{
     }
 
 
-    //--------------------------------------------------------------------------------
-    // access ptr 2d matrix
-    //--------------------------------------------------------------------------------
-
-    SP_GENFUNC SP_REAL& acsm(ExPtr<SP_REAL> &mat, const int r, const int c) {
-        return mat.ptr[r * mat.dsize[0] + c];
-    }
-
-    SP_GENFUNC const SP_REAL& acsm(const ExPtr<SP_REAL> &mat, const int r, const int c) {
-        return mat.ptr[r * mat.dsize[0] + c];
-    }
-
 
     //--------------------------------------------------------------------------------
     // access ptr 2d color

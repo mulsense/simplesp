@@ -10,9 +10,11 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
+#include <array>
+#include <deque>
 
 namespace sp{
-
 
     //--------------------------------------------------------------------------------
     // mem base class 
@@ -163,8 +165,6 @@ namespace sp{
         }
 
     };
-
-
     //--------------------------------------------------------------------------------
     // mem 1d 
     //--------------------------------------------------------------------------------
@@ -173,12 +173,12 @@ namespace sp{
 
     protected:
 
-        virtual void copy(const void *cpy, const int csize){
-            const TYPE *src = static_cast<const TYPE*>(cpy);
-            TYPE *dst = this->ptr;
-            
+        virtual void copy(const void* cpy, const int csize) {
+            const TYPE* src = static_cast<const TYPE*>(cpy);
+            TYPE* dst = this->ptr;
+
             // work constructor
-            for (int i = 0; i < csize; i++){
+            for (int i = 0; i < csize; i++) {
                 *(dst++) = *(src++);
             }
         }
@@ -189,27 +189,27 @@ namespace sp{
         // constructor
         //--------------------------------------------------------------------------------
 
-        Mem1(const Mem1<TYPE> &mem) : Mem<TYPE>(){
+        Mem1(const Mem1<TYPE>& mem) : Mem<TYPE>() {
             resize(mem.dsize, mem.ptr);
         }
 
-        Mem1(const Mem<TYPE> &mem) : Mem<TYPE>() {
+        Mem1(const Mem<TYPE>& mem) : Mem<TYPE>() {
             resize(mem.dsize, mem.ptr);
         }
 
-        Mem1(Mem1<TYPE> &&mem) : Mem<TYPE>() {
+        Mem1(Mem1<TYPE>&& mem) : Mem<TYPE>() {
             Mem<TYPE>::move(mem);
         }
 
-        Mem1(Mem<TYPE> &&mem) : Mem<TYPE>() {
+        Mem1(Mem<TYPE>&& mem) : Mem<TYPE>() {
             Mem<TYPE>::move(mem);
         }
 
-        Mem1(const int *dsize = NULL, const void *cpy = NULL) : Mem<TYPE>() {
+        Mem1(const int* dsize = NULL, const void* cpy = NULL) : Mem<TYPE>() {
             resize(dsize, cpy);
         }
 
-        Mem1(const int dsize0, const void *cpy = NULL) : Mem<TYPE>() {
+        Mem1(const int dsize0, const void* cpy = NULL) : Mem<TYPE>() {
             resize(dsize0, cpy);
         }
 
@@ -218,12 +218,12 @@ namespace sp{
         // resize
         //--------------------------------------------------------------------------------
 
-        void resize(const int dsize0, const void *cpy = NULL){
+        void resize(const int dsize0, const void* cpy = NULL) {
             const int dsize[] = { dsize0 };
             resize(dsize, cpy);
         }
 
-        void resize(const int *dsize, const void *cpy = NULL){
+        void resize(const int* dsize, const void* cpy = NULL) {
             Mem<TYPE>::resize(1, dsize, cpy);
         }
 
@@ -232,23 +232,23 @@ namespace sp{
         // operator
         //--------------------------------------------------------------------------------
 
-        Mem1& operator = (const Mem1<TYPE> &mem){
+        Mem1& operator = (const Mem1<TYPE>& mem) {
             Mem<TYPE>::resize(mem.dim, mem.dsize, mem.ptr);
             return *this;
         }
 
-        Mem1& operator = (Mem1<TYPE> &&mem){
+        Mem1& operator = (Mem1<TYPE>&& mem) {
             Mem<TYPE>::free();
             Mem<TYPE>::move(mem);
 
             return *this;
         }
 
-        TYPE& operator () (const int d0){
+        TYPE& operator () (const int d0) {
             return acs1(*this, d0);
         }
 
-        const TYPE& operator () (const int d0) const{
+        const TYPE& operator () (const int d0) const {
             return acs1(*this, d0);
         }
 
@@ -263,7 +263,7 @@ namespace sp{
         //--------------------------------------------------------------------------------
         // util
         //--------------------------------------------------------------------------------
-        
+
         void reserve(const int msize) {
             this->dsize[0] = 0;
             if (msize > this->msize) {
@@ -282,17 +282,17 @@ namespace sp{
             return &this->ptr[s];
         }
 
-        void push(const TYPE &data){
+        void push(const TYPE& data) {
             *extend() = data;
         }
 
-        void push(const TYPE *data, const int num) {
+        void push(const TYPE* data, const int num) {
             for (int i = 0; i < num; i++) {
                 push(data[i]);
             }
         }
 
-        void push(const Mem<TYPE> &data){
+        void push(const Mem<TYPE>& data) {
             push(data.ptr, data.size());
         }
 
@@ -302,7 +302,7 @@ namespace sp{
             }
         }
 
-        void add(const int x, const TYPE &data) {
+        void add(const int x, const TYPE& data) {
             extend();
             const int ix = (x >= 0) ? x : this->dsize[0] + x;
             for (int i = this->dsize[0] - 1; i > ix; i--) {
@@ -328,16 +328,15 @@ namespace sp{
 
         Mem1 part(const int dbase0, const int dsize0) const {
             Mem1<TYPE> ret(min(dsize0, this->dsize[0] - dbase0));
-            TYPE *ptr = ret.ptr;
+            TYPE* ptr = ret.ptr;
 
-            for (int d0 = 0; d0 < ret.dsize[0]; d0++){
+            for (int d0 = 0; d0 < ret.dsize[0]; d0++) {
                 *ptr++ = (*this)(dbase0 + d0);
             }
 
             return ret;
         }
     };
-
 
     //--------------------------------------------------------------------------------
     // mem 2d 
@@ -501,32 +500,14 @@ namespace sp{
         }
 
         TYPE& operator () (const int d0, const int d1, const int d2){
-            return acs3(*this, d0, d1, d2);
+            return this->ptr[(d2 * this->dsize[1] + d1) * this->dsize[0] + d0];
         }
 
         const TYPE& operator () (const int d0, const int d1, const int d2) const{
-            return acs3(*this, d0, d1, d2);
+            return this->ptr[(d2 * this->dsize[1] + d1) * this->dsize[0] + d0];
         }
 
 
-        //--------------------------------------------------------------------------------
-        // util
-        //--------------------------------------------------------------------------------
-
-        Mem3 part(const int dbase0, const int dbase1, const int dbase2, const int dsize0, const int dsize1, const int dsize2) const {
-            Mem3<TYPE> ret(min(dsize0, this->dsize[0] - dbase0), min(dsize1, this->dsize[1] - dbase1), min(dsize2, this->dsize[2] - dbase2));
-            TYPE *ptr = ret.ptr;
-
-            for (int d2 = 0; d2 < ret.dsize[2]; d2++) {
-                for (int d1 = 0; d1 < ret.dsize[1]; d1++) {
-                    for (int d0 = 0; d0 < ret.dsize[0]; d0++) {
-                        *ptr++ = (*this)(dbase0 + d0, dbase1 + d1, dbase2 + d2);
-                    }
-                }
-            }
-
-            return ret;
-        }
     };
 
 
@@ -586,11 +567,11 @@ namespace sp{
         }
 
         SP_REAL& operator () (const int r, const int c){
-            return acsm(*this, r, c);
+            return this->ptr[r * this->dsize[0] + c];
         }
 
-        const SP_REAL& operator () (const int r, const int c) const{
-            return acsm(*this, r, c);
+        const SP_REAL& operator () (const int r, const int c) const {
+            return this->ptr[r * this->dsize[0] + c];
         }
 
 
@@ -622,76 +603,6 @@ namespace sp{
 
         Mat col(const int cbase, const int csize = 1) const {
             return part(0, cbase, rows(), csize);
-        }
-
-    };
-
-
-    //--------------------------------------------------------------------------------
-    // mem array
-    //--------------------------------------------------------------------------------
-
-    template<typename TYPE, int SIZE> class MemA {
-   
-    public:
-        TYPE ptr[SIZE];
-
-    public:
-        MemA() {
-        }
-
-        MemA(const MemA<TYPE, SIZE> &mem) {
-            set(mem.ptr);
-        }
-
-        MemA(const TYPE data0, ...) {
-            va_list arg;
-            va_start(arg, data0);
-            ptr[0] = data0;
-            for (int i = 1; i < SIZE; i++) {
-                ptr[i] = va_arg(arg, TYPE);
-            }
-            va_end(arg);
-        }
-
-        MemA& operator = (const MemA<TYPE, SIZE> &mem) {
-            set(mem.ptr);
-            return *this;
-        }
-
-         //--------------------------------------------------------------------------------
-        // operator
-        //--------------------------------------------------------------------------------
-        
-        TYPE& operator [] (const int i) {
-            return ptr[i];
-        }
-        const TYPE& operator [] (const int i) const {
-            return ptr[i];
-        }
-
-        //--------------------------------------------------------------------------------
-        // util
-        //--------------------------------------------------------------------------------
-     
-        void set(const TYPE data0, ...) {
-            va_list arg;
-            va_start(arg, data0);
-            ptr[0] = data0;
-            for (int i = 1; i < SIZE; i++) {
-                ptr[i] = va_arg(arg, TYPE);
-            }
-            va_end(arg);
-        }
-
-        void set(const TYPE *ptr) {
-            for (int i = 0; i < SIZE; i++) {
-                this->ptr[i] = ptr[i];
-            }
-        }
-
-        int size() const {
-            return SIZE;
         }
 
     };
@@ -862,75 +773,6 @@ namespace sp{
     };
 
 
-    //--------------------------------------------------------------------------------
-    // mem ring 
-    //--------------------------------------------------------------------------------
-
-    template <typename TYPE> class MemR {
-    private:
-        int size;
-
-        int minId;
-        int maxId;
-        int crntId;
-        sp::Mem1<TYPE> mem;
-
-    public:
-        MemR() {
-            reset(10);
-        }
-
-        void reset(const int size) {
-            this->size = size;
-
-            minId = 0;
-            maxId = 0;
-            crntId = 0;
-
-            mem.clear();
-            mem.resize(size);
-        }
-
-        TYPE &data() {
-            return mem[crntId % size];
-        }
-        const TYPE &data() const {
-            return mem[crntId % size];
-        }
-
-        int id() {
-            return crntId;
-        }
-
-        void next() {
-            TYPE &backup = data();
-            crntId++;
-            maxId = crntId;
-            if (crntId - minId >= size) minId++;
-
-            data() = backup;
-        }
-
-        void prev() {
-            crntId--;
-            if (crntId < minId) crntId++;
-            maxId = crntId;
-        }
-
-        void shift(const int i) {
-            crntId += i;
-            if (crntId > maxId) crntId = maxId;
-            if (crntId < minId) crntId = minId;
-        }
-
-        bool check(const int i) {
-            bool ret = false;
-            int tmp = crntId + i;
-            if (tmp > maxId) tmp = maxId;
-            if (tmp < minId) tmp = minId;
-            return (tmp != crntId) ? true : false;
-        }
-    };
 }
 
 #endif

@@ -428,126 +428,67 @@ namespace sp {
     };
 
     //--------------------------------------------------------------------------------
-    // position and direction
-    //--------------------------------------------------------------------------------
+        // position and direction
+        //--------------------------------------------------------------------------------
 
-    class VecPD2 {
+    template <typename VEC> class VecPD {
     public:
-        Vec2 pos, drc;
-
-        VecPD2() {
-        }
-
-        VecPD2(const Vec2& pos, const Vec2& drc) {
+        VEC pos, drc;
+        VecPD(const VEC& pos, const VEC& drc) {
             this->pos = pos;
             this->drc = drc;
         }
+        VecPD() {}
 
         //--------------------------------------------------------------------------------
         // operator
         //--------------------------------------------------------------------------------
-        friend bool operator == (const VecPD2& vec0, const VecPD2& vec1) {
-            return VecPD2::cmp(vec0, vec1) == true;
-        }
 
-        friend bool operator != (const VecPD2& vec0, const VecPD2& vec1) {
-            return VecPD2::cmp(vec0, vec1) == false;
-        }
+        friend bool operator == (const VecPD<VEC>& vec0, const VecPD<VEC>& vec1) { return VecPD<VEC>::cmp(vec0, vec1) == true; }
+        friend bool operator != (const VecPD<VEC>& vec0, const VecPD<VEC>& vec1) { return VecPD<VEC>::cmp(vec0, vec1) != true; }
 
         //--------------------------------------------------------------------------------
         // util
         //--------------------------------------------------------------------------------
 
-        // compare vec (position and normal)
-        static bool cmp(const VecPD2& vec0, const VecPD2& vec1, const double t = 1.0e-6) {
-            return Vec2::cmp(vec0.pos, vec1.pos, t) && Vec2::cmp(vec0.drc, vec1.drc, t);
+        static bool cmp(const VecPD<VEC>& vec0, const VecPD<VEC>& vec1, const double t = 1.0e-6) {
+            return VEC::cmp(vec0.pos, vec1.pos, t) && VEC::cmp(vec0.drc, vec1.drc, t);
+        }
+        static VecPD mul(const SP_REAL* mat, const int rows, const int cols, const VecPD& vec) {
+            const int size = sizeof(VEC) / sizeof(SP_REAL);
+            SP_REAL rot[3 * 3];
+            for (int r = 0; r < size; r++) {
+                for (int c = 0; c < size; c++) {
+                    rot[r * size + c] = mat[r * cols + c];
+                }
+            }
+            return VecPD<VEC>(VEC::mul(mat, rows, cols, vec.pos), VEC::mul(rot, size, size, vec.drc).unit());
         }
     };
+    using VecPD2 = VecPD<Vec2>;
+    using VecPD3 = VecPD<Vec3>;
 
-    class VecPD3 {
-    public:
-        Vec3 pos, drc;
-
-        VecPD3() {
-        }
-
-        VecPD3(const Vec3& pos, const Vec3& drc) {
-            this->pos = pos;
-            this->drc = drc;
-        }
-
-        //--------------------------------------------------------------------------------
-        // operator
-        //--------------------------------------------------------------------------------
-        friend bool operator == (const VecPD3& vec0, const VecPD3& vec1) {
-            return VecPD3::cmp(vec0, vec1) == true;
-        }
-
-        friend bool operator != (const VecPD3& vec0, const VecPD3& vec1) {
-            return VecPD3::cmp(vec0, vec1) == false;
-        }
-
-        //--------------------------------------------------------------------------------
-        // util
-        //--------------------------------------------------------------------------------
-
-        // compare vec (position and normal)
-        static bool cmp(const VecPD3& vec0, const VecPD3& vec1, const double t = 1.0e-6) {
-            return Vec3::cmp(vec0.pos, vec1.pos, t) && Vec3::cmp(vec0.drc, vec1.drc, t);
-        }
-
-        //static VecPD3 mul(const SP_REAL* mat, const int rows, const int cols, const VecPD3& vec) {
-        //    VecPD3 dst;
-
-        //    dst.pos = Vec3::mul(mat, rows, cols, vec.pos);
-
-        //    SP_REAL rot[3 * 3] = { 0 };
-        //    {
-        //        for (int r = 0; r < 3; r++) {
-        //            for (int c = 0; c < 3; c++) {
-        //                rot[r * 3 + c] = mat[r * cols + c];
-        //            }
-        //        }
-        //    }
-        //    if (rows == 4 && cols == 4) {
-        //        const SP_REAL pos[3] = { dst.pos.x, dst.pos.y, dst.pos.z };
-        //        for (int r = 0; r < 3; r++) {
-        //            for (int c = 0; c < 3; c++) {
-        //                rot[r * 3 + c] -= mat[3 * cols + c] * pos[r];
-        //            }
-        //        }
-        //    }
-
-        //    dst.drc = Vec3::mul(rot, 3, 3, vec.drc).unit();
-
-        //    return dst;
-        //}
-    };
 
     //--------------------------------------------------------------------------------
     // line
     //--------------------------------------------------------------------------------
 
-    class Line2 {
+    template <typename VEC> class Line {
     public:
-        Vec2 pos[2];
-        Line2() {
-        }
-        Line2(const Vec2& vec0, const Vec2& vec1) {
+        VEC pos[2];
+        Line(const VEC& vec0, const VEC& vec1) {
             pos[0] = vec0;
             pos[1] = vec1;
         }
+        Line() {}
 
         //--------------------------------------------------------------------------------
         // operator
         //--------------------------------------------------------------------------------
 
-        friend Line2 operator + (const Line2& line, const Vec2& vec) {
-            return Line2(line.pos[0] + vec, line.pos[1] + vec);
-        }
-        friend Line2 operator - (const Line2& line, const Vec2& vec) {
-            return Line2(line.pos[0] - vec, line.pos[1] - vec);
-        }
+        friend Line<VEC> operator + (const Line<VEC>& line, const VEC& vec) { return Line<VEC>(line.pos[0] + vec, line.pos[1] + vec); }
+        friend Line<VEC> operator - (const Line<VEC>& line, const VEC& vec) { return Line<VEC>(line.pos[0] - vec, line.pos[1] - vec); }
+
         void operator += (const Vec2& vec) {
             pos[0] += vec;
             pos[1] += vec;
@@ -557,28 +498,21 @@ namespace sp {
             pos[1] -= vec;
         }
 
-        friend bool operator == (const Line2& line0, const Line2& line1) {
-            return cmp(line0, line1) == true;
-        }
-
-        friend bool operator != (const Line2& line0, const Line2& line1) {
-            return cmp(line0, line1) == false;
-        }
+        friend bool operator == (const Line<VEC>& line0, const Line<VEC>& line1) { return cmp(line0, line1) == true; }
+        friend bool operator != (const Line<VEC>& line0, const Line<VEC>& line1) { return cmp(line0, line1) != true; }
 
         //--------------------------------------------------------------------------------
         // util
         //--------------------------------------------------------------------------------
 
-        // length
         SP_REAL length() const {
             return (pos[0] - pos[1]).length();
         }
 
-        // length
-        SP_REAL distance(const Vec2& vec) const {
+        SP_REAL distance(const VEC& vec) const {
             double ret = 0.0;
 
-            const Vec2 lvec = pos[1] - pos[0];
+            const VEC lvec = pos[1] - pos[0];
             const double len = lvec.length();
 
             if (len < SP_SMALL) {
@@ -599,88 +533,72 @@ namespace sp {
             return ret;
         }
 
-        static bool cmp(const Line2& line0, const Line2& line1, const double t = 1.0e-6) {
-            return Vec2::cmp(line0.pos[0], line1.pos[0], t)
-                && Vec2::cmp(line0.pos[1], line1.pos[1], t);
+        static bool cmp(const Line<VEC>& line0, const Line<VEC>& line1, const double t = 1.0e-6) {
+            return VEC::cmp(line0.pos[0], line1.pos[0], t) && VEC::cmp(line0.pos[1], line1.pos[1], t);
         }
 
     };
 
-    class Line3 {
-    public:
-        Vec3 pos[2];
+    using Line2 = Line<Vec2>;
+    using Line3 = Line<Vec3>;
 
-        Line3() {
-        }
-        Line3(const Vec3& vec0, const Vec3& vec1) {
+    //--------------------------------------------------------------------------------
+    // triangle mesh
+    //--------------------------------------------------------------------------------
+
+    template <typename VEC> class Mesh {
+    public:
+        VEC pos[3];
+        Mesh(const VEC& vec0, const VEC& vec1, const VEC& vec2) {
             pos[0] = vec0;
             pos[1] = vec1;
+            pos[2] = vec2;
         }
+        Mesh() {}
 
         //--------------------------------------------------------------------------------
         // operator
         //--------------------------------------------------------------------------------
 
-        friend Line3 operator + (const Line3& line, const Vec3& vec) {
-            return Line3(line.pos[0] + vec, line.pos[1] + vec);
+        friend Mesh<VEC> operator + (const Mesh<VEC>& mesh, const VEC vec) {
+            return Mesh<VEC>(mesh.pos[0] + vec, mesh.pos[1] + vec, mesh.pos[2] + vec);
         }
-        friend Line3 operator - (const Line3& line, const Vec3& vec) {
-            return Line3(line.pos[0] - vec, line.pos[1] - vec);
+        friend Mesh<VEC> operator - (const Mesh<VEC>& mesh, const VEC vec) {
+            return Mesh<VEC>(mesh.pos[0] - vec, mesh.pos[1] - vec, mesh.pos[2] - vec);
         }
-        void operator += (const Vec3& vec) {
+        friend Mesh<VEC> operator * (const Mesh<VEC>& mesh, const double val) {
+            return Mesh<VEC>(mesh.pos[0] * val, mesh.pos[1] * val, mesh.pos[2] * val);
+        }
+
+        void operator += (const VEC& vec) {
             pos[0] += vec;
             pos[1] += vec;
+            pos[2] += vec;
         }
-        void operator -= (const Vec3& vec) {
+        void operator -= (const VEC& vec) {
             pos[0] -= vec;
             pos[1] -= vec;
+            pos[2] -= vec;
+        }
+        void operator *= (const double val) {
+            pos[0] *= val;
+            pos[1] *= val;
+            pos[2] *= val;
         }
 
-        friend bool operator == (const Line3& line0, const Line3& line1) {
-            return cmp(line0, line1) == true;
-        }
-
-        friend bool operator != (const Line3& line0, const Line3& line1) {
-            return cmp(line0, line1) == false;
-        }
+        friend bool operator == (const Mesh<VEC>& mesh0, const Mesh<VEC>& mesh1) { return Mesh<VEC>::cmp(mesh0, mesh1) == true; }
+        friend bool operator != (const Mesh<VEC>& mesh0, const Mesh<VEC>& mesh1) { return Mesh<VEC>::cmp(mesh0, mesh1) != true; }
 
         //--------------------------------------------------------------------------------
         // util
         //--------------------------------------------------------------------------------
 
-        // length
-        SP_REAL length() const {
-            return (pos[0] - pos[1]).length();
+        VEC center() const {
+            return (pos[0] + pos[1] + pos[2]) / 3.0;
         }
 
-        // length
-        SP_REAL distance(const Vec3& vec) const {
-            double ret = 0.0;
-
-            const Vec3 lvec = pos[1] - pos[0];
-            const double len = lvec.length();
-
-            if (len < SP_SMALL) {
-                ret = (vec - (pos[0] + pos[1]) * 0.5).length();
-            }
-            else {
-                const double s = lvec.dot(vec - pos[0]) / len;
-                if (s < 0.0) {
-                    ret = (vec - pos[0]).length();
-                }
-                else if (s > len) {
-                    ret = (vec - pos[1]).length();
-                }
-                else {
-                    ret = (vec - (pos[0] + lvec * s / len)).length();
-                }
-            }
-            return ret;
-        }
-
-        static bool cmp(const Line3& line0, const Line3& line1, const double t = 1.0e-6) {
-            return Vec3::cmp(line0.pos[0], line1.pos[0], t)
-                && Vec3::cmp(line0.pos[1], line1.pos[1], t);
+        static bool cmp(const Mesh<VEC>& mesh0, const Mesh<VEC>& mesh1, const double t = 1.0e-6) {
+            return VEC::cmp(mesh0.pos[0], mesh1.pos[0], t) && VEC::cmp(mesh0.pos[1], mesh1.pos[1], t) && VEC::cmp(mesh0.pos[2], mesh1.pos[2], t);
         }
     };
 
