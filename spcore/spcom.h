@@ -6,7 +6,7 @@
 #define __SP_COM_H__
 
 #include <math.h>
-
+#include <algorithm>
 
 //--------------------------------------------------------------------------------
 // system
@@ -129,12 +129,6 @@ namespace sp {
     // swap
     template<typename TYPE> SP_GENFUNC void swap(TYPE& a, TYPE& b) { const TYPE tmp = a; a = b; b = tmp; }
 
-
-    // get max value
-    SP_GENFUNC const SP_REAL max(const double a, const double b) { return static_cast<SP_REAL>((a > b) ? a : b); }
-
-    // get min value
-    SP_GENFUNC const SP_REAL min(const double a, const double b) { return static_cast<SP_REAL>((a < b) ? a : b); }
 
     // get clampped value
     SP_GENFUNC const int clamp(const int v, const int minv, const int maxv) { return (v > maxv) ? maxv : ((v < minv) ? minv : v); }
@@ -772,8 +766,8 @@ namespace sp {
         friend Rect2 operator & (const Rect2& rect0, const Rect2& rect1) {
             int dbase[2] = { 0 }, dsize[2] = { 0 };
             for (int i = 0; i < 2; i++) {
-                dbase[i] = max(rect0.dbase[i], rect1.dbase[i]);
-                dsize[i] = max(0, min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
+                dbase[i] = std::max(rect0.dbase[i], rect1.dbase[i]);
+                dsize[i] = std::max(0, std::min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
             }
             return Rect2(dbase, dsize);
         }
@@ -785,9 +779,9 @@ namespace sp {
             if (b0 && b1) {
                 int dbase[2] = { 0 }, dsize[2] = { 0 };
                 for (int i = 0; i < 2; i++) {
-                    dbase[i] = min(rect0.dbase[i], rect1.dbase[i]);
-                    dsize[i] = max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
-                    dsize[i] = max(0, dsize[i]);
+                    dbase[i] = std::min(rect0.dbase[i], rect1.dbase[i]);
+                    dsize[i] = std::max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
+                    dsize[i] = std::max(0, dsize[i]);
                 }
                 return Rect2(dbase, dsize);
             }
@@ -840,7 +834,7 @@ namespace sp {
         Rect2 extend(const int val) const {
             int dbase[2] = { 0 }, dsize[2] = { 0 };
             for (int i = 0; i < 2; i++) {
-                const int t = max(val, -this->dsize[i] / 2);
+                const int t = std::max(val, -this->dsize[i] / 2);
                 dbase[i] = this->dbase[i] - t;
                 dsize[i] = this->dsize[i] + 2 * t;
             }
@@ -902,8 +896,8 @@ namespace sp {
         friend Rect3 operator & (const Rect3& rect0, const Rect3& rect1) {
             int dbase[3] = { 0 }, dsize[3] = { 0 };
             for (int i = 0; i < 3; i++) {
-                dbase[i] = max(rect0.dbase[i], rect1.dbase[i]);
-                dsize[i] = max(0, min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
+                dbase[i] = std::max(rect0.dbase[i], rect1.dbase[i]);
+                dsize[i] = std::max(0, std::min(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i]);
             }
             return Rect3(dbase, dsize);
         }
@@ -915,9 +909,9 @@ namespace sp {
             if (b0 && b1) {
                 int dbase[3] = { 0 }, dsize[3] = { 0 };
                 for (int i = 0; i < 3; i++) {
-                    dbase[i] = min(rect0.dbase[i], rect1.dbase[i]);
-                    dsize[i] = max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
-                    dsize[i] = max(0, dsize[i]);
+                    dbase[i] = std::min(rect0.dbase[i], rect1.dbase[i]);
+                    dsize[i] = std::max(rect0.dbase[i] + rect0.dsize[i], rect1.dbase[i] + rect1.dsize[i]) - dbase[i];
+                    dsize[i] = std::max(0, dsize[i]);
                 }
                 return Rect3(dbase, dsize);
             }
@@ -970,7 +964,7 @@ namespace sp {
         Rect3 extend(const int val) const {
             int dbase[3] = { 0 }, dsize[3] = { 0 };
             for (int i = 0; i < 3; i++) {
-                const int t = max(val, -this->dsize[i] / 2);
+                const int t = std::max(val, -this->dsize[i] / 2);
                 dbase[i] = this->dbase[i] - t;
                 dsize[i] = this->dsize[i] + 2 * t;
             }
@@ -1041,10 +1035,10 @@ namespace sp {
                 dst = box0;
             }
             else {
-                dst.pos[0].x = min(box0.pos[0].x, box1.pos[0].x);
-                dst.pos[1].x = max(box0.pos[1].x, box1.pos[1].x);
-                dst.pos[0].y = min(box0.pos[0].y, box1.pos[0].y);
-                dst.pos[1].y = max(box0.pos[1].y, box1.pos[1].y);
+                dst.pos[0].x = std::min(box0.pos[0].x, box1.pos[0].x);
+                dst.pos[1].x = std::max(box0.pos[1].x, box1.pos[1].x);
+                dst.pos[0].y = std::min(box0.pos[0].y, box1.pos[0].y);
+                dst.pos[1].y = std::max(box0.pos[1].y, box1.pos[1].y);
             }
             return dst;
         }
@@ -1102,12 +1096,12 @@ namespace sp {
                 dst = box0;
             }
             else {
-                dst.pos[0].x = min(box0.pos[0].x, box1.pos[0].x);
-                dst.pos[1].x = max(box0.pos[1].x, box1.pos[1].x);
-                dst.pos[0].y = min(box0.pos[0].y, box1.pos[0].y);
-                dst.pos[1].y = max(box0.pos[1].y, box1.pos[1].y);
-                dst.pos[0].z = min(box0.pos[0].z, box1.pos[0].z);
-                dst.pos[1].z = max(box0.pos[1].z, box1.pos[1].z);
+                dst.pos[0].x = std::min(box0.pos[0].x, box1.pos[0].x);
+                dst.pos[1].x = std::max(box0.pos[1].x, box1.pos[1].x);
+                dst.pos[0].y = std::min(box0.pos[0].y, box1.pos[0].y);
+                dst.pos[1].y = std::max(box0.pos[1].y, box1.pos[1].y);
+                dst.pos[0].z = std::min(box0.pos[0].z, box1.pos[0].z);
+                dst.pos[1].z = std::max(box0.pos[1].z, box1.pos[1].z);
             }
             return dst;
         }
@@ -1275,10 +1269,10 @@ namespace sp {
         }
 
         void initialize(const SP_REAL* mat, const int rows, const int cols) {
-            this->qx = sqrt(max(0.0, 1 + mat[0 * cols + 0] - mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
-            this->qy = sqrt(max(0.0, 1 - mat[0 * cols + 0] + mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
-            this->qz = sqrt(max(0.0, 1 - mat[0 * cols + 0] - mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
-            this->qw = sqrt(max(0.0, 1 + mat[0 * cols + 0] + mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
+            this->qx = sqrt(std::max(0.0, 1.0 + mat[0 * cols + 0] - mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
+            this->qy = sqrt(std::max(0.0, 1.0 - mat[0 * cols + 0] + mat[1 * cols + 1] - mat[2 * cols + 2])) / 2;
+            this->qz = sqrt(std::max(0.0, 1.0 - mat[0 * cols + 0] - mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
+            this->qw = sqrt(std::max(0.0, 1.0 + mat[0 * cols + 0] + mat[1 * cols + 1] + mat[2 * cols + 2])) / 2;
 
             this->qx *= sign(this->qx * (mat[2 * cols + 1] - mat[1 * cols + 2]));
             this->qy *= sign(this->qy * (mat[0 * cols + 2] - mat[2 * cols + 0]));

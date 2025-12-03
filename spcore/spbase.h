@@ -222,7 +222,7 @@ namespace sp{
     //--------------------------------------------------------------------------------
 
     SP_GENFUNC const int acsid1(const int *dsize, const int d0) {
-        const int id0 = max(0, min(dsize[0] - 1, d0));
+        const int id0 = std::max(0, std::min(dsize[0] - 1, d0));
         return id0;
     }
 
@@ -261,8 +261,8 @@ namespace sp{
     //--------------------------------------------------------------------------------
 
     SP_GENFUNC int acsid2(const int *dsize, const int d0, const int d1, const int c = 0) {
-        const int id0 = max(0, min(dsize[0] - 1, d0));
-        const int id1 = max(0, min(dsize[1] - 1, d1));
+        const int id0 = std::max(0, std::min(dsize[0] - 1, d0));
+        const int id1 = std::max(0, std::min(dsize[1] - 1, d1));
         return id1 * dsize[0] + id0;
     }
 
@@ -284,9 +284,9 @@ namespace sp{
     //--------------------------------------------------------------------------------
 
     SP_GENFUNC int acsid3(const int *dsize, const int d0, const int d1, const int d2, const int c = 0) {
-        const int id0 = max(0, min(dsize[0] - 1, d0));
-        const int id1 = max(0, min(dsize[1] - 1, d1));
-        const int id2 = max(0, min(dsize[2] - 1, d2));
+        const int id0 = std::max(0, std::min(dsize[0] - 1, d0));
+        const int id1 = std::max(0, std::min(dsize[1] - 1, d1));
+        const int id2 = std::max(0, std::min(dsize[2] - 1, d2));
         return (id2 * dsize[1] + id1) * dsize[0] + id0;
     }
 

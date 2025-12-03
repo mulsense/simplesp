@@ -93,7 +93,7 @@ namespace sp {
                 char &wei = wmap(x, y, z);
 
                 val = cast<char>((val * wei + SP_VOXEL_VMAX * srcv) / (wei + 1.0));
-                wei = min(wei + 1, SP_VOXEL_WMAX);
+                wei = std::min(wei + 1, SP_VOXEL_WMAX);
             }
             else {
                 vmap(x, y, z) = (srcv > 0) ? +SP_VOXEL_VMAX : -SP_VOXEL_VMAX;
@@ -179,7 +179,7 @@ namespace sp {
                         else {
                             if (cpos.dot(drc) >= 0) continue;
 
-                            const SP_REAL dist = max(cpos.z - pos.z, -step) / step;
+                            const SP_REAL dist = std::max(cpos.z - pos.z, -step) / step;
                             voxel.update(x, y, z, dist);
                         }
                     }

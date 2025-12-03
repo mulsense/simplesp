@@ -91,8 +91,8 @@ namespace sp {
 
             const double tn = (acsv(a, i) - acsv(ray.pos, i)) / v;
             const double tf = (acsv(b, i) - acsv(ray.pos, i)) / v;
-            n = max(n, tn);
-            f = min(f, tf);
+            n = std::max(n, tn);
+            f = std::min(f, tf);
             if (f < n) return false;
         }
         return true;
@@ -276,7 +276,7 @@ namespace sp {
                     const double x = fabs(n.box.pos[1].x - n.box.pos[0].x);
                     const double y = fabs(n.box.pos[1].y - n.box.pos[0].y);
                     const double z = fabs(n.box.pos[1].z - n.box.pos[0].z);
-                    if (x > max(y, z)) {
+                    if (x > std::max(y, z)) {
                         da = 0;
                     }
                     else if(y > z) {
@@ -713,7 +713,7 @@ namespace sp {
             SP_ASSERT(lights.size() <= LIGHT_MAX);
 
             for (int i = 0; i < LIGHT_MAX; i++) {
-                if (i >= min(m_plights.size(), lights.size()) || lights[i].pos != m_plights[i].pos) {
+                if (i >= std::min(m_plights.size(), lights.size()) || lights[i].pos != m_plights[i].pos) {
                     m_cnt.dif[i] = 0;
                 }
                 
@@ -747,11 +747,11 @@ namespace sp {
                 }
             }
             {
-                m_cnt.amb = min(m_lim.amb, m_cnt.amb + 1);
+                m_cnt.amb = std::min(m_lim.amb, m_cnt.amb + 1);
                 for (int i = 0; i < m_plights.size(); i++) {
-                    m_cnt.dif[i] = min(m_lim.dif[i], m_cnt.dif[i] + 1);
+                    m_cnt.dif[i] = std::min(m_lim.dif[i], m_cnt.dif[i] + 1);
                 }
-                m_cnt.msk = min(m_lim.msk, m_cnt.msk + 1);
+                m_cnt.msk = std::min(m_lim.msk, m_cnt.msk + 1);
             }
             return true;
         }
@@ -930,9 +930,9 @@ namespace sp {
 
             const SP_REAL delta = 0.001;
 
-            const double rate0 = 1.0 - max(base.mat.tr, base.mat.rf);
-            const double rate1 = base.mat.tr * max(base.mat.tr, base.mat.rf) / (base.mat.tr + base.mat.rf);
-            const double rate2 = base.mat.rf * max(base.mat.tr, base.mat.rf) / (base.mat.tr + base.mat.rf);
+            const double rate0 = 1.0 - std::max(base.mat.tr, base.mat.rf);
+            const double rate1 = base.mat.tr * std::max(base.mat.tr, base.mat.rf) / (base.mat.tr + base.mat.rf);
+            const double rate2 = base.mat.rf * std::max(base.mat.tr, base.mat.rf) / (base.mat.tr + base.mat.rf);
 
             data.col = getCol4f(0.0, 0.0, 0.0, 0.0);
             data.sdw = 0.0;
@@ -1008,7 +1008,7 @@ namespace sp {
                 for (int i = 0; i < LEVEL_MAX - level; i++) {
                     ret = trace(hit, next, 0.0, SP_INFINITY);
                     if (ret == true) {
-                        const double r = hit.mat.tr * max(hit.mat.tr, hit.mat.rf) / (hit.mat.tr + hit.mat.rf);
+                        const double r = hit.mat.tr * std::max(hit.mat.tr, hit.mat.rf) / (hit.mat.tr + hit.mat.rf);
                         if (r > 0.0) {
                             next.pos = hit.vec.pos + next.drc * delta;
                             next.drc = next.drc;

@@ -159,11 +159,11 @@ namespace sp{
                     const int rw = rect.dsize[0];
                     const int rh = rect.dsize[1];
 
-                    rect.dbase[0] = min(u, ru);
-                    rect.dsize[0] = max(u + 1, ru + rw) - rect.dbase[0];
+                    rect.dbase[0] = std::min(u, ru);
+                    rect.dsize[0] = std::max(u + 1, ru + rw) - rect.dbase[0];
 
-                    rect.dbase[1] = min(v, rv);
-                    rect.dsize[1] = max(v + 1, rv + rh) - rect.dbase[1];
+                    rect.dbase[1] = std::min(v, rv);
+                    rect.dsize[1] = std::max(v + 1, rv + rh) - rect.dbase[1];
                 }
             }
         }

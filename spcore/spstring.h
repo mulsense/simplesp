@@ -21,13 +21,6 @@ namespace sp{
     // base
     //--------------------------------------------------------------------------------
 
-    SP_CPUFUNC int strlen(const char *str) { return static_cast<int>(::strlen(str)); }
-    SP_CPUFUNC char* strcpy(char *dst, const char *str) { return ::strcpy(dst, str); }
-    SP_CPUFUNC char* strcat(char *dst, const char *str) { return ::strcat(dst, str); }
-    SP_CPUFUNC int strcmp(const char *str0, const char *str1) { return ::strcmp(str0, str1); }
-    SP_CPUFUNC const char* strstr(const char *str, const char *substr) { return ::strstr(str, substr); }
-    SP_CPUFUNC char* strtok(char *str, const char * tok) { return ::strtok(str, tok); }
-
     SP_CPUFUNC char* strget(char *dst, const char *src, const int x, const char *tok = " ,\t\n\r") {
         char *buf = new char[strlen(src) + 1];
 
@@ -105,7 +98,7 @@ namespace sp{
             ::WideCharToMultiByte(CP_ACP, 0, (LPCWSTR)src, -1, (LPSTR)sjis, size, NULL, NULL);
         }
         {
-            const int size = strlen((char*)sjis);
+            const int size = (int)strlen((char*)sjis);
             msize = size + 1;
             memcpy(dst, sjis, msize);
         }
@@ -175,7 +168,7 @@ namespace sp{
             ::WideCharToMultiByte(CP_ACP, 0, (LPCWSTR)utf16, -1, (LPSTR)sjis, size, NULL, NULL);
         }
         {
-            const int size = strlen((char*)sjis);
+            const int size = (int)strlen((char*)sjis);
             msize = size + 1;
             memcpy(dst, sjis, msize);
         }

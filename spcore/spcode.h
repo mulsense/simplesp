@@ -72,17 +72,17 @@ namespace sp {
             int search = 0;
             int length = minLength - 1;
 
-            for (int j = max(0, i - maxSearch); j < i; j++) {
+            for (int j = std::max(0, i - maxSearch); j < i; j++) {
                 if (data[i] != data[j]) continue;
 
                 int k = 1;
-                const int maxk = min(maxLength, data.size() - 1 - i);
+                const int maxk = std::min(maxLength, data.size() - 1 - i);
                 for (; k <= maxk; k++) {
                     if (data[i + k] != data[j + k]) break;
                 }
                 if (k > length) {
                     search = i - j;
-                    length = min(k, maxLength);
+                    length = std::min(k, maxLength);
                 }
             }
             if (search == 0) {
@@ -150,8 +150,8 @@ namespace sp {
         for (int i = 0; i < lngs.size(); i++) {
             const int n = lngs[i];
             if (n == 0) continue;
-            maxv = max(n, maxv);
-            minv = min(n, minv);
+            maxv = std::max(n, maxv);
+            minv = std::min(n, minv);
         }
         if (maxv == 0) {
             return table;
@@ -460,7 +460,7 @@ namespace sp {
 
     SP_CPUFUNC Mem1<u08> base64Decode(const char* src) {
 
-        int size = strlen(src);
+        int size = (int)strlen(src);
         if (size == 0) return Mem1<u08>();
 
         Mem1<u08> ret;

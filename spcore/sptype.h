@@ -306,7 +306,7 @@ namespace sp {
 
     // convert phase to col3(rainbow), phase = [0, 1]
     SP_GENFUNC void cnvPhaseToCol(Col3& col, const double phase) {
-        const double p = max(0.0, min(phase, 1.0));
+        const double p = std::max(0.0, std::min(phase, 1.0));
 
         col.r = static_cast<u08>(255 * (sin(1.5 * SP_PI * p + SP_PI * (9.0 / 4.0)) + 1.0) / 2.0);
         col.g = static_cast<u08>(255 * (sin(1.5 * SP_PI * p + SP_PI * (7.0 / 4.0)) + 1.0) / 2.0);
@@ -340,15 +340,15 @@ namespace sp {
 
     // convert col3 to hsv, hsv = Vec3(h = [0, 2 * PI], s = [0, 1], v = [0, 1])
     SP_GENFUNC void cnvColToHSV(Vec3& hsv, const Col3& col) {
-        const double maxv = max(col.r, max(col.g, col.b));
-        const double minv = min(col.r, min(col.g, col.b));
+        const double maxv = std::max(col.r, std::max(col.g, col.b));
+        const double minv = std::min(col.r, std::min(col.g, col.b));
         const double subv = maxv - minv;
 
         double h, s, v;
         {
             h = 0.0;
             v = maxv / 255.0;
-            s = subv / max(maxv, 1.0);
+            s = subv / std::max(maxv, 1.0);
         }
         if (subv == 0.0) {
             h = 0.0;
@@ -438,9 +438,9 @@ namespace sp {
         val.y = static_cast<SP_REAL>(-0.969244 * xyz.x + 1.875968 * xyz.y + 0.041555 * xyz.z);
         val.z = static_cast<SP_REAL>(+0.055630 * xyz.x - 0.203977 * xyz.y + 1.056972 * xyz.z);
 
-        val.x = min(1.0, f(val.x));
-        val.y = min(1.0, f(val.y));
-        val.z = min(1.0, f(val.z));
+        val.x = std::min((SP_REAL)1.0, f(val.x));
+        val.y = std::min((SP_REAL)1.0, f(val.y));
+        val.z = std::min((SP_REAL)1.0, f(val.z));
 
         col = cast<Col3>(val);
     }
@@ -516,8 +516,8 @@ namespace sp {
         if (r1 == 0.0) return col0;
 
         Col4 dst;
-        const float t0 = col0.a * r0;
-        const float t1 = col1.a * r1;
+        const float t0 = static_cast<float>(col0.a * r0);
+        const float t1 = static_cast<float>(col1.a * r1);
 
         if (t0 + t1 > 0.0f) {
             dst.r = static_cast<u08>((col0.r * t0 + col1.r * t1) / (t0 + t1) + 0.5);
@@ -540,9 +540,9 @@ namespace sp {
         if (r1 == 0.0) return col0;
 
         Col4f dst;
-        dst.r = (col0.r * r0 + col1.r * r1) / (r0 + r1);
-        dst.g = (col0.g * r0 + col1.g * r1) / (r0 + r1);
-        dst.b = (col0.b * r0 + col1.b * r1) / (r0 + r1);
+        dst.r = static_cast<float>((col0.r * r0 + col1.r * r1) / (r0 + r1));
+        dst.g = static_cast<float>((col0.g * r0 + col1.g * r1) / (r0 + r1));
+        dst.b = static_cast<float>((col0.b * r0 + col1.b * r1) / (r0 + r1));
         return dst;
     }
 
@@ -869,13 +869,10 @@ namespace sp {
         Vec3 vec = Vec3(0.0, 0.0, 0.0);
 
         const SP_REAL angle = acos(rot.qw) * 2.0;
-
-        if (::fabs(angle - 0.0) == false) {
-            const SP_REAL s = sin(angle * 0.5);
-            vec.x = rot.qx / s * angle;
-            vec.y = rot.qy / s * angle;
-            vec.z = rot.qz / s * angle;
-        }
+        const SP_REAL s = sin(angle * 0.5);
+        vec.x = rot.qx / s * angle;
+        vec.y = rot.qy / s * angle;
+        vec.z = rot.qz / s * angle;
         return vec;
     }
 

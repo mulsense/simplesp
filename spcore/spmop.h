@@ -602,7 +602,7 @@ namespace sp {
 
         TYPE maxv = mem[0];
         for (int i = 1; i < mem.size(); i++) {
-            maxv = max(maxv, mem[i]);
+            maxv = std::max(maxv, mem[i]);
         }
         return maxv;
     }

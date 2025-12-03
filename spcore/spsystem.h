@@ -133,7 +133,7 @@ namespace sp {
         char tmp[512] = { 0 };
         strget(tmp, path, -1, "\\/");
 
-        const int size = strlen(path) - strlen(tmp) - 1;
+        const int size = (int)(strlen(path) - strlen(tmp) - 1);
 
         memcpy(dir, path, size);
 

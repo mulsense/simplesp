@@ -133,7 +133,7 @@ namespace sp{
         //--------------------------------------------------------------------------------
 
         void resize(const int dim, const int *dsize, const void *cpy = NULL){
-            this->dim = max(dim, 1);
+            this->dim = std::max(dim, 1);
 
             for (int i = 0; i < SP_DIMMAX; i++){
                 this->dsize[i] = (dsize != NULL && i < dim) ? dsize[i] : 0;
@@ -588,7 +588,7 @@ namespace sp{
         }
 
         Mat part(const int rbase, const int cbase, const int rsize, const int csize) const {
-            Mat mat(min(rsize, rows() - rbase), min(csize, cols() - cbase));
+            Mat mat(std::min(rsize, rows() - rbase), std::min(csize, cols() - cbase));
             for (int r = 0; r < mat.rows(); r++) {
                 for (int c = 0; c < mat.cols(); c++) {
                     mat(r, c) = (*this)(rbase + r, cbase + c);
@@ -661,7 +661,7 @@ namespace sp{
         void init(const int unit = 1){
             clear();
 
-            m_unit = max(1, unit);
+            m_unit = std::max(1, unit);
             m_block = 100;
         }
 

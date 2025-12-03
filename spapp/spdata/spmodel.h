@@ -45,7 +45,7 @@ namespace sp{
     SP_CPUFUNC SP_REAL getModelDistance(const Mem1<Mesh3> &model, const CamParam &cam){
 
         const double radius = getModelRadius(model);
-        const double distance = 1.2 * max(cam.fx, cam.fy) * radius / (0.5 * min(cam.dsize[0], cam.dsize[1]));
+        const double distance = 1.2 * std::max(cam.fx, cam.fy) * radius / (0.5 * std::min(cam.dsize[0], cam.dsize[1]));
     
         return static_cast<SP_REAL>(distance);
     }

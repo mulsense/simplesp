@@ -59,11 +59,11 @@ namespace sp {
 
                 const Vec2 pix = mulCamD(cam, prjVec(pm.pos[i]));
 
-                xs = min(xs, floor(pix.x + 1));
-                xe = max(xe, floor(pix.x + 1));
+                xs = std::min(xs, floor(pix.x + 1));
+                xe = std::max(xe, floor(pix.x + 1));
 
-                ys = min(ys, floor(pix.y + 1));
-                ye = max(ye, floor(pix.y + 1));
+                ys = std::min(ys, floor(pix.y + 1));
+                ye = std::max(ye, floor(pix.y + 1));
             }
             if (valid == false) return;
 
