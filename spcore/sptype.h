@@ -552,19 +552,19 @@ namespace sp {
         if (r1 == 0.0) return col0;
 
         Col4f dst;
-        const float t0 = col0.a * r0;
-        const float t1 = col1.a * r1;
+        const float t0 = static_cast<float>(col0.a * r0);
+        const float t1 = static_cast<float>(col1.a * r1);
 
         if (t0 + t1 > 0.0f) {
-            dst.r = (col0.r * t0 + col1.r * t1) / (t0 + t1);
-            dst.g = (col0.g * t0 + col1.g * t1) / (t0 + t1);
-            dst.b = (col0.b * t0 + col1.b * t1) / (t0 + t1);
-            dst.a = (t0 + t1) / (r0 + r1);
+            dst.r = static_cast<float>((col0.r * t0 + col1.r * t1) / (t0 + t1));
+            dst.g = static_cast<float>((col0.g * t0 + col1.g * t1) / (t0 + t1));
+            dst.b = static_cast<float>((col0.b * t0 + col1.b * t1) / (t0 + t1));
+            dst.a = static_cast<float>((t0 + t1) / (r0 + r1));
         }
         else {
-            dst.r = (col0.r * r0 + col1.r * r1) / (r0 + r1);
-            dst.g = (col0.g * r0 + col1.g * r1) / (r0 + r1);
-            dst.b = (col0.b * r0 + col1.b * r1) / (r0 + r1);
+            dst.r = static_cast<float>((col0.r * r0 + col1.r * r1) / (r0 + r1));
+            dst.g = static_cast<float>((col0.g * r0 + col1.g * r1) / (r0 + r1));
+            dst.b = static_cast<float>((col0.b * r0 + col1.b * r1) / (r0 + r1));
             dst.a = 0.0f;
         }
         return dst;
@@ -592,7 +592,7 @@ namespace sp {
             cnvHSVToCol(col, sp::Vec3(0.0f, 0.0f, vlist[v]));
         }
         else {
-            const float h = (i - 1) * 2.0f * SP_PI / 12.0f;
+            const float h = static_cast<float>((i - 1) * 2.0f * SP_PI / 12.0f);
             const float slist[] = { 0.16f, 0.26f, 0.38f, 0.50f, 0.62f, 0.74f, 0.86f, 0.98f };
             const float vlist[] = { 0.98f, 0.95f, 0.91f, 0.86f, 0.80f, 0.73f, 0.65f, 0.56f };
             cnvHSVToCol(col, sp::Vec3(h, slist[v], vlist[v]));
