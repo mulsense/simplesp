@@ -1527,7 +1527,7 @@ namespace sp {
             this->a = 0;
         }
 
-        Col4(const u08 r, const u08 g, const u08 b, const u08 a) : Col3(a, g, b) {
+        Col4(const u08 r, const u08 g, const u08 b, const u08 a) : Col3(r, g, b) {
             this->a = a;
         }
 
